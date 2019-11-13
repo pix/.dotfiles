@@ -1,0 +1,9 @@
+[Unit]
+Description=compton compositing daemon
+Documentation=man:compton
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/compton

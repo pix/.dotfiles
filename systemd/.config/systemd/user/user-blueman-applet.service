@@ -1,0 +1,9 @@
+[Unit]
+Description=blueman-applet notification daemon
+Documentation=man:blueman-applet
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/blueman-applet

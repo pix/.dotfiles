@@ -1,0 +1,9 @@
+[Unit]
+Description=pasystray notification daemon
+Documentation=man:pasystray
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/pasystray

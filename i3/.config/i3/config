@@ -597,14 +597,16 @@ exec --no-startup-id exec firefox --name Firefart
 exec --no-startup-id exec virt-manager
 exec --no-startup-id exec evolution
 exec --no-startup-id exec /usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh
-exec_always --no-startup-id $cmd_must_start mopidy && exec sh -c '. ~/.virtualenvs/mopidy/bin/activate && exec mopidy'
 
-exec_always --no-startup-id killall compton; exec compton --config ~/.config/i3/compton/compton.conf -b
-exec_always --no-startup-id killall xautolock; exec xautolock -time 10 -locker $cmd_locker
-exec_always --no-startup-id killall redshift-gtk; killall redshift; exec redshift-gtk
-exec_always --no-startup-id killall pasystray; exec pasystray
-exec_always --no-startup-id killall blueman-applet; exec blueman-applet
-exec_always --no-startup-id killall dunst; exec ~/.config/i3/scripts/start-dunst.sh
-exec_always --no-startup-id killall nm-applet; exec nm-applet
+# Update dunst config
+exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
 exec_always --no-startup-id killall nitrogen; exec nitrogen --restore
-exec_always --no-startup-id killall flameshot; exec flameshot
+exec_always --no-startup-id killall xautolock; exec xautolock -time 10 -locker $cmd_locker
+
+exec_always --no-startup-id systemctl start --user user-mopidy
+exec_always --no-startup-id systemctl restart --user user-dunst
+exec_always --no-startup-id systemctl restart --user user-nm-applet
+exec_always --no-startup-id systemctl restart --user user-blueman-applet
+exec_always --no-startup-id systemctl restart --user user-redshift-gtk
+exec_always --no-startup-id systemctl restart --user user-pasystray
+exec_always --no-startup-id systemctl restart --user user-flameshot

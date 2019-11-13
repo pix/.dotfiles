@@ -1,4 +1,4 @@
 *.log
 shell/.zsh/cache/
-dunstrc.env
 *.pyc
+i3/.config/i3/dunst/dunstrc

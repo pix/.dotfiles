@@ -1,0 +1,9 @@
+[Unit]
+Description=redshift notification daemon
+Documentation=man:redshift-gtk
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/redshift-gtk
