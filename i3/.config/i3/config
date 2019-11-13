@@ -5,13 +5,14 @@
 # sudo update-alternatives --config x-terminal-emulator
 #
 # apt install xautolock redshift-gtk pasystray blueman-applet dunst nm-applet nitrogen flameshot \
-#             notify-osd firefox xlock-fancy pavucontrol eog playerctl
+#             notify-osd firefox xlock-fancy pavucontrol eog playerctl libnotify-bin
 #
 # workon mopidy
 # pip install mopidy
 #
 # workon i3
-# pip install i3ipc i3-resurrect i3-py i3-clever-layout pywall
+# pip install i3ipc i3-resurrect i3-py i3-clever-layout
+# pip3 install pywal
 
 set $rofi_theme -config ~/.cache/wal/colors-rofi-dark.rasi
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu -- -config ~/.cache/wal/colors-rofi-dark.rasi

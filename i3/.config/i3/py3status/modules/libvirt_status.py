@@ -70,10 +70,16 @@ class Py3status:
 
         # connect
         if not hasattr(self, 'conn'):
-            self.conn = libvirt.openReadOnly(self.uri)
+            try:
+                self.conn = libvirt.openReadOnly(self.uri)
+            except:
+                self.conn = None
         
         if self.conn == None:
-            response['full_text'] = "no_hypervisor"
+            if hasattr(self, 'format_no_state'):
+                response['full_text'] = self.format_no_state
+            else:
+                response['full_text'] = 'no_hypervisor'
         else:
             # print hypervisor information  
             data = {'inactive' : self.conn.numOfDefinedDomains(),
