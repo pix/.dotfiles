@@ -1,0 +1,490 @@
+###############################################################################
+# ceerious i3 status config
+# see "man i3status" for documentation.
+#
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+###############################################################################
+
+py3status {
+   resources = [
+       ('color_accent', 'i3wm*accent', 'black'),
+       ('color_color0', '*color0', 'black'),
+       ('color_color1', '*color1', 'black'),
+       ('color_color2', '*color2', 'black'),
+       ('color_color3', '*color3', 'black'),
+       ('color_color4', '*color4', 'black'),
+       ('color_color5', '*color5', 'black'),
+       ('color_color6', '*color6', 'black'),
+       ('color_color7', '*color7', 'black'),
+       ('color_color8', '*color8', 'black'),
+       ('color_color9', '*color9', 'black'),
+       ('color_color10', '*color10', 'black'),
+       ('color_color11', '*color11', 'black'),
+       ('color_color12', '*color12', 'black'),
+       ('color_color13', '*color13', 'black'),
+       ('color_color14', '*color14', 'black'),
+       ('color_color15', '*color15', 'black'),
+   ]
+}
+
+general {
+    interval        = 1
+    colors          = false
+    color           = '#aaaaaa'
+    color_good      = '#aaaaaa'
+    color_degraded  = '#aaaaaa'
+    color_bad       = '#aaaaaa'
+    output_format   = "i3bar"
+}
+
+order += "group rate"
+order += "xsel"
+order += "frame mpris"
+order += "volume_status"
+order += "group vms"
+order += "frame rootfs"
+order += "frame data"
+order += "static_string bluetooth"
+order += "group wifi"
+order += "group ethernet"
+order += "frame cpu"
+order += "frame date"
+order += "frame time"
+order += "battery 0"
+
+frame mpris {
+    format = '{button}{output}'
+    format_separator = " "
+    format_button_closed = ""
+    format_button_open   = "  "
+    click_mode = "button"
+    align="right"
+
+    # mpris next {
+        # format = "{next}"
+        # icon_next=''
+    # }
+    mpris {
+      format="[{artist} - ]{title}"
+      button_next = 3
+      button_previous = 2
+      format_none=''
+      icon_next=''
+      icon_previous=''
+      icon_pause=''
+      icon_play=''
+      player_priority = "[mopidy, mpd, cantata, vlc, bomi]"
+    }
+    # mpris prev {
+        # format = "{previous}"
+        # icon_previous=''
+    # }
+    # mpris next {
+        # format = "{next}"
+        # icon_next=''
+    # }
+
+    static_string {
+        format = '  '
+        on_click 1 = "exec playerctl previous"
+    }
+
+    static_string {
+        format = "  "
+        on_click 1 = "exec playerctl next"
+    }
+}
+
+group vms {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open   = "  "
+
+    color_good      = '#aaaaaa'
+    color_degraded  = '#aaaaaa'
+    color_bad       = '#aaaaaa'
+
+    button_toggle = 3
+    button_next = 1
+
+    frame {
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Non-Existant"
+            format = " non-existant: {state}"
+            format_running = " non-existant"
+            format_paused = " non-existant"
+            format_shut_off = " non-existant"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Non-Existant"'
+            on_click 2 = 'exec "virsh managedsave Non-Existant"'
+            on_click 3 = 'exec "virsh start Non-Existant"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Whonix-Gateway"
+            format = " whonix: {state}"
+            format_running = " whonix"
+            format_paused = " whonix"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Whonix-Gateway"'
+            on_click 2 = 'exec "virsh managedsave Whonix-Gateway"'
+            on_click 3 = 'exec "virsh start Whonix-Gateway"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "offsecvm-2018.3"
+            format = " offsec: {state}"
+            format_running = " offsec"
+            format_paused = " offsec"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a offsecvm-2018.3"'
+            on_click 2 = 'exec "virsh managedsave offsecvm-2018.3"'
+            on_click 3 = 'exec "virsh start offsecvm-2018.3"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "blackarch"
+            format = " blackarch: {state}"
+            format_running = " arch"
+            format_paused = " arch"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a blackarch"'
+            on_click 2 = 'exec "virsh managedsave blackarch"'
+            on_click 3 = 'exec "virsh start blackarch"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Kali-2019.2"
+            format = " kali {state}"
+            format_running = " kali"
+            format_paused = " kali"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Kali-2019.2"'
+            on_click 2 = 'exec "virsh managedsave Kali-2019.2"'
+            on_click 3 = 'exec "virsh start Kali-2019.2"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "windows10-domain"
+            format = " dom: {state}"
+            format_running = " dom"
+            format_paused = " dom"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a windows10-domain"'
+            on_click 2 = 'exec "virsh managedsave windows10-domain"'
+            on_click 3 = 'exec "virsh start windows10-domain"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "windows10-tools"
+            format = " tools: {state}"
+            format_running = " tools"
+            format_paused = " tools"
+            format_shut_off = ""
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a windows10-tools"'
+            on_click 2 = 'exec "virsh managedsave windows10-tools"'
+            on_click 3 = 'exec "virsh start windows10-tools"'
+        }
+    }
+    frame {
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Non-Existant"
+            format = " non-existant: {state}"
+            format_running = " non-existant"
+            format_paused = " non-existant"
+            format_shut_off = " non-existant"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Non-Existant"'
+            on_click 2 = 'exec "virsh managedsave Non-Existant"'
+            on_click 3 = 'exec "virsh start Non-Existant"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Whonix-Gateway"
+            format = " whonix: {state}"
+            format_running = " whonix"
+            format_paused = " whonix"
+            format_shut_off = " whonix"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Whonix-Gateway"'
+            on_click 2 = 'exec "virsh managedsave Whonix-Gateway"'
+            on_click 3 = 'exec "virsh start Whonix-Gateway"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "offsecvm-2018.3"
+            format = " offsec: {state}"
+            format_running = " offsec"
+            format_paused = " offsec"
+            format_shut_off = " offsec"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a offsecvm-2018.3"'
+            on_click 2 = 'exec "virsh managedsave offsecvm-2018.3"'
+            on_click 3 = 'exec "virsh start offsecvm-2018.3"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "blackarch"
+            format = " blackarch: {state}"
+            format_running = " arch"
+            format_paused = " arch"
+            format_shut_off = " arch"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a blackarch"'
+            on_click 2 = 'exec "virsh managedsave blackarch"'
+            on_click 3 = 'exec "virsh start blackarch"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "Kali-2019.2"
+            format = " kali {state}"
+            format_running = " kali"
+            format_paused = " kali"
+            format_shut_off = " kali"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a Kali-2019.2"'
+            on_click 2 = 'exec "virsh managedsave Kali-2019.2"'
+            on_click 3 = 'exec "virsh start Kali-2019.2"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "windows10-domain"
+            format = " dom: {state}"
+            format_running = " dom"
+            format_paused = " dom"
+            format_shut_off = " dom"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a windows10-domain"'
+            on_click 2 = 'exec "virsh managedsave windows10-domain"'
+            on_click 3 = 'exec "virsh start windows10-domain"'
+        }
+
+        libvirt_status {
+            uri = "qemu:///system"
+            name = "windows10-tools"
+            format = " tools: {state}"
+            format_running = " tools"
+            format_paused = " tools"
+            format_shut_off = " tools"
+            format_no_state = ""
+
+            on_click 1 = 'exec "virt-viewer -a windows10-tools"'
+            on_click 2 = 'exec "virsh managedsave windows10-tools"'
+            on_click 3 = 'exec "virsh start windows10-tools"'
+        }
+    }
+}
+
+frame rootfs {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open   = ""
+    disk "/" {
+            format = " root:%avail"
+            prefix_type = custom
+            low_threshold = 20
+            threshold_type = percentage_avail
+            on_click 3 = 'exec "pcmanfm"'
+    }
+    open = False
+}
+
+frame data {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open   = ""
+    disk "/media/data" {
+            format = " media:%avail"
+            prefix_type = custom
+            low_threshold = 20
+            threshold_type = percentage_avail
+            on_click 3 = 'exec "pcmanfm"'
+    }
+    open = False
+}
+
+static_string bluetooth {
+    format = ''
+    on_click 1 = "exec blueman-manager"
+    on_click 3 = "exec blueman-manager"
+}
+
+group wifi {
+
+    format_button_closed = ""
+    format_button_open   = ""
+    format = '{button}{output}'
+    click_mode = "button"
+    button_toggle = 0
+    button_next = 1
+
+    wifi pwet {
+        device = "wlp2s0"
+        format_up = " {signal_percent}"
+        format_down = " off"
+        on_click 1 = 'exec ip -4 address show dev wlp2s0 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | tr -d "\n" | xclip -i'
+        format_separator = " "
+    }
+
+    wifi pwet2 {
+        device = "wlp2s0"
+        format_up = " {signal_percent} {ssid} - {ip}"
+        format_down = " off"
+        on_click 1 = 'exec ip -4 address show dev wlp2s0 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | tr -d "\n" | xclip -i'
+    }
+}
+
+group ethernet {
+    ethernet eno1 {
+        format_up = " %ip"
+        format_down = ""
+        on_click 1 = 'exec ip -4 address show dev eno1 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | xclip -i'
+    }
+}
+
+battery 0 {
+    format = "%status %percentage %remaining "
+    format_down = ""
+    last_full_capacity = true
+    integer_battery_capacity = true
+    low_threshold = 20
+    threshold_type = percentage
+    hide_seconds = true
+    status_chr = " "
+    status_bat = " "
+    status_unk = " "
+    status_full = " "
+}
+
+frame date {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open   = ""
+
+    tztime date {
+        format = " %V - %A %e %B"
+        on_click 3 = "exec --no-startup-id gnome-calendar"
+        on_click 2 = "restart"
+    }
+
+}
+
+frame time {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open   = ""
+
+    tztime time {
+        format = " %H:%M:%S"
+    }
+}
+
+
+frame cpu {
+    format = '{button}{output}'
+    format_button_closed = ""
+    format_button_open = ""
+
+    cpu_temperature 1 {
+        format = " %degrees°C"
+    }
+
+    sysdata {
+        format = " {mem_used} GiB"
+    }
+
+    cpu_usage {
+        format = "  %usage"
+    }
+
+    frame {
+        format = '{button}{output}'
+        format_button_closed = ""
+        format_button_open = ""
+        load {
+            format = " %1min %5min %15min"
+        }
+    }
+    open = False
+}
+
+xsel {
+    max_size = 50
+    command = 'sh -c "if [ `xsel -o -b|wc -c` -eq 0 ]; then echo ; else echo ; fi"'
+    on_click 1 = "exec xsel -o -p | xsel -i -s -b"
+    on_click 2 = 'exec "xsel -c -p; xsel -c -b"'
+    on_click 3 = 'exec "xsel -c -p; xsel -c -b"'
+}
+
+group rate {
+    format = '{output}{button}'
+    format_button_closed = ""
+    format_button_open = ""
+    click_mode = "all"
+    button_toggle = 3
+    button_next = 1
+
+    net_rate nr1 {
+        format = "{down}  {up} "
+        # format = "{total}"
+        precision = 0
+        format_no_connection = " - "
+        cache_timeout = 5
+    }
+
+    net_rate nr2 {
+        format = "{total} "
+        # format = "{total}"
+        precision = 0
+        format_no_connection = " - "
+        cache_timeout = 5
+    }
+
+}
+
+
+volume_status {
+    format = "{percentage}%  "
+    format_muted = "  "
+    # device = "default"
+    # mixer = "Master"
+    # mixer_idx = 0
+
+    button_mute = 1
+    on_click 3 = 'exec "pavucontrol"'
+}

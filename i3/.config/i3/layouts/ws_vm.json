@@ -1,0 +1,30 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "tabbed",
+    "percent": null,
+    "type": "con",
+    "nodes": [
+        {
+            "border": "normal",
+            "current_border_width": 1,
+            "floating": "auto_off",
+            "geometry": {
+               "height": 728,
+               "width": 668,
+               "x": 0,
+               "y": 0
+            },
+            "name": "Virtual Machine Manager",
+            "percent": 1,
+            "swallows": [
+               {
+                "class": "^Virt\\-manager$"
+               }
+            ],
+            "type": "con"
+        }
+    ]
+}
+
