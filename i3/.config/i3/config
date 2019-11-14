@@ -16,7 +16,6 @@
 
 set $rofi_theme -config ~/.cache/wal/colors-rofi-dark.rasi
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu -- -config ~/.cache/wal/colors-rofi-dark.rasi
-set $cmd_must_start ~/.config/i3/scripts/should-start
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
 set $cmd_locker ~/.config/i3/scripts/lock.sh
 
@@ -206,7 +205,7 @@ set $ws_office "6:"
 #
 # %%hotkey: Send workspace/apps where they belong at work %%
 bindsym $mod+a exec $cmd_refresh \
-               exec --no-startup-id "autorandr -c",                 \
+               exec --no-startup-id autorandr -c,                 \
                \
                workspace $ws1, move workspace to output $monitor_1, \
                workspace $ws2, move workspace to output $monitor_2, \
@@ -607,6 +606,7 @@ exec_always --no-startup-id systemctl start --user user-mopidy
 exec_always --no-startup-id systemctl restart --user user-dunst
 exec_always --no-startup-id systemctl restart --user user-nm-applet
 exec_always --no-startup-id systemctl restart --user user-blueman-applet
+exec_always --no-startup-id systemctl restart --user user-compton
 exec_always --no-startup-id systemctl restart --user user-redshift-gtk
 exec_always --no-startup-id systemctl restart --user user-pasystray
 exec_always --no-startup-id systemctl restart --user user-flameshot
