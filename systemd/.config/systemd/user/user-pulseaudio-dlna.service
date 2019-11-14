@@ -1,0 +1,9 @@
+[Unit]
+Description=pulseaudio dlna daemon
+Documentation=man:pulseaudio-dlna
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/pulseaudio-dlna --codec wav --auto-reconnect --cover-mode=distribution --chunk-size 256 --disable-ssdp-listener
