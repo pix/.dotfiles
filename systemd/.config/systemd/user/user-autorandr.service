@@ -1,0 +1,7 @@
+[Unit]
+Description=Lock X session
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/autorandr -c
+ExecStop=/usr/bin/autorandr -c

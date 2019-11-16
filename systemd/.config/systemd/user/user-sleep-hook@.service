@@ -1,0 +1,13 @@
+[Unit]
+Description=%I user sleep hook
+Before=user-sleep.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=-/usr/bin/systemctl --user stop %I
+ExecStop=-/usr/bin/systemctl --user start %I
+
+[Install]
+WantedBy=user-sleep.target

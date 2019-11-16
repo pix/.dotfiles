@@ -2,3 +2,4 @@
 shell/.zsh/cache/
 *.pyc
 i3/.config/i3/dunst/dunstrc
+systemd/.config/systemd/user/user-sleep.target.wants/
