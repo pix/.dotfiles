@@ -2,11 +2,12 @@
 
 setbg() {
     source ~/.virtualenvs/i3/bin/activate
-    wal -e -i "$@"
+    wal -e -n -i "$@"
     source ~/.cache/wal/colors.sh
     sed "s/file=.*/file=$(echo $wallpaper | sed -e 's/[\/&]/\\&/g')/g" -i ~/.config/nitrogen/bg-saved.cfg
-    # nitrogen --restore
-    wal -i "$@" >/dev/null 2>&1
+    nitrogen --restore
+    wal -e -n -i "$@" >/dev/null 2>&1
+    i3-msg restart
 }
 
 if [ -z "${1}" ]; then

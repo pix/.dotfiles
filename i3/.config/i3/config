@@ -610,3 +610,5 @@ exec_always --no-startup-id systemctl restart --user user-compton
 exec_always --no-startup-id systemctl restart --user user-redshift-gtk
 exec_always --no-startup-id systemctl restart --user user-pasystray
 exec_always --no-startup-id systemctl restart --user user-flameshot
+
+exec --no-startup-id systemctl restart --user user-sleep.target
