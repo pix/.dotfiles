@@ -4,10 +4,9 @@ dbus-monitor --system "type='signal',interface='org.freedesktop.login1.Manager',
     case "$x" in
         *"boolean false"*) 
           systemctl --user --no-block stop user-sleep.target
-	  notify-send "Welcome back !"
           ;;
         *"boolean true"*) 
-	  systemctl --user --no-block start user-sleep.target
+          systemctl --user --no-block start user-sleep.target
           ;;
     esac
 done
