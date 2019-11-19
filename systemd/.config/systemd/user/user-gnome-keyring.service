@@ -1,0 +1,11 @@
+[Unit]
+Description=gnome-keyring daemon
+Documentation=man:gnome-keyring-daemon
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/gnome-keyring-daemon --foreground --start --components=gpg,pkcs11,secrets,ssh
+
+[Install]
+WantedBy=user-session-once.target

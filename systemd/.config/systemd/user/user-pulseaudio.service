@@ -1,5 +1,6 @@
 [Unit]
 Description=Sound Service
+PartOf=user-session-once.target
 
 # We require pulseaudio.socket to be active before starting the daemon, because
 # while it is possible to use the service without the socket, it is not clear
@@ -31,4 +32,4 @@ UMask=0077
 
 [Install]
 Also=user-pulseaudio.socket
-WantedBy=default.target
+WantedBy=user-session-once.target

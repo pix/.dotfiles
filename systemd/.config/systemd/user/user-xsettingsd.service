@@ -1,0 +1,11 @@
+[Unit]
+Description=xsettings daemon
+Documentation=man:xsettingsd
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/xsettingsd -c %h/.config/xsettingsd/xsettingsd.conf
+
+[Install]
+WantedBy=user-session.target

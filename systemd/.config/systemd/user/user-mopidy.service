@@ -1,9 +1,12 @@
 [Unit]
 Description=Mopidy daemon
 Documentation=man:mopidy
-PartOf=graphical-session.target
+PartOf=user-session-once.target
 
 [Service]
 Type=simple
 Restart=always
 ExecStart=/bin/sh -c '. ~/.virtualenvs/mopidy/bin/activate && exec mopidy'
+
+[Install]
+WantedBy=user-session-once.target

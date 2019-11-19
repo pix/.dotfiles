@@ -7,3 +7,6 @@ PartOf=graphical-session.target
 Type=simple
 Restart=always
 ExecStart=/usr/bin/compton
+
+[Install]
+WantedBy=user-session.target

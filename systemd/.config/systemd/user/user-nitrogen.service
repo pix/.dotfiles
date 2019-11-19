@@ -1,0 +1,10 @@
+[Unit]
+Description=set wallpaper using nitrogen
+Documentation=man:nitrogen
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nitrogen --restore
+
+[Install]
+WantedBy=user-session.target

@@ -1,7 +1,9 @@
 [Unit]
-Description=Lock X session
+Description=Detect screen layout
 
 [Service]
-Environment=DISPLAY=:0
-ExecStart=/usr/bin/autorandr -c
-ExecStop=/usr/bin/autorandr -c
+ExecStart=/bin/sh -c "autorandr single; autorandr -c"
+ExecStop=/bin/sh -c "autorandr single; autorandr -c"
+
+[Install]
+WantedBy=user-session.target

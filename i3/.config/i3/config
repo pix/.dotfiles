@@ -597,24 +597,14 @@ exec i3-msg 'workspace --no-auto-back-and-forth $ws_vm, append_layout ~/.config/
 exec i3-msg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json'
 
 exec --no-startup-id exec i3-sensible-terminal -name ws1
-exec --no-startup-id exec xsettingsd -c ~/.config/i3/xsettingsd/xsettingsd.conf
 exec --no-startup-id exec firefox --name Firefart
 exec --no-startup-id exec virt-manager
 exec --no-startup-id exec evolution
-exec --no-startup-id exec /usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh
 
 # Update dunst config
 exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
 exec_always --no-startup-id killall nitrogen; exec nitrogen --restore
 exec_always --no-startup-id killall xautolock; exec xautolock -time 10 -locker $cmd_locker
 
-exec_always --no-startup-id systemctl start --user user-mopidy
-exec_always --no-startup-id systemctl restart --user user-dunst
-exec_always --no-startup-id systemctl restart --user user-nm-applet
-exec_always --no-startup-id systemctl restart --user user-blueman-applet
-exec_always --no-startup-id systemctl restart --user user-compton
-exec_always --no-startup-id systemctl restart --user user-redshift-gtk
-exec_always --no-startup-id systemctl restart --user user-pasystray
-exec_always --no-startup-id systemctl restart --user user-flameshot
-
-exec --no-startup-id systemctl restart --user user-sleep.target
+exec_always --no-startup-id "systemctl --user restart -- $(systemctl --user show -p Wants user-session.target | cut -d= -f2)"
+exec_always --no-startup-id "systemctl --user start -- $(systemctl --user show -p Wants user-session-once.target | cut -d= -f2)"

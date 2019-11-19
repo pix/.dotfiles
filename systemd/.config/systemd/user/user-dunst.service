@@ -1,0 +1,12 @@
+[Unit]
+Description=Dunst notification daemon
+Documentation=man:dunst
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.Notifications
+ExecStart=/usr/bin/dunst
+
+[Install]
+WantedBy=user-session.target
+
