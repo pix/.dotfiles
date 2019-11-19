@@ -200,6 +200,12 @@ set $ws_mail   "3:"
 set $ws_vm     "4:"
 set $ws_office "6:"
 
+# %%hotkey: Send workspace to output left %%
+bindsym $mod+Control+Left move workspace to output left
+
+# %%hotkey: Send workspace to output right %%
+bindsym $mod+Control+Right move workspace to output right
+
 ########################################################################
 # Arrange window for 3 screens
 #
@@ -242,11 +248,11 @@ bindsym $mod+Shift+a \
 ########################################################################
 # Focus / Workspace switch <Alt/Mod/Ctrl> + Tab
 # %%hotkey: Goto previous workspace on output %%
-bindsym Mod4+Tab                workspace prev_on_output, \
+bindsym $mod+Tab                workspace prev_on_output, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Goto next workspace on output %%
-bindsym Mod4+Shift+Tab          workspace next_on_output, \
+bindsym $mod+Shift+Tab          workspace next_on_output, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Goto previous workspace %%
@@ -258,11 +264,11 @@ bindsym Control+Shift+Tab       workspace next, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Focus previous window %%
-bindsym Mod1+Tab                exec --no-startup-id "~/.config/i3/scripts/focus-next prev", \
+bindsym $alt+Tab                exec --no-startup-id "~/.config/i3/scripts/focus-next prev", \
                                 exec notify-send $osd_id 'Focus' "$window_name"
 
 # %%hotkey: Focus next window %%
-bindsym Mod1+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus-next next", \
+bindsym $alt+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus-next next", \
                                 exec notify-send $osd_id 'Focus' '$window_name'
 
 ########################################################################
