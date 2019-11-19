@@ -1,5 +1,5 @@
 *.log
 shell/.zsh/cache/
 *.pyc
-i3/.config/i3/dunst/dunstrc
+i3/.config/dunst/dunstrc
 systemd/.config/systemd/user/*.target.wants/
