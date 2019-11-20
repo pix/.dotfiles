@@ -14,8 +14,8 @@
 # pip install i3ipc i3-resurrect i3-py i3-clever-layout
 # pip3 install pywal
 
-set $rofi_theme -config ~/.cache/wal/colors-rofi-dark.rasi
-set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu -- -config ~/.cache/wal/colors-rofi-dark.rasi
+set $rofi_theme
+set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
 set $cmd_locker ~/.config/i3/scripts/lock.sh
 
@@ -112,7 +112,7 @@ bindsym $alt+F4      kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
-bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,ssh,windowcd,combi,keys -show combi -sidebar-mod $rofi_theme"
+bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,ssh,windowcd,combi,keys -show combi -sidebar-mod"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
 
 # alternatively, you can use the cursor keys:
@@ -158,6 +158,8 @@ bindsym $mod+z layout tabbed, exec notify-send $osd_id '$mod + Z: layout tabbed'
 bindsym $mod+e layout toggle split, exec notify-send $osd_id '$mod + E: layout split' '$bindings'
 # %%hotkey: Toggle all layout mode %%
 bindsym $mod+w layout toggle all, exec notify-send $osd_id '$mod + W: layout toggle all' '$bindings'
+
+bindsym $mod+Shift+s exec ~/.config/i3/scripts/rofi-systemd
 
 # %%hotkey: Toggle tilling / floating mode %%
 bindsym $mod+Shift+space floating toggle
@@ -411,6 +413,7 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
+for_window [instance="floating-border"] floating enable, border pixel 4
 for_window [class="Blueman-manager"] floating enable
 for_window [class="Eog"] floating enable
 for_window [class="flameshot"] floating enable
