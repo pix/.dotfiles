@@ -6,6 +6,9 @@ else
     num=""
 fi
 
+DIR=~/.cache/i3lock/
+
+mkdir -p "${DIR}"
 
 curl https://xkcd.com/${num}info.0.json > /tmp/.xkcd.json 2>/dev/null
 ALT=$(jq -r .alt < /tmp/.xkcd.json 2>/dev/null)
@@ -14,6 +17,6 @@ URL=$(jq -r .img < /tmp/.xkcd.json 2>/dev/null)
 wget -qO /tmp/.xkcd.png "$URL"
 
 if identify /tmp/.xkcd.png >/dev/null 2>/dev/null; then
-    mv /tmp/.xkcd.png ~/.lock.overlay.png
-    echo "$ALT" > ~/.lock.text
+    mv /tmp/.xkcd.png "${DIR}/overlay.png"
+    echo -n "$ALT" > "${DIR}/overlay.txt"
 fi

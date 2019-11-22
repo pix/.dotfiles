@@ -1,0 +1,6 @@
+[Unit]
+Description=User level timers target
+StopWhenUnneeded=yes
+
+[Install]
+WantedBy=user-session.target

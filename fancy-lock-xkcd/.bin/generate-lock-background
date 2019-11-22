@@ -1,0 +1,36 @@
+#!/bin/bash
+
+DIR=~/.cache/lock-background
+OUT="$HOME/.cache/i3lock"
+
+mkdir -p "${OUT}"
+
+rm -fr "${DIR}"
+mkdir -p "${DIR}"
+
+scrot "${DIR}/bg.png"
+
+if [ -f ~/.cache/i3lock/overlay.png -a -f ~/.cache/i3lock/overlay.txt ]; then
+    TEXT="$(cat ~/.cache/i3lock/overlay.txt)"
+
+    convert "${DIR}/bg.png" \
+        -scale 10% -scale 1000% \
+        "${DIR}/layer0.png"
+
+    convert -size 1920x50 xc:none \
+        -font Liberation-Sans -pointsize 16 \
+        -stroke black -strokewidth 8 -gravity SouthEast -annotate +15+15 "${TEXT}" -blur 0x8 \
+        -fill white   -stroke none   -gravity SouthEast -annotate +15+15 "${TEXT}" \
+        "${DIR}/layer1.png"
+
+    convert "${DIR}/layer0.png" -gravity SouthEast \
+        \( "${DIR}/layer1.png" -alpha set -channel a -evaluate set 70% +channel \) -composite \
+        \( ~/.cache/i3lock/overlay.png -alpha set -channel a -evaluate set 50% +channel \) -geometry +15+45 -composite \
+        -background none -flatten "${OUT}/lock.png"
+else
+    convert ~/.bg.png \
+        -filter Gaussian -scale 50% -define filter:sigma=2.5 -scale 200% \
+        "${OUT}/lock.png"
+fi
+
+rm -fr "${DIR}"

@@ -17,7 +17,7 @@
 set $rofi_theme
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
-set $cmd_locker ~/.config/i3/scripts/lock.sh
+set $cmd_locker ~/.bin/i3lock-overlay
 
 set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low

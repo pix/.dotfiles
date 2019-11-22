@@ -1,0 +1,5 @@
+[Unit]
+Description=Download last XKCD for lock overlay
+
+[Service]
+ExecStart=%h/.bin/download-xkcd-overlay

@@ -1,0 +1,5 @@
+#!/bin/bash
+$HOME/.bin/generate-lock-background-ffmpeg
+notify-send DUNST_COMMAND_PAUSE &
+i3lock -i ~/.cache/i3lock/lock.png
+notify-send DUNST_COMMAND_RESUME &
