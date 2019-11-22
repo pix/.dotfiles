@@ -9,19 +9,20 @@ set -a
 set +a
 
 is_systemd() {
-    systemctl status --user dunst >/dev/null 2>&1
+    systemctl is-enabled --user "${1}" >/dev/null 2>&1
 }
 
 reload_dunst() {
     envsubst < ~/.config/dunst/dunstrc.env > ~/.config/dunst/dunstrc
 
-    if is_systemd; then
-        echo "(Re)starting via systemd"
-        systemctl restart --user dunst
+    if is_systemd dunst; then
+        systemctl --user restart dunst
+    elif is_systemd user-dunst; then
+        systemctl --user restart user-dunst
     else
         echo "(Re)starting manually"
         pkill dunst
-        nohup dunst -config ~/.config/i3/dunst/dunstrc.env >/dev/null 2>&1 &
+        nohup dunst -config ~/.config/i3/dunst/dunstrc >/dev/null 2>&1 &
     fi
 }
 
