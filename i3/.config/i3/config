@@ -114,6 +114,7 @@ bindsym $alt+F4      kill
 # %%hotkey: Start dmenu launcher %%
 bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,ssh,windowcd,combi,keys -show combi -sidebar-mod"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
+bindsym $mod+colon exec --no-startup-id ~/.bin/rofi-emoji
 
 # alternatively, you can use the cursor keys:
 # %%hotkey: Move focus left %%
