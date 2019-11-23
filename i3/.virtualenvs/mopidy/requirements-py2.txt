@@ -1,0 +1,2 @@
+Mopidy-MPRIS
+git+https://github.com/mopidy/mopidy-gmusic.git

@@ -1,0 +1,7 @@
+pywal
+i3-py
+i3ipc
+pydbus
+colorama
+colorthief
+colorz

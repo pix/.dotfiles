@@ -1,0 +1,27 @@
+#!/bin/bash
+
+wrapper=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
+[ -f "${wrapper}" ] && source "${wrapper}"
+
+set -o pipefail
+shopt -s nullglob
+
+venv_name() {
+    echo -n "$(basename "$(dirname "${1}")")"
+}
+
+for req in ~/.virtualenvs/*/requirements-py3.txt; do
+    env=$(venv_name "${req}")
+    mkvirtualenv -p /usr/bin/python3 "${env}" || true
+    workon "${env}"
+    pip3 install -r "${req}"
+    deactivate
+done
+
+for req in ~/.virtualenvs/*/requirements-py2.txt; do
+    env=$(venv_name "${req}")
+    mkvirtualenv -p /usr/bin/python2 "${env}" || true
+    workon "${env}"
+    pip2 install -r "${req}"
+    deactivate
+done
