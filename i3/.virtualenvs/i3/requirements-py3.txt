@@ -5,3 +5,5 @@ pydbus
 colorama
 colorthief
 colorz
+vext
+vext.gi
