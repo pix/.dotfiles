@@ -1,0 +1,7 @@
+[Unit]
+Description=Lock X session now !
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/bin/yes
+ExecStop=/usr/bin/xautolock -locknow
