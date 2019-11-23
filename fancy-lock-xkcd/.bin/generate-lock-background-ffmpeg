@@ -1,10 +1,10 @@
 #!/bin/bash
 LOCKBG=$HOME/.cache/i3lock/lock.png
-OVERLAY=$HOME/.cache/xkcd-overlay/overlay.png
+OVERLAY=$HOME/.cache/i3lock/overlay.png
 RES=$(xdpyinfo | grep 'dimensions:'|awk '{print $2}')
 
 
-if ffmpeg -f x11grab -video_size $RES -y -i $DISPLAY -i $OVERLAY -filter_complex scale=iw/6:ih/6,scale=6*iw:6*ih:flags=neighbor,drawtext="textfile='$HOME/.cache/xkcd-overlay/overlay.txt':fontsize=16:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2:x=(main_w-text_w-15):y=(main_h-text_h)",overlay='(main_w-overlay_w-15):(main_h-overlay_h-45)' -vframes 1 $LOCKBG; then
+if ffmpeg -f x11grab -video_size $RES -y -i $DISPLAY -i $OVERLAY -filter_complex scale=iw/6:ih/6,scale=6*iw:6*ih:flags=neighbor,drawtext="textfile='$HOME/.cache/i3lock/overlay.txt':fontsize=16:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2:x=(main_w-text_w-15):y=(main_h-text_h)",overlay='(main_w-overlay_w-15):(main_h-overlay_h-45)' -vframes 1 $LOCKBG; then
     exit 0
 else
     FAILOVER="$(find /usr/share/backgrounds -type f -iname '*.png' -print0 | shuf -z | head -zn1)"
