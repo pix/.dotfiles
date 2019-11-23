@@ -2,11 +2,13 @@
 
 #define CAT(a,b) a##b
 #define XCAT(a,b) CAT(a,b)
-#define __accent 1
+#define __accent 2
+#define __urgent 5
 
 #include "./.cache/wal/colors.h"
 
 #define __accent_color XCAT(__color, __accent)
+#define __urgent_color XCAT(__color, __urgent)
 
 Xft.dpi: 96
 
@@ -14,57 +16,10 @@ Xft.dpi: 96
 !
 i3wm*background:    GTK_THEME_BACKGROUND
 i3wm*accent:        __accent_color
+i3wm*urgent:        __urgent_color
 URxvt*foreground:   #c5c8c6
 URxvt*background:   #1d1f21
 URxvt*cursorColor:  #c5c8c6
-
-! black
-! URxvt*color0:       GTK_THEME_BACKGROUND
-! URxvt*color8:       #373b41
-*color0:       GTK_THEME_BACKGROUND
-*color8:       #373b41
-
-! red
-! URxvt*color1:       #a54242
-! URxvt*color9:       #cc6666
-*color1:       #a54242
-*color9:       #cc6666
-
-! green
-! URxvt*color2:       #88bb88
-! URxvt*color10:      #99cc99
-*color2:       #88bb88
-*color10:      #99cc99
-
-! yellow
-! URxvt*color3:       #de935f
-! URxvt*color11:      #f0c674
-*color3:       #de935f
-*color11:      #f0c674
-
-! blue
-! URxvt*color4:       #3f617d
-! URxvt*color12:      #61829e
-*color4:       #3f617d
-*color12:      #61829e
-
-! magenta
-! URxvt*color5:       #85678f
-! URxvt*color13:      #b294bb
-*color5:       #85678f
-*color13:      #b294bb
-
-! cyan
-! URxvt*color6:       #5e8d87
-! URxvt*color14:      #8abeb7
-*color6:       #5e8d87
-*color14:      #8abeb7
-
-! white
-! URxvt*color7:       #707880
-! URxvt*color15:      #c5c8c6
-*color7:       #707880
-*color15:      #c5c8c6
 
 #include "./.cache/wal/colors.Xresources"
 ! Override black

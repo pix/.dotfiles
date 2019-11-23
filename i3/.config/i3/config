@@ -19,7 +19,9 @@ set $osd_id -h string:x-canonical-private-synchronous:anything -u low
 
 exec_always $cmd_refresh
 
+
 set_from_resource $accent     i3wm.accent
+set_from_resource $urgent     i3wm.urgent
 set_from_resource $background i3wm.background
 set_from_resource $foreground foreground
 set_from_resource $color0     color0     # black
@@ -84,7 +86,7 @@ gaps outer 4
 client.focused $accent $accent #000000 $background
 client.focused_inactive $background $background $accent $background
 client.unfocused $background $background #999999 $background
-client.urgent #2f343a #900000 #ffffff #900000
+client.urgent $urgent $urgent #ffffff #ebdbb2
 
 ########################################################################
 # Borders
@@ -562,7 +564,7 @@ bar {
       focused_workspace $accent $accent #000000 #282828
       active_workspace $background $background #ffffff #928374
       inactive_workspace $background $background #999999 #928374
-      urgent_workspace #f2777a #f2777a #ffffff #ebdbb2
+      urgent_workspace $urgent $urgent #ffffff #ebdbb2
     }
 }
 
@@ -583,7 +585,7 @@ bar {
       focused_workspace $accent $accent #000000 #282828
       active_workspace $background $background $accent #928374
       inactive_workspace $background $background #999999 #928374
-      urgent_workspace #f2777a #f2777a #ffffff #ebdbb2
+      urgent_workspace $urgent $urgent #ffffff #ebdbb2
     }
 }
 
