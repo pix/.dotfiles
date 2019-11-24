@@ -1,7 +1,16 @@
 #!/bin/bash
 
-wrapper=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
-[ -f "${wrapper}" ] && source "${wrapper}"
+
+for i in /usr/bin/virtualenvwrapper.sh \
+	/usr/share/virtualenvwrapper/virtualenvwrapper.sh; do
+
+    if [ -f "${i}" ]; then
+	    wrapper="${i}"
+	    break
+    fi
+done
+
+[ -f "${wrapper}" ] && source "${wrapper}" || exit 1
 
 set -o pipefail
 shopt -s nullglob
