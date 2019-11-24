@@ -2,6 +2,8 @@
 Description=Lock X session now !
 
 [Service]
+Type=oneshot
 Environment=DISPLAY=:0
-ExecStart=/bin/yes
+ExecStart=/bin/true
 ExecStop=/usr/bin/xautolock -locknow
+

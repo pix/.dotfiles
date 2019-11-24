@@ -76,4 +76,7 @@ Vim*background                         : Black
 Vim*useEnhancedFSB                     : true
 Vim*geometry                           : 88x40
 
-*sessionMgt               : false
+Xautolock*locker                       : ~/.bin/i3lock-overlay
+Xautolock*time                         : 10
+
+*sessionMgt                            : false

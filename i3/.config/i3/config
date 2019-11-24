@@ -12,7 +12,7 @@
 set $rofi_theme
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
-set $cmd_locker ~/.bin/i3lock-overlay
+set $cmd_locker xautolock -locknow
 
 set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low
@@ -604,8 +604,6 @@ exec --no-startup-id exec evolution
 
 # Update dunst config
 exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
-exec_always --no-startup-id killall nitrogen; exec nitrogen --restore
-exec_always --no-startup-id killall xautolock; exec xautolock -time 10 -locker $cmd_locker
 
 exec_always --no-startup-id "systemctl --user restart -- $(systemctl --user show -p Wants user-session.target | cut -d= -f2)"
 exec_always --no-startup-id "systemctl --user start -- $(systemctl --user show -p Wants user-session-once.target | cut -d= -f2)"
