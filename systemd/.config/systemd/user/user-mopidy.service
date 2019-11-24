@@ -6,7 +6,7 @@ PartOf=user-session-once.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=/bin/sh -c '. ~/.virtualenvs/mopidy/bin/activate && exec mopidy'
+ExecStart=%h/.virtualenvs/mopidy/bin/mopidy -q
 
 [Install]
 WantedBy=user-session-once.target
