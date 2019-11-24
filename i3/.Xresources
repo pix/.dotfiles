@@ -6,6 +6,7 @@
 #define __urgent 5
 
 #include "./.cache/wal/colors.h"
+#include "./.cache/wal/colors.Xresources"
 
 #define __accent_color XCAT(__color, __accent)
 #define __urgent_color XCAT(__color, __urgent)
@@ -13,20 +14,18 @@
 Xft.dpi: 96
 
 ! special
-!
 i3wm*background:    GTK_THEME_BACKGROUND
 i3wm*accent:        __accent_color
 i3wm*urgent:        __urgent_color
+
+! urxvt settings
+!
+! Override black
+URxvt*color0:       GTK_THEME_BACKGROUND
 URxvt*foreground:   #c5c8c6
 URxvt*background:   #1d1f21
 URxvt*cursorColor:  #c5c8c6
 
-#include "./.cache/wal/colors.Xresources"
-! Override black
-URxvt*color0:       GTK_THEME_BACKGROUND
-
-! urxvt settings
-!
 ! URxvt*fontAlt: xft:Ubuntu Mono:pixelsize=13:antialias=false:hinting=true
 URxvt*fontAlt: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
 URxvt*font: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
@@ -43,43 +42,38 @@ URxvt*keysym.Control-t                 : perl:tabbedex:new_tab
 URxvt*keysym.M-C-v                     : perl:clipboard:paste_escaped
 URxvt*keysym.M-c                       : perl:clipboard:copy
 URxvt*keysym.M-v                       : perl:clipboard:paste
+URxvt*keysym.Shift-Down                : perl:font-size:decrease
+URxvt*keysym.Shift-Up                  :   perl:font-size:increase
 URxvt*perl-ext-common                  : default,matcher,tabbedex,clipboard,font-size,bell-command
-
-URxvt*keysym.Shift-Up:   perl:font-size:increase
-URxvt*keysym.Shift-Down: perl:font-size:decrease
-
-
 URxvt*print-pipe                       : cat > $(TMPDIR=$HOME mktemp URxvt.XXXXX)
 URxvt*reverseVideo                     : false
 URxvt*saveLines                        : 10000
 URxvt*scrollBar                        : false
-
-
+URxvt*shading                          : 70
+URxvt*tabbed.active-fg                 : 1
+URxvt*tabbed.actived-fg                : 4
+URxvt*tabbed.actives-fg                : 5
 URxvt*tabbed.autohide                  : true
 URxvt*tabbed.no-tabbedex-keys          : true
 URxvt*tabbed.tab-bg                    : __accent
 URxvt*tabbed.tab-fg                    : 0
-URxvt*tabbed.title-fg                  : __accent
 URxvt*tabbed.tabbar-bg                 : 0
 URxvt*tabbed.tabbar-fg                 : __accent
-URxvt*tabbed.active-fg: 1
-URxvt*tabbed.actives-fg: 5
-URxvt*tabbed.actived-fg: 4
+URxvt*tabbed.title-fg                  : __accent
 URxvt*tintColor                        : grey40
 URxvt*transpartent:                    : true
-URxvt*shading                          : 70
 
-*keysym.M-Down            : \033[1;3B
-*keysym.M-Up              : \033[1;3A
-*keysym.M-Left            : \033[1;3D
-*keysym.M-Right           : \033[1;3C
+*keysym.M-Down                         : \033[1;3B
+*keysym.M-Up                           : \033[1;3A
+*keysym.M-Left                         : \033[1;3D
+*keysym.M-Right                        : \033[1;3C
 
 ! Vim
-Vim*useSchemes            : all
-Vim*sgiMode               : true
-Vim*foreground            : lightyellow2
-Vim*background            : Black
-Vim*useEnhancedFSB        : true
-Vim*geometry              : 88x40
+Vim*useSchemes                         : all
+Vim*sgiMode                            : true
+Vim*foreground                         : lightyellow2
+Vim*background                         : Black
+Vim*useEnhancedFSB                     : true
+Vim*geometry                           : 88x40
 
 *sessionMgt               : false
