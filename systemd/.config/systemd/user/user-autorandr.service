@@ -2,8 +2,10 @@
 Description=Detect screen layout
 
 [Service]
-ExecStart=/bin/sh -c "autorandr single; autorandr -c"
-ExecStop=/bin/sh -c "autorandr single; autorandr -c"
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/autorandr -c -f
+ExecStop=/usr/bin/autorandr single
 
 [Install]
 WantedBy=user-session.target

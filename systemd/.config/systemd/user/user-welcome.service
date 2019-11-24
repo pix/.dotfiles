@@ -2,5 +2,7 @@
 Description=Welcome user !
 
 [Service]
+Type=oneshot
+RemainAfterExit=yes
 Environment=DISPLAY=:0
 ExecStart=/usr/bin/notify-send "Welcome home %u"
