@@ -3,7 +3,7 @@ Description=Download Latest XKCD
 
 [Timer]
 OnBootSec=15min
-OnUnitActiveSec=1d
+OnUnitActiveSec=6h
 
 [Install]
 WantedBy=user-timers.target

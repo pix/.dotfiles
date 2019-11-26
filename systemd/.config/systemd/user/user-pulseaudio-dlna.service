@@ -1,6 +1,7 @@
 [Unit]
 Description=pulseaudio dlna daemon
 Documentation=man:pulseaudio-dlna
+PartOf=user-session.target
 
 [Service]
 Type=simple

@@ -1,6 +1,8 @@
 [Unit]
 Description=Dunst notification daemon
 Documentation=man:dunst
+PartOf=user-session.target
+
 
 [Service]
 Type=dbus

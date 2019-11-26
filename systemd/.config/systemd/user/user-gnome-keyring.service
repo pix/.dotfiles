@@ -1,6 +1,7 @@
 [Unit]
 Description=gnome-keyring daemon
 Documentation=man:gnome-keyring-daemon
+PartOf=user-session-once.target
 
 [Service]
 Type=simple

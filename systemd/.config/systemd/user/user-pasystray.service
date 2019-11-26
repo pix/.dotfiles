@@ -1,6 +1,7 @@
 [Unit]
 Description=pasystray notification daemon
 Documentation=man:pasystray
+PartOf=user-session.target
 
 [Service]
 Type=simple

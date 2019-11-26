@@ -1,6 +1,7 @@
 [Unit]
 Description=flameshot notification daemon
 Documentation=man:flameshot
+PartOf=user-session.target
 
 [Service]
 Type=simple

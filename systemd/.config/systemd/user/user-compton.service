@@ -1,7 +1,7 @@
 [Unit]
 Description=compton compositing daemon
 Documentation=man:compton
-PartOf=graphical-session.target
+PartOf=user-session.target
 
 [Service]
 Type=simple

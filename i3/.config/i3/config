@@ -605,5 +605,5 @@ exec --no-startup-id exec evolution
 # Update dunst config
 exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
 
-exec_always --no-startup-id "systemctl --user restart -- $(systemctl --user show -p Wants user-session.target | cut -d= -f2)"
-exec_always --no-startup-id "systemctl --user start -- $(systemctl --user show -p Wants user-session-once.target | cut -d= -f2)"
+exec_always --no-startup-id "systemctl --user restart user-session.target"
+exec_always --no-startup-id "systemctl --user start user-session-once.target"

@@ -1,6 +1,7 @@
 [Unit]
 Description=xsettings daemon
 Documentation=man:xsettingsd
+WantedBy=user-session.target
 
 [Service]
 Type=simple

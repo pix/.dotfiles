@@ -1,6 +1,8 @@
 [Unit]
 Description=nm-applet notification daemon
 Documentation=man:nm-applet
+PartOf=user-session.target
+
 
 [Service]
 Type=simple

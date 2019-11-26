@@ -1,5 +1,7 @@
 [Unit]
 Description=watch for sleep signal to start sleep.target
+PartOf=user-session.target
+
 
 [Service]
 ExecStart=%h/.config/systemd/user/user-watch-sleep.command

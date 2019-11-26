@@ -1,6 +1,6 @@
 [Unit]
 Description=User level timers target
-StopWhenUnneeded=yes
+AllowIsolate=true
 
 [Install]
 WantedBy=user-session.target

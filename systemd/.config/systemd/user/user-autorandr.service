@@ -1,5 +1,6 @@
 [Unit]
 Description=Detect screen layout
+PartOf=user-session.target
 
 [Service]
 Type=oneshot
