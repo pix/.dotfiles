@@ -1,0 +1,16 @@
+#!/bin/bash
+
+term() {
+    title="${1}"
+    shift 1
+    if [ -z "${@}" ]; then
+        urxvt -name "${title}" &
+    else
+        urxvt -name "${title}" -e "${SHELL}" -c "${@}; ${SHELL}" &
+    fi
+}
+
+term ws1
+term ws1-lyrics  ncmpcpp
+term ws1-ncmpcpp ncmpcpp
+term ws1-top htop
