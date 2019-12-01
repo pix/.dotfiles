@@ -416,6 +416,7 @@ for_window [class="Blueman-manager"] floating enable
 for_window [class="Eog"] floating enable
 for_window [class="flameshot"] floating enable
 for_window [class="Gnome-calendar"] floating enable
+for_window [class="Ghidra"] floating enable
 for_window [class="Pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="Pcmanfm"] floating enable, resize set 800 600, move window position center
 
