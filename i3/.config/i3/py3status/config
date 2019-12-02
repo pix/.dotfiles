@@ -42,6 +42,7 @@ general {
 
 order += "group rate"
 order += "xsel"
+order += "dpms"
 order += "frame mpris"
 order += "volume_status"
 order += "group vms"
@@ -449,6 +450,12 @@ xsel {
     on_click 1 = "exec xsel -o -p | xsel -i -s -b"
     on_click 2 = 'exec "xsel -c -p; xsel -c -b"'
     on_click 3 = 'exec "xsel -c -p; xsel -c -b"'
+}
+
+dpms {
+    format = "{icon}  DPMS"
+    icon_on = ""
+    icon_off = ""
 }
 
 group rate {

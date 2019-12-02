@@ -1,0 +1,13 @@
+[Unit]
+Description=xss-lock using i3lock-overlay
+Documentation=man:xss-lock
+PartOf=user-session-once.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=xss-lock -- %h/.bin/i3lock-overlay
+
+[Install]
+WantedBy=user-session-once.target
+
