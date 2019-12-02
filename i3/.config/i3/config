@@ -198,7 +198,9 @@ set $ws20 "20"
 set $ws_web    "2:"
 set $ws_mail   "3:"
 set $ws_vm     "4:"
+set $ws_code   "5:"
 set $ws_office "6:"
+
 
 # %%hotkey: Send workspace to output left %%
 bindsym $mod+Control+Left move workspace to output left
@@ -480,6 +482,10 @@ bindsym $mod+m exec "virt-viewer -a --hotkeys=release-cursor=Super_L", focus
 assign [class="Virt-viewer"] $ws_vm
 for_window [class="Virt-viewer" window_type="dialog"] floating enable, focus
 assign [class="Virt-manager"] $ws_vm
+
+########################################################################
+# Workspace: Code
+assign     [class="Code"] $ws_code
 
 ########################################################################
 # Workspace: Office
