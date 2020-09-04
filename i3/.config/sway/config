@@ -5,49 +5,39 @@
 # sudo update-alternatives --config x-terminal-emulator
 #
 # apt install xautolock redshift-gtk pasystray blueman-applet dunst nm-applet nitrogen flameshot \
-#             notify-osd firefox xlock-fancy pavucontrol eog playerctl libnotify-bin
+#             notify-osd firefox xlock-fancy pavucontrol eog playerctl
 #
-# stow pip in dotfiles && init-virtualenvs
+# workon mopidy
+# pip install mopidy
+#
+# workon i3
+# pip install i3ipc i3-resurrect i3-py i3-clever-layout pywal
+#
 
-set $rofi_theme
-set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
-set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
+input * xkb_layout "fr"
+
+set $rofi_theme -config ~/.cache/wal/colors-rofi-dark.rasi
+set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu -- -config ~/.cache/wal/colors-rofi-dark.rasi
+set $cmd_must_start ~/.config/i3/scripts/should-start
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
-set $cmd_locker xset s activate
+set $cmd_locker ~/.config/i3/scripts/lock.sh
 
 set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low
 
 exec_always $cmd_refresh
 
+include "~/.cache/wal/colors-sway"
 
-set_from_resource $accent     i3wm.accent
-set_from_resource $urgent     i3wm.urgent
-set_from_resource $background i3wm.background
-set_from_resource $foreground foreground
-set_from_resource $color0     color0     # black
-set_from_resource $color1     color1     # red
-set_from_resource $color2     color2     # green
-set_from_resource $color3     color3     # yellow
-set_from_resource $color4     color4     # blue
-set_from_resource $color5     color5     # magenta
-set_from_resource $color6     color6     # cyan
-set_from_resource $color7     color7     # white
-set_from_resource $color8     color8     # black  black
-set_from_resource $color9     color9     # red
-set_from_resource $color10    color10    # green
-set_from_resource $color11    color11    # yellow
-set_from_resource $color12    color12    # blue
-set_from_resource $color13    color13    # magenta
-set_from_resource $color14    color14    # cyan
-set_from_resource $color15    color15    # white
+set $accent $color4
+set $active $color4
 
 set $alt Mod1
 set $mod Mod4
 
-set $monitor_1 DP1-1
-set $monitor_2 DP1-2
-set $monitor_3 DP1-3
+set $monitor_1 DP-1-2
+set $monitor_2 DP-1-1
+set $monitor_3 DP-1-3
 
 set $border_floating normal 2
 set $border_no_floating pixel 1
@@ -59,7 +49,7 @@ set $border_no_floating pixel 1
 # font pango:Font Awesome 7, Ubuntu Mono 7
 # font pango:Font Awesome 5 Free 7, Consolas 7
 #font pango:Inconsolata 7
-font pango: Ubuntu Sans 7
+font pango: Ubuntu Sans 6
 #font:Ubuntu Mono 8, Font Awesome 5 Free
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
@@ -84,10 +74,10 @@ gaps outer 4
 ########################################################################
 # Colors
 #
-client.focused $accent $accent #000000 $background
-client.focused_inactive $background $background $accent $background
-client.unfocused $background $background #999999 $background
-client.urgent $urgent $urgent #ffffff #ebdbb2
+client.focused $accent $accent #000000 $background $active
+client.focused_inactive $background $background $accent $background $background
+client.unfocused $background $background #999999 $background $background
+client.urgent #2f343a #900000 #ffffff #900000 $background
 
 ########################################################################
 # Borders
@@ -110,9 +100,8 @@ bindsym $alt+F4      kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
-bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,,ssh,windowcd,combi,keys,file-browser -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
+bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,ssh,windowcd,combi,keys -show combi -sidebar-mod $rofi_theme"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
-bindsym $mod+colon exec --no-startup-id ~/.bin/rofi-emoji
 
 # alternatively, you can use the cursor keys:
 # %%hotkey: Move focus left %%
@@ -158,8 +147,6 @@ bindsym $mod+e layout toggle split, exec notify-send $osd_id '$mod + E: layout s
 # %%hotkey: Toggle all layout mode %%
 bindsym $mod+w layout toggle all, exec notify-send $osd_id '$mod + W: layout toggle all' '$bindings'
 
-bindsym $mod+Shift+s exec ~/.config/i3/scripts/rofi-systemd
-
 # %%hotkey: Toggle tilling / floating mode %%
 bindsym $mod+Shift+space floating toggle
 # %%hotkey: Change focus between tiling / floating windows %%
@@ -199,69 +186,55 @@ set $ws20 "20"
 set $ws_web    "2:"
 set $ws_mail   "3:"
 set $ws_vm     "4:"
-set $ws_code   "5:"
 set $ws_office "6:"
-
-
-# %%hotkey: Send workspace to output left %%
-bindsym $mod+Control+Left move workspace to output left
-
-# %%hotkey: Send workspace to output right %%
-bindsym $mod+Control+Right move workspace to output right
-
-# %%hotkey: Send workspace to output up %%
-bindsym $mod+Control+Up move workspace to output up
-
-# %%hotkey: Send workspace to output down %%
-bindsym $mod+Control+Down move workspace to output down
 
 ########################################################################
 # Arrange window for 3 screens
 #
 # %%hotkey: Send workspace/apps where they belong at work %%
-bindsym $mod+a exec $cmd_refresh, \
-               exec --no-startup-id autorandr -f -c,                 \
+bindsym $mod+a exec $cmd_refresh \
+               exec --no-startup-id "autorandr -c",                 \
                \
-               workspace $ws1, move workspace to output $monitor_2, \
-               workspace $ws2, move workspace to output $monitor_1, \
+               workspace $ws1, move workspace to output $monitor_1, \
+               workspace $ws2, move workspace to output $monitor_2, \
                workspace $ws3, move workspace to output $monitor_3, \
                \
-               workspace $ws4, move workspace to output $monitor_3, \
-               workspace $ws5, move workspace to output $monitor_3, \
+               workspace $ws5, move workspace to output $monitor_1, \
+               workspace $ws4, move workspace to output $monitor_2, \
                workspace $ws6, move workspace to output $monitor_3, \
                \
-               workspace $ws7, move workspace to output $monitor_3, \
-               workspace $ws8, move workspace to output $monitor_3, \
-               workspace $ws9, move workspace to output $monitor_3, \
+               workspace $ws8, move workspace to output $monitor_1, \
                \
-               workspace $ws10, move workspace to output $monitor_2, \
-               workspace $ws11, move workspace to output $monitor_3, \
-               workspace $ws12, move workspace to output $monitor_3, \
+               workspace $ws11, move workspace to output $monitor_1, \
+               workspace $ws12, move workspace to output $monitor_2, \
                workspace $ws13, move workspace to output $monitor_3, \
-               workspace $ws14, move workspace to output $monitor_3, \
-               workspace $ws15, move workspace to output $monitor_3, \
+               workspace $ws14, move workspace to output $monitor_1, \
+               workspace $ws15, move workspace to output $monitor_2, \
                workspace $ws16, move workspace to output $monitor_3, \
-               workspace $ws17, move workspace to output $monitor_3, \
-               workspace $ws18, move workspace to output $monitor_3, \
+               workspace $ws17, move workspace to output $monitor_1, \
+               workspace $ws18, move workspace to output $monitor_2, \
                workspace $ws19, move workspace to output $monitor_3, \
-               workspace $ws20, move workspace to output $monitor_3, \
+               workspace $ws20, move workspace to output $monitor_1, \
                \
-               workspace $ws2, \
                workspace $ws3, \
+               workspace $ws2, \
                workspace $ws1
+
 # %%hotkey: Send virt-viewer screens to the right monitors %%
 bindsym $mod+Shift+a \
-            exec --no-startup-id autorandr single
+               [class="Virt-viewer" title="\(1\)"] move container to workspace $ws11, \
+               [class="Virt-viewer" title="\(2\)"] move container to workspace $ws12, \
+               [class="Virt-viewer" title="\(3\)"] move container to workspace $ws13
 
 
 ########################################################################
 # Focus / Workspace switch <Alt/Mod/Ctrl> + Tab
 # %%hotkey: Goto previous workspace on output %%
-bindsym $mod+Tab                workspace prev_on_output, \
+bindsym Mod4+Tab                workspace prev_on_output, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Goto next workspace on output %%
-bindsym $mod+Shift+Tab          workspace next_on_output, \
+bindsym Mod4+Shift+Tab          workspace next_on_output, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Goto previous workspace %%
@@ -273,11 +246,11 @@ bindsym Control+Shift+Tab       workspace next, \
                                 exec notify-send $osd_id 'Workspace' "$window_name"
 
 # %%hotkey: Focus previous window %%
-bindsym $alt+Tab                exec --no-startup-id "~/.config/i3/scripts/focus-next prev", \
+bindsym Mod1+Tab                exec --no-startup-id "~/.config/i3/scripts/focus-next prev", \
                                 exec notify-send $osd_id 'Focus' "$window_name"
 
 # %%hotkey: Focus next window %%
-bindsym $alt+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus-next next", \
+bindsym Mod1+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus-next next", \
                                 exec notify-send $osd_id 'Focus' '$window_name'
 
 ########################################################################
@@ -393,7 +366,7 @@ bindsym $mod+Shift+c exec "$cmd_refresh", reload
 # %%hotkey: Restart i3 inplace (preserves your layout/session, can be used to upgrade i3) %%
 bindsym $mod+Shift+r restart
 # %%hotkey: Exit i3 (logs you out of your X session) %%
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'swaymsg exit'"
 
 # %%hotkey: Prompt for an i3 command %%
 bindsym $mod+Escape exec $cmd_i3cmd
@@ -420,18 +393,12 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-for_window [instance="floating-border"] floating enable, border pixel 4
 for_window [class="Blueman-manager"] floating enable
 for_window [class="Eog"] floating enable
 for_window [class="flameshot"] floating enable
 for_window [class="Gnome-calendar"] floating enable
-for_window [class="Ghidra"] floating enable
 for_window [class="Pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="Pcmanfm"] floating enable, resize set 800 600, move window position center
-
-bindsym Pause [title="Picture-in-Picture"] mark --toggle FLOATING_ACTIVE
-bindsym $mod+Pause mark --toggle FLOATING_ACTIVE
-for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle FLOATING_ACTIVE
 
 # Burp configs
 for_window [class="^burp-StartBurp$" title="^(?!Burp Suite|Intruder).*"] floating enable
@@ -469,7 +436,6 @@ bindsym $mod+twosuperior move scratchpad
 assign [instance="ws1"] $ws1
 # %%hotkey: Activate $ws1 on current output %%
 bindsym twosuperior [workspace=$ws1] move workspace to output current, workspace $ws1
-bindsym Shift+twosuperior exec $switch
 
 ########################################################################
 # Workspace: Firefox
@@ -496,10 +462,6 @@ for_window [class="Virt-viewer" window_type="dialog"] floating enable, focus
 assign [class="Virt-manager"] $ws_vm
 
 ########################################################################
-# Workspace: Code
-assign     [class="Code"] $ws_code
-
-########################################################################
 # Workspace: Office
 assign [instance="libreoffice"]    $ws_office
 assign [class="(?i)soffice"]       $ws_office
@@ -513,7 +475,6 @@ assign [class="(?i)libreoffice.*"] $ws_office
 bindsym $mod+End exec "flameshot gui"
 # %%hotkey: Start flameshot launcher %%
 bindsym Print exec "flameshot launcher"
-bindsym $mod+p exec "~/.config/i3/scripts/pulsemenu"
 bindsym XF86MonBrightnessUp exec "python ~/.config/i3/scripts/set-brightness +5"
 bindsym XF86MonBrightnessDown exec "python ~/.config/i3/scripts/set-brightness -5"
 bindsym XF86AudioRaiseVolume exec "amixer -q -D pulse set Master 5%+ unmute; killall -USR1 i3status py3status"
@@ -570,10 +531,28 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 #
 bar {
-    id bar-0
+    position top
+    tray_output primary
+    strip_workspace_numbers yes
+    mode hide
+    hidden_state hide
+    modifier Mod5
+
+    colors {
+      separator #515151
+      background $background
+      statusline #eeeeee
+      focused_workspace $accent $accent #000000
+      active_workspace $background $background #ffffff
+      inactive_workspace $background $background #999999
+      urgent_workspace #f2777a #f2777a #ffffff
+    }
+}
+
+bar {
     position top
     strip_workspace_numbers yes
-    tray_output primary
+    tray_output none
 
     status_command py3status -c ~/.config/i3/py3status/config \
         -i ~/.config/i3/py3status/modules
@@ -584,27 +563,35 @@ bar {
       separator #eeeeee
       background $background
       statusline $accent
-      focused_workspace $accent $accent #000000 #282828
-      active_workspace $background $background $accent #928374
-      inactive_workspace $background $background #999999 #928374
-      urgent_workspace $urgent $urgent #ffffff #ebdbb2
+      focused_workspace $accent $accent #000000
+      active_workspace $background $background $accent
+      inactive_workspace $background $background #999999
+      urgent_workspace #f2777a #f2777a #ffffff
     }
 }
-
 
 ########################################################################
 # Start tools
 #
 
-exec i3-msg 'workspace --no-auto-back-and-forth $ws_web, append_layout ~/.config/i3/layouts/ws_web.json'
-exec i3-msg 'workspace --no-auto-back-and-forth $ws_vm, append_layout ~/.config/i3/layouts/ws_vm.json'
-exec i3-msg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json, exec ~/.config/i3/layouts/ws1.run'
+exec swaymsg 'workspace --no-auto-back-and-forth $ws_web, append_layout ~/.config/i3/layouts/ws_web.json'
+exec swaymsg 'workspace --no-auto-back-and-forth $ws_vm, append_layout ~/.config/i3/layouts/ws_vm.json'
+exec swaymsg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json'
 
+exec --no-startup-id exec i3-sensible-terminal -name ws1
+exec --no-startup-id exec xsettingsd -c ~/.config/i3/xsettingsd/xsettingsd.conf
 exec --no-startup-id exec firefox --name Firefart
+exec --no-startup-id exec virt-manager
 exec --no-startup-id exec evolution
+exec --no-startup-id exec /usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh
+exec_always --no-startup-id $cmd_must_start mopidy && exec sh -c '. ~/.virtualenvs/mopidy/bin/activate && exec mopidy'
 
-# Update dunst config
-exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
-
-exec_always --no-startup-id "systemctl --user restart user-session.target"
-exec_always --no-startup-id "systemctl --user start user-session-once.target"
+exec_always --no-startup-id killall compton; exec compton --config ~/.config/i3/compton/compton.conf -b
+exec_always --no-startup-id killall xautolock; exec xautolock -time 10 -locker $cmd_locker
+exec_always --no-startup-id killall redshift-gtk; killall redshift; exec redshift-gtk
+exec_always --no-startup-id killall pasystray; exec pasystray
+exec_always --no-startup-id killall blueman-applet; exec blueman-applet
+exec_always --no-startup-id killall dunst; exec ~/.config/i3/scripts/start-dunst.sh
+exec_always --no-startup-id killall nm-applet; exec nm-applet
+exec_always --no-startup-id killall nitrogen; exec nitrogen --restore
+exec_always --no-startup-id killall flameshot; exec flameshot

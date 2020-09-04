@@ -1,1 +1,6 @@
-rofi.theme: ~/.cache/wal/colors-rofi-dark-alt.rasi
+
+configuration {
+show-icons: true;
+icon-theme: "Adwaita";
+}
+

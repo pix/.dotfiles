@@ -108,6 +108,7 @@ group vms {
     color_degraded  = '#aaaaaa'
     color_bad       = '#aaaaaa'
 
+    click_mode = "button"
     button_toggle = 3
     button_next = 1
 
@@ -493,5 +494,6 @@ volume_status {
     # mixer_idx = 0
 
     button_mute = 1
-    on_click 3 = 'exec "pavucontrol"'
+    on_click 3 = 'exec "killall pavucontrol; pavucontrol"'
+    on_click 2 = 'exec "killall pavucontrol"'
 }

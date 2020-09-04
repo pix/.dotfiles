@@ -6,8 +6,24 @@ RES=$(xdpyinfo | grep 'dimensions:'|awk '{print $2}')
 RES_x=$(echo "${RES}" | cut -dx -f1)
 RES_y=$(echo "${RES}" | cut -dx -f2)
 
+ORIENTATION=top-left # bottom
 
-if ffmpeg -f x11grab -video_size "${RES}" -y -i "${DISPLAY}" -i "${OVERLAY}" -filter_complex scale=iw/"${BLUR_INTENSITY}":ih/"${BLUR_INTENSITY}",scale="${RES_x}":"${RES_y}":flags=neighbor,drawtext="textfile='${HOME}/.cache/i3lock/overlay.txt':fontsize=16:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2:x=(main_w-text_w-15):y=(main_h-text_h-15)",overlay='(main_w-overlay_w-15):(main_h-overlay_h-45)' -vframes 1 "${LOCKBG}"; then
+if [[ "${ORIENTATION}" == *"top"* ]]; then
+    posy_text="15"
+    posy_overlay='45'
+else
+    posy_text="main_h-text_h-15"
+    posy_overlay='main_h-overlay_h-45'
+fi
+if [[ "${ORIENTATION}" == *"left"* ]]; then
+    posx_text="15"
+    posx_overlay='15'
+else
+    posx_text="main_w-text_w-15"
+    posx_overlay='main_w-overlay_w-15'
+fi
+
+if ffmpeg -f x11grab -video_size "${RES}" -y -i "${DISPLAY}" -i "${OVERLAY}" -filter_complex scale=iw/"${BLUR_INTENSITY}":ih/"${BLUR_INTENSITY}",scale="${RES_x}":"${RES_y}":flags=neighbor,drawtext="textfile='${HOME}/.cache/i3lock/overlay.txt':fontsize=16:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2:x=('"${posy_text}"'):y=('"${posy_text}"')",overlay='('"${posx_overlay}"'):('"${posy_overlay}"')' -vframes 1 "${LOCKBG}"; then
     exit 0
 else
     FAILOVER="$(find /usr/share/backgrounds -type f -iname '*.png' -print0 | shuf -z | head -zn1)"

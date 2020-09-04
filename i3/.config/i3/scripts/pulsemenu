@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+# choose pulseaudio sink via rofi or dmenu
+# changes default sink and moves all streams to that sink
+
+set -eu -o pipefail
+
+list=$(
+    pactl list sinks | egrep 'Name:|Description:' | sed -e 's/.*: //g' | awk 'NR%2{printf "%s:",$0;next;}1'
+)
+
+icon=
+
+target=$(
+	echo "${list}" | cut -d: -f2 | rofi -dmenu
+)
+
+sink="$(echo "${list}" | grep ":${target}$" | cut -d: -f1)"
+
+pactl set-default-sink "${sink}"
+
+pacmd list-sink-inputs | grep index | while read line
+do
+    echo "Moving input: ";
+    echo $line | cut -f2 -d' ';
+    echo "to sink: ${sink}";
+    pacmd move-sink-input `echo $line | cut -f2 -d' '` "${sink}"
+done
