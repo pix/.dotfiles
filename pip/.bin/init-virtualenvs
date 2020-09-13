@@ -24,7 +24,7 @@ for req in ~/.virtualenvs/*/requirements-py3.txt; do
     echo "[creating] ${env}:python3"
     mkvirtualenv -p /usr/bin/python3 "${env}" >/dev/null || true
     workon "${env}"
-    pip3 install -r "${req}" "${@}"
+    pip install -r "${req}" "${@}"
     deactivate
 done
 
@@ -33,6 +33,6 @@ for req in ~/.virtualenvs/*/requirements-py2.txt; do
     echo "[creating] ${env}:python2"
     mkvirtualenv -p /usr/bin/python2 "${env}" >/dev/null || true
     workon "${env}"
-    pip2 install -r "${req}" "${@}"
+    pip install -r "${req}" "${@}"
     deactivate
 done

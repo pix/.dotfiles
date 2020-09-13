@@ -110,7 +110,7 @@ bindsym $alt+F4      kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
-bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,,ssh,windowcd,combi,keys,file-browser -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
+bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,,ssh,windowcd,combi,keys -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
 bindsym $mod+colon exec --no-startup-id ~/.bin/rofi-emoji
 
@@ -450,10 +450,10 @@ bindsym $mod+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
 bindsym $mod+Shift+g exec i3-input -F '[title="(?i)%s"] focus' -P 'Goto title: '
 ########################################################################
 # Keepassx waiting in Scratchpad
-for_window [class="keepassxc" instance="keepassxc" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
-for_window [class="keepassxc" instance="keepassxc" window_type="dialog"] floating disable, floating enable, focus
+for_window [class="KeePassXC" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
+for_window [class="KeePassXC" window_type="dialog"] floating disable, floating enable, focus
 # %%hotkey: Show keepassxc window %%
-bindsym $mod+k exec "keepassxc", [class="keepassxc" instance="keepassxc"] scratchpad show
+bindsym $mod+k exec "keepassxc", [class="KeePassXC"] scratchpad show
 
 ########################################################################
 # 'Dropdown' terminal waiting in Scratchpad
@@ -513,7 +513,8 @@ assign [class="(?i)libreoffice.*"] $ws_office
 bindsym $mod+End exec "flameshot gui"
 # %%hotkey: Start flameshot launcher %%
 bindsym Print exec "flameshot launcher"
-bindsym $mod+p exec "~/.config/i3/scripts/pulsemenu"
+bindsym $mod+p exec "rofi-autorandr"
+bindsym $mod+Shift+p exec "~/.config/i3/scripts/pulsemenu"
 bindsym XF86MonBrightnessUp exec "python ~/.config/i3/scripts/set-brightness +5"
 bindsym XF86MonBrightnessDown exec "python ~/.config/i3/scripts/set-brightness -5"
 bindsym XF86AudioRaiseVolume exec "amixer -q -D pulse set Master 5%+ unmute; killall -USR1 i3status py3status"
@@ -597,11 +598,9 @@ bar {
 #
 
 exec i3-msg 'workspace --no-auto-back-and-forth $ws_web, append_layout ~/.config/i3/layouts/ws_web.json'
-exec i3-msg 'workspace --no-auto-back-and-forth $ws_vm, append_layout ~/.config/i3/layouts/ws_vm.json'
 exec i3-msg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json, exec ~/.config/i3/layouts/ws1.run'
 
 exec --no-startup-id exec firefox --name Firefart
-exec --no-startup-id exec evolution
 
 # Update dunst config
 exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
