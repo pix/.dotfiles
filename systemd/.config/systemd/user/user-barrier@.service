@@ -1,0 +1,20 @@
+[Unit]
+Description=Barrier Server Daemon
+PartOf=user-session.target
+
+[Service]
+IPAddressDeny=any
+IPAddressAllow=%i,localhost
+PassEnvironment=DISPLAY
+ExecStart=/usr/bin/barrierc --enable-crypto --no-restart --no-daemon %i
+ExecStartPost=/bin/sh -c "setxkbmap $(setxkbmap -query | grep '^layout:' | awk -F ': *' '{print $2}')"
+Type=simple
+ProtectHome=read-only
+ProtectSystem=true
+PrivateTmp=true
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+
+[Install]
+WantedBy=user-session.target
