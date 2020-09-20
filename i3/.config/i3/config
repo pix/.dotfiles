@@ -490,7 +490,7 @@ for_window [class="Evolution" window_role="^(EMailBrowser|EMsgComposer|ECompEdit
 ########################################################################
 # Workspace: VMs
 # %%hotkey: Start virt-viewer %%
-bindsym $mod+m exec "virt-viewer -a --hotkeys=release-cursor=Super_L", focus
+bindsym $mod+m exec "~/.bin/rofi-libvirt", focus
 assign [class="Virt-viewer"] $ws_vm
 for_window [class="Virt-viewer" window_type="dialog"] floating enable, focus
 assign [class="Virt-manager"] $ws_vm

@@ -35,6 +35,7 @@ otf-font-awesome
 vlc
 mpv
 scli
+python-rofi
 
 # programs
 firefox

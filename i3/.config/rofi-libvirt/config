@@ -1,0 +1,5 @@
+[DEFAULT]
+viewer_args = ["-f", '-d']
+
+[manjaro]
+shared_dir = ["~/Public", 'ask']
