@@ -40,6 +40,7 @@ general {
     output_format   = "i3bar"
 }
 
+order += "frame systemd"
 order += "group rate"
 order += "xsel"
 order += "dpms"
@@ -56,8 +57,26 @@ order += "frame date"
 order += "frame time"
 order += "battery 0"
 
-frame mpris {
+frame systemd {
     format = '{button}{output}'
+    format_separator = " "
+    format_button_closed = ""
+    format_button_open   = "  "
+    click_mode = "button"
+    align="right"
+
+    systemd barrier {
+        unit = 'user-barrier@bousier.local.service'
+	format = '\?if=!hide barrier@bousier: {status}'
+        user = True
+        hide_extension = True
+        on_click 1 = 'exec systemctl --user restart user-barrier@bousier.local'
+        on_click 3 = 'exec systemctl --user stop user-barrier@bousier.local'
+    }
+}
+
+frame mpris {
+   format = '{button}{output}'
     format_separator = " "
     format_button_closed = ""
     format_button_open   = "  "

@@ -1,0 +1,14 @@
+#!/bin/bash -ue
+
+is_archlinux() {
+	test -f /etc/pacman.conf
+}
+
+if is_archlinux; then
+	for file in ~/.dotfiles/*/.pacman.install; do
+		if [ -f "${file}" ]; then
+			packages=$(cat "${file}" | grep -v '^#' | tr $'\n' ' ')
+			yay --batchinstall --noconfirm -S ${packages}
+		fi
+	done
+fi

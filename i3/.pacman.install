@@ -1,0 +1,50 @@
+# emojies
+noto-fonts-emoji
+rofi-emoji
+
+# autorandr
+rofi-autorandr
+autorandr
+
+# rofi
+rofi
+rofi-file-browser-extended
+
+# fancy lock
+xautolock
+xss-lock
+
+# systray
+redshift
+pasystray
+blueman 
+flameshot
+dunst 
+networkmanager 
+
+# i3
+nitrogen
+py3status
+notify-osd 
+libnotify
+pavucontrol 
+playerctl
+ttf-font-awesome-4
+ttf-font-awesome
+otf-font-awesome
+vlc
+mpv
+scli
+
+# programs
+firefox
+keepassxc
+evolution
+
+# bluetooth
+pulseaudio-bluetooth
+bluez-utils bluez-tools
+
+# sound
+pulseeffects pulsemixer pulseview
+

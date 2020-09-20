@@ -13,7 +13,7 @@ set $rofi_theme
 set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
-set $cmd_locker xset s activate
+set $cmd_locker exec --no-startup-id xautolock -locknow, exec --no-startup-id xset dpms force off
 
 set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low
@@ -110,9 +110,9 @@ bindsym $alt+F4      kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
-bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,,ssh,windowcd,combi,keys -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
+bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,file-browser,ssh,windowcd,combi,keys -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
-bindsym $mod+colon exec --no-startup-id ~/.bin/rofi-emoji
+bindsym $mod+colon exec --no-startup-id rofi-emoji
 
 # alternatively, you can use the cursor keys:
 # %%hotkey: Move focus left %%
@@ -169,7 +169,7 @@ bindsym $mod+q focus parent
 
 ########################################################################
 # %%hotkey: Lock the screen
-bindsym $mod+l exec --no-startup-id $cmd_locker
+bindsym $mod+l $cmd_locker
 
 ########################################################################
 # Workspace names
@@ -505,6 +505,7 @@ assign [instance="libreoffice"]    $ws_office
 assign [class="(?i)soffice"]       $ws_office
 assign [class="(?i)libreoffice-"]  $ws_office
 assign [class="(?i)libreoffice.*"] $ws_office
+assign [class="DesktopEditors"]    $ws_office
 
 ########################################################################
 # Volume
