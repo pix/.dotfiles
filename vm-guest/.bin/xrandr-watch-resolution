@@ -1,0 +1,8 @@
+#!/bin/bash
+
+while true; do 
+	for i in $(xrandr --listmonitors | grep '[[:digit:]]:' | awk '{ print $NF }'); do 
+		xrandr --output "$i" --auto; 
+	done
+	sleep 2; 
+done
