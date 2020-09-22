@@ -21,18 +21,28 @@ venv_name() {
 
 for req in ~/.virtualenvs/*/requirements-py3.txt; do
     env=$(venv_name "${req}")
+    if grep -Po system-site-packages "${req}" >/dev/null; then
+	args=--system-site-packages
+    else
+	args=""
+    fi
     echo "[creating] ${env}:python3"
-    mkvirtualenv -p /usr/bin/python3 "${env}" >/dev/null || true
+    mkvirtualenv -p /usr/bin/python3 $args "${env}" -r "${req}" >/dev/null || true
     workon "${env}"
-    pip install -r "${req}" "${@}"
+    pip install --upgrade -r "${req}" "${@}"
     deactivate
 done
 
 for req in ~/.virtualenvs/*/requirements-py2.txt; do
     env=$(venv_name "${req}")
+    if grep -Po system-site-packages "${req}" >/dev/null; then
+	args=--system-site-packages
+    else
+	args=""
+    fi
     echo "[creating] ${env}:python2"
-    mkvirtualenv -p /usr/bin/python2 "${env}" >/dev/null || true
+    mkvirtualenv -p /usr/bin/python2 $args "${env}" -r "${req}" >/dev/null || true
     workon "${env}"
-    pip install -r "${req}" "${@}"
+    pip install --upgrade -r "${req}" "${@}"
     deactivate
 done
