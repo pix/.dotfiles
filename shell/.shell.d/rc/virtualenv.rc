@@ -1,0 +1,9 @@
+for i in /usr/bin/virtualenvwrapper.sh \
+    /usr/share/virtualenvwrapper/virtualenvwrapper.sh; do
+
+    if [ -f "${i}" ]; then
+        source "${i}"
+        break
+    fi
+done
+
