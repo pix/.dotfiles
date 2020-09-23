@@ -50,8 +50,7 @@ order += "group vms"
 order += "frame rootfs"
 order += "frame data"
 order += "static_string bluetooth"
-order += "group wifi"
-order += "group ethernet"
+order += "frame network"
 order += "frame cpu"
 order += "frame date"
 order += "frame time"
@@ -67,7 +66,7 @@ frame systemd {
 
     systemd barrier {
         unit = 'user-barrier@bousier.local.service'
-	format = '\?if=!hide barrier@bousier: {status}'
+	format = '[\?if=status=not-found |[\?if=!hide barrier@bousier: [\?if=status=inactive |]]]'
         user = True
         hide_extension = True
         on_click 1 = 'exec systemctl --user restart user-barrier@bousier.local'
@@ -96,7 +95,9 @@ frame mpris {
       icon_previous=''
       icon_pause=''
       icon_play=''
-      player_priority = "[mopidy, mpd, cantata, vlc, bomi]"
+      player_priority = "[mopidy, mpd, cantata, vlc, bomi, *]"
+      on_click 1 = "exec playerctl play-pause"
+      on_click 3 = "exec playerctl stop"
     }
     # mpris prev {
         # format = "{previous}"
@@ -254,37 +255,18 @@ static_string bluetooth {
     on_click 3 = "exec blueman-manager"
 }
 
-group wifi {
+frame network {
 
     format_button_closed = ""
     format_button_open   = ""
     format = '{button}{output}'
-    click_mode = "button"
-    button_toggle = 0
-    button_next = 1
 
-    wifi pwet {
-        device = "wlo1"
-        format_up = " {signal_percent}"
-        format_down = " off"
-        on_click 1 = 'exec ip -4 address show dev wlo1 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | tr -d "\n" | xclip -i'
-        format_separator = " "
+    networkmanager {
+	format = " {format_device}"
+        devices = ["e*", "w*"]        # ethernet, wireless, lo, etc
     }
 
-    wifi pwet2 {
-        device = "wlo1"
-        format_up = " {signal_percent} {ssid} - {ip}"
-        format_down = " off"
-        on_click 1 = 'exec ip -4 address show dev wlo1 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | tr -d "\n" | xclip -i'
-    }
-}
-
-group ethernet {
-    ethernet eno1 {
-        format_up = " %ip"
-        format_down = ""
-        on_click 1 = 'exec ip -4 address show dev eno1 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | xclip -i'
-    }
+    open = True
 }
 
 battery 0 {
