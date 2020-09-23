@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euf -o pipefail
+
+PASSWORD=$(pwgen 128 1);
+TEMP=$(mktemp -d);
+ARCHIVE="${TEMP}/out.zip"
+
+function rm_temp_at_exit() {
+    rm -fr "${TEMP}"
+}
+trap rm_temp_at_exit EXIT
+
+zip -r -P"${PASSWORD}" "${ARCHIVE}" "$@"
+
+URL="$(cat "${ARCHIVE}" | base64 | curl -F 'f:1=<-' ix.io 2>/dev/null)"
+
+if [[ -n "${URL}" ]]; then
+    echo "Upload successful !"
+    echo "To download on the target host:"
+    echo "wget -O- '$URL' | base64 -d > out.zip && unzip -P'${PASSWORD}' out.zip"
+fi
