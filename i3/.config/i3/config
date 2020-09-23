@@ -59,7 +59,8 @@ set $border_no_floating pixel 1
 # font pango:Font Awesome 7, Ubuntu Mono 7
 # font pango:Font Awesome 5 Free 7, Consolas 7
 #font pango:Inconsolata 7
-font pango: Ubuntu Sans 7
+#font pango: Ubuntu Sans 7
+font xft:Source Code Pro 8
 #font:Ubuntu Mono 8, Font Awesome 5 Free
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
@@ -197,10 +198,14 @@ set $ws19 "19"
 set $ws20 "20"
 
 set $ws_web    "2:"
+# workspace_default_layout 2 tabbed
 set $ws_mail   "3:"
 set $ws_vm     "4:"
+# workspace_default_layout 4 tabbed
 set $ws_code   "5:"
+# workspace_default_layout 5 tabbed
 set $ws_office "6:"
+# workspace_default_layout 6 tabbed
 
 
 # %%hotkey: Send workspace to output left %%
