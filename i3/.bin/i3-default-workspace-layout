@@ -32,7 +32,7 @@ def set_web_layout_to_tab(event):
         workspaces dynamically. https://github.com/i3/i3/issues/531 """
         if event.current and event.current.num in layouts: # $ws_web. see ~/.config/i3/config
             if len(event.current.nodes) == 0: # Skit if the workspace has children
-                i3.command('layout {}'.format(layouts[event.current.num]))
+                i3.command(f'[con_id="{event.current.id}"] layout {layouts[event.current.num]}')
                 
 
 # pylint: disable=unused-argument
