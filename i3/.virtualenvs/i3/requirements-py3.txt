@@ -1,4 +1,5 @@
 # system-site-packages
+dmenu-hotkeys
 pywal
 i3-py
 i3ipc
