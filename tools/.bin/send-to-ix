@@ -10,7 +10,7 @@ function rm_temp_at_exit() {
 }
 trap rm_temp_at_exit EXIT
 
-zip -r -P"${PASSWORD}" "${ARCHIVE}" "$@"
+zip -9 -r -P"${PASSWORD}" "${ARCHIVE}" "$@"
 
 URL="$(cat "${ARCHIVE}" | base64 | curl -F 'f:1=<-' ix.io 2>/dev/null)"
 
