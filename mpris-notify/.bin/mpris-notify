@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import sys
-
+from dataclasses import dataclass
 from gi.repository import GLib, Gio
 import gi
 import urllib.request
 
 try:
-    gi.require_version('Playerctl', '2.0')
+    gi.require_version("Playerctl", "2.0")
     from gi.repository import Playerctl
 except:
     print("Unable to import Playerctl")
@@ -16,65 +16,120 @@ except:
 
 manager = Playerctl.PlayerManager()
 
-gi.require_version('Notify', '0.7')
+gi.require_version("Notify", "0.7")
 from gi.repository import Notify
 
 Notify.init("Media Player")
-notification = Notify.Notification.new("");
+notification = Notify.Notification.new("")
 
 from urllib.parse import urlparse, unquote
 from pathlib import Path
 from gi.repository import GdkPixbuf
 import os.path
 
+
+@dataclass
+class ArtistInfo:
+    artist: list
+    album: str
+    title: str
+    url: str
+    artUrl: str
+
+    def is_empty(self) -> bool:
+        return (
+            not self.artist
+            and not self.album
+            and not self.title
+            and not self.url
+            and not self.artUrl
+        )
+
+
+# ArtistInfo = recordtype('ArtistInfo', ['artist', 'album', 'title', 'url', 'artUrl'])
+lastInfos = ArtistInfo(None, None, None, None, None)
+
+
 def notify(player):
+    global lastInfos
     metadata = player.props.metadata
     keys = metadata.keys()
-    if 'xesam:artist' in keys and 'xesam:title' in keys:
 
-        if 'xesam:album' in keys:
-            notification.update(metadata['xesam:title'], "{} / {}".format(
-                metadata['xesam:artist'][0],
-                metadata['xesam:album']))
-        else:
-            notification.update(metadata['xesam:title'], metadata['xesam:artist'][0], )
+    infos = ArtistInfo(None, None, None, None, None)
 
-        path = Path(unquote(urlparse(metadata['xesam:url']).path)).parent / "cover.jpg";
-        if os.path.exists(path):
-            image = GdkPixbuf.Pixbuf.new_from_file(str(path));
-            notification.set_image_from_pixbuf(image)
-        elif 'mpris:artUrl' in keys:
-            url = metadata['mpris:artUrl']
-            try:
-                response = urllib.request.urlopen(url, timeout=2)
-                input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-                pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
-                notification.set_image_from_pixbuf(pixbuf)
-            except:
-                pass
+    for prop, key in (
+        ("artist", "xesam:artist"),
+        ("album", "xesam:album"),
+        ("title", "xesam:title"),
+        ("url", "xesam:url"),
+        ("artUrl", "mpris:artUrl"),
+    ):
 
-        # notification.add_action('previous', 'Previous', lambda x, y, z: player.previous(), None)
-        # notification.add_action('next', 'Next', lambda x, y, z: player.next(), None)
+        if key in keys and len(metadata[key]) > 0:
+            setattr(infos, prop, metadata[key])
 
-        notification.show();
+    if infos.is_empty():
+        return
+
+    if infos != lastInfos:
+
+        lastInfos = infos
+
+        if infos.artist and infos.title:
+
+            if infos.album:
+                notification.update(
+                    infos.title, "{} / {}".format(", ".join(infos.artist), infos.album)
+                )
+            else:
+                notification.update(
+                    infos.title,
+                    ", ".join(infos.artist),
+                )
+
+            if infos.url:
+                path = Path(unquote(urlparse(infos.url).path)).parent / "cover.jpg"
+                if os.path.exists(path):
+                    image = GdkPixbuf.Pixbuf.new_from_file(str(path))
+                    notification.set_image_from_pixbuf(image)
+            elif infos.artUrl:
+                try:
+                    response = urllib.request.urlopen(infos.artUrl, timeout=2)
+                    input_stream = Gio.MemoryInputStream.new_from_data(
+                        response.read(), None
+                    )
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
+                    notification.set_image_from_pixbuf(pixbuf)
+                except:
+                    pass
+
+            notification.add_action('previous', 'Previous', lambda x, y, z: player.previous(), None)
+            notification.add_action('next', 'Next', lambda x, y, z: player.next(), None)
+
+            notification.show()
+
 
 def on_play(player, status, manager):
-    notify(player);
+    notify(player)
+
 
 def on_metadata(player, metadata, manager):
-    notify(player);
+    notify(player)
+
 
 def init_player(name):
     player = Playerctl.Player.new_from_name(name)
-    player.connect('playback-status::playing', on_play, manager)
-    player.connect('metadata', on_metadata, manager)
+    player.connect("playback-status::playing", on_play, manager)
+    player.connect("metadata", on_metadata, manager)
     manager.manage_player(player)
     # notify(player)
+
 
 def on_name_appeared(manager, name):
     init_player(name)
 
-manager.connect('name-appeared', on_name_appeared)
+
+manager.connect("name-appeared", on_name_appeared)
 
 for name in manager.props.player_names:
     init_player(name)
