@@ -1,14 +1,34 @@
 #!/bin/bash -ue
+set -eu -o pipefail
 
 is_archlinux() {
 	test -f /etc/pacman.conf
 }
 
+archlinux_install_deps() {
+	file="${SCRIPT_PATH}/../../${1}/.pacman.install"
+	if [[ -f "${file}" ]]; then
+		packages=$(cat "${file}" | grep -v '^#' | tr $'\n' ' ')
+		yay --batchinstall --noconfirm -S ${packages}
+	fi
+}
+
+pushd . > /dev/null
+SCRIPT_PATH="${BASH_SOURCE[0]}";
+while([ -h "${SCRIPT_PATH}" ]); do
+    cd "`dirname "${SCRIPT_PATH}"`"
+    SCRIPT_PATH="$(readlink "`basename "${SCRIPT_PATH}"`")";
+done
+cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
+SCRIPT_PATH="`pwd`";
+popd  > /dev/null
+
+pushd "${SCRIPT_PATH}/../../"
+
 if is_archlinux; then
-	for file in ~/.dotfiles/*/.pacman.install; do
-		if [ -f "${file}" ]; then
-			packages=$(cat "${file}" | grep -v '^#' | tr $'\n' ' ')
-			yay --batchinstall --noconfirm -S ${packages}
-		fi
+	archlinux_install_deps stow
+
+	for i in ~/.config/dotfiles/*; do
+		archlinux_install_deps "$(basename "${i}")"
 	done
 fi

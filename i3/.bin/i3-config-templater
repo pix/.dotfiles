@@ -1,0 +1,10 @@
+#!/bin/bash
+
+RELOAD=0
+
+~/.bin/jinja-config-templater ~/.config/i3/config && RELOAD=1
+~/.bin/jinja-config-templater ~/.config/i3/py3status/config && RELOAD=1
+
+if [[ "${RELOAD}" == "1" ]]; then
+	i3-msg restart
+fi

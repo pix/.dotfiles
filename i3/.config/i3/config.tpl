@@ -1,13 +1,8 @@
 # i3 config file (v4)
 #
 
-# To change the terminal:
-# sudo update-alternatives --config x-terminal-emulator
-#
-# apt install xautolock redshift-gtk pasystray blueman-applet dunst nm-applet nitrogen flameshot \
-#             notify-osd firefox xlock-fancy pavucontrol eog playerctl libnotify-bin
-#
-# stow pip in dotfiles && init-virtualenvs
+# auto-reload configs
+exec_always --no-startup-id ~/.bin/i3-config-templater
 
 set $rofi_theme
 set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
@@ -45,12 +40,57 @@ set_from_resource $color15    color15    # white
 set $alt Mod1
 set $mod Mod4
 
+# Set default monitors
 set $monitor_1 DP1-1
 set $monitor_2 DP1-2
 set $monitor_3 DP1-3
 
+########################################################################
+# Workspace names
+# term:  ie: mail:  box: tool: word: skull:
+#
+set $ws1 "1:"
+set $ws2 "2:"
+set $ws3 "3:"
+set $ws4 "4:"
+set $ws5 "5:"
+set $ws6 "6:"
+set $ws7 "7:"
+set $ws8 "8:"
+set $ws9 "9:"
+set $ws10 "10:"
+set $ws11 "11"
+set $ws12 "12"
+set $ws13 "13"
+set $ws14 "14"
+set $ws15 "15"
+set $ws16 "16"
+set $ws17 "17"
+set $ws18 "18"
+set $ws19 "19"
+set $ws20 "20"
+
+set $ws_web    "2:"
+# workspace_default_layout 2 tabbed
+set $ws_mail   "3:"
+# workspace_default_layout 3 tabbed
+set $ws_vm     "4:"
+# workspace_default_layout 4 tabbed
+set $ws_code   "5:"
+# workspace_default_layout 5 tabbed
+set $ws_office "6:"
+# workspace_default_layout 6 tabbed
+
 set $border_floating normal 2
 set $border_no_floating pixel 1
+
+# Include  specific files
+{% for x in ("~/.config/i3/hosts.d/vars-" + hostname + "*") | fileglob %}
+{% include x %}
+{% endfor %}
+{% for x in ("~/.config/i3/local.d/*") | fileglob %}
+{% include x %}
+{% endfor %}
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -58,14 +98,7 @@ set $border_no_floating pixel 1
 # font pango:Font Awesome 20, Ubuntu Mono 7
 # font pango:Font Awesome 7, Ubuntu Mono 7
 # font pango:Font Awesome 5 Free 7, Consolas 7
-#font pango:Inconsolata 7
-#font pango: Ubuntu Sans 7
 font xft:Source Code Pro 8
-#font:Ubuntu Mono 8, Font Awesome 5 Free
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
 
 # Before i3 v4.8, we used to recommend this one as the default:
 #
@@ -172,42 +205,6 @@ bindsym $mod+q focus parent
 # %%hotkey: Lock the screen
 bindsym $mod+l $cmd_locker
 
-########################################################################
-# Workspace names
-# term:  ie: mail:  box: tool: word: skull:
-#
-set $ws1 "1:"
-set $ws2 "2:"
-set $ws3 "3:"
-set $ws4 "4:"
-set $ws5 "5:"
-set $ws6 "6:"
-set $ws7 "7:"
-set $ws8 "8:"
-set $ws9 "9:"
-set $ws10 "10:"
-set $ws11 "11"
-set $ws12 "12"
-set $ws13 "13"
-set $ws14 "14"
-set $ws15 "15"
-set $ws16 "16"
-set $ws17 "17"
-set $ws18 "18"
-set $ws19 "19"
-set $ws20 "20"
-
-set $ws_web    "2:"
-# workspace_default_layout 2 tabbed
-set $ws_mail   "3:"
-set $ws_vm     "4:"
-# workspace_default_layout 4 tabbed
-set $ws_code   "5:"
-# workspace_default_layout 5 tabbed
-set $ws_office "6:"
-# workspace_default_layout 6 tabbed
-
-
 # %%hotkey: Send workspace to output left %%
 bindsym $mod+Control+Left move workspace to output left
 
@@ -253,7 +250,10 @@ bindsym $mod+a exec $cmd_refresh, \
                \
                workspace $ws2, \
                workspace $ws3, \
-               workspace $ws1
+               workspace $ws1, \
+               \
+               exec --no-startup-id ~/.bin/i3-config-templater
+
 # %%hotkey: Send virt-viewer screens to the right monitors %%
 bindsym $mod+Shift+a \
             exec --no-startup-id autorandr single
@@ -613,3 +613,11 @@ exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
 
 exec_always --no-startup-id "systemctl --user restart user-session.target"
 exec_always --no-startup-id "systemctl --user start user-session-once.target"
+
+# Include specific config files
+{% for x in ("~/.config/i3/hosts.d/conf-" + hostname + "*") | fileglob %}
+{% include x %}
+{% endfor %}
+{% for x in ("~/.config/i3/local.d/*") | fileglob %}
+{% include x %}
+{% endfor %}

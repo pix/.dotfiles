@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import jinja2
+import glob
+
+
+def fileglob(pathname):
+    """ return list of matched files for glob """
+    return glob.glob(os.path.expanduser(pathname))
+
+
+def render(template_path, data, extensions, strict=False):
+    from jinja2 import Environment, FileSystemLoader, StrictUndefined
+
+    env = Environment(
+        loader=FileSystemLoader("/"),
+        extensions=extensions,
+        keep_trailing_newline=False,
+        trim_blocks=True
+    )
+    env.globals['fileglob'] = fileglob
+
+    if strict:
+        env.undefined = StrictUndefined
+
+    # Add environ global
+    env.globals["hostname"] = os.uname().nodename
+    env.globals["environ"] = lambda key: force_text(os.environ.get(key))
+    env.globals["get_context"] = lambda: data
+    env.filters["fileglob"] = fileglob
+
+    return env.get_template(os.path.abspath(template_path)).render(data)
+
+
+try:
+    old = open(sys.argv[1], "r").read()
+except:
+    old = ""
+
+new = render(sys.argv[1] + ".tpl", {}, [])
+
+if old != new:
+    new_path = sys.argv[1] + ".new"
+    with open(new_path, "w") as f:
+        f.write(new)
+        os.rename(new_path, sys.argv[1])
+        sys.exit(0)
+
+sys.exit(1)

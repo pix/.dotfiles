@@ -2,4 +2,6 @@
 shell/.zsh/cache/
 *.pyc
 i3/.config/dunst/dunstrc
+i3/.config/i3/config
+i3/.config/i3/py3status/config
 systemd/.config/systemd/user/*.target.wants/

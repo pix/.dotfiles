@@ -1,0 +1,11 @@
+[Unit]
+Description=Add alternating layouts to i3
+PartOf=user-session.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=%h/.bin/i3-alternating-layouts
+
+[Install]
+WantedBy=user-session.target

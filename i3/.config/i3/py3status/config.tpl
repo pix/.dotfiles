@@ -8,6 +8,8 @@
 # If the above line is not correctly displayed, fix your editor first!
 ###############################################################################
 
+{% set is_roger = hostname == 'roger-compta' %}
+
 py3status {
    resources = [
        ('color_accent', 'i3wm*accent', 'black'),
@@ -40,7 +42,9 @@ general {
     output_format   = "i3bar"
 }
 
+{% if is_roger %}
 order += "frame systemd"
+{% endif %}
 order += "group rate"
 order += "xsel"
 order += "dpms"
@@ -56,6 +60,7 @@ order += "frame date"
 order += "frame time"
 order += "battery 0"
 
+{% if is_roger %}
 frame systemd {
     format = '{button}{output}'
     format_separator = " "
@@ -73,6 +78,8 @@ frame systemd {
         on_click 3 = 'exec systemctl --user stop user-barrier@bousier.local'
     }
 }
+{% endif %}
+
 
 frame mpris {
    format = '{button}{output}'
