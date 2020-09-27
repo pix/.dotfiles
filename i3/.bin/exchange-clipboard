@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+oldPrimary=$(xsel --primary --output)
+oldClipboard=$(xsel --clipboard --output)
+
+echo "${oldPrimary}"   | xsel --input --clipboard
+echo "${oldClipboard}" | xsel --input --primary 

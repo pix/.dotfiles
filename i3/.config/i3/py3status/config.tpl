@@ -49,10 +49,10 @@ order += "group rate"
 order += "xsel"
 order += "dpms"
 order += "frame mpris"
-order += "volume_status"
+order += "volume_status output"
+order += "volume_status input"
 order += "group vms"
 order += "frame rootfs"
-order += "frame data"
 order += "static_string bluetooth"
 order += "frame network"
 order += "frame cpu"
@@ -64,14 +64,14 @@ order += "battery 0"
 frame systemd {
     format = '{button}{output}'
     format_separator = " "
-    format_button_closed = ""
-    format_button_open   = "  "
+    format_button_closed = ""
+    format_button_open   = " "
     click_mode = "button"
     align="right"
 
     systemd barrier {
         unit = 'user-barrier@bousier.local.service'
-	format = '[\?if=status=not-found |[\?if=!hide barrier@bousier: [\?if=status=inactive |]]]'
+	format = '[\?if=status=not-found |[\?if=!hide barrier: [\?if=status=inactive |]]]'
         user = True
         hide_extension = True
         on_click 1 = 'exec systemctl --user restart user-barrier@bousier.local'
@@ -116,12 +116,12 @@ frame mpris {
     # }
 
     static_string {
-        format = '  '
+        format = ''
         on_click 1 = "exec playerctl previous"
     }
 
     static_string {
-        format = "  "
+        format = ""
         on_click 1 = "exec playerctl next"
     }
 }
@@ -242,20 +242,6 @@ frame rootfs {
     open = False
 }
 
-frame data {
-    format = '{button}{output}'
-    format_button_closed = ""
-    format_button_open   = ""
-    disk "/media/data" {
-            format = " media:%avail"
-            prefix_type = custom
-            low_threshold = 20
-            threshold_type = percentage_avail
-            on_click 3 = 'exec "pcmanfm"'
-    }
-    open = False
-}
-
 static_string bluetooth {
     format = ''
     on_click 1 = "exec blueman-manager"
@@ -343,15 +329,14 @@ frame cpu {
 }
 
 xsel {
-    max_size = 50
-    command = 'sh -c "if [ `xsel -o -b|wc -c` -eq 0 ]; then echo ; else echo ; fi"'
-    on_click 1 = "exec xsel -o -p | xsel -i -s -b"
-    on_click 2 = 'exec "xsel -c -p; xsel -c -b"'
-    on_click 3 = 'exec "xsel -c -p; xsel -c -b"'
+    format = ''
+    on_click 1 = "exec ~/.bin/exchange-clipboard"
+    on_click 2 = 'exec "xsel -o -p; xsel -i -b"'
+    on_click 3 = 'exec "xsel -o -b; xsel -i -p"'
 }
 
 dpms {
-    format = "{icon}  DPMS"
+    format = "{icon} DPMS"
     icon_on = ""
     icon_off = ""
 }
@@ -383,14 +368,22 @@ group rate {
 }
 
 
-volume_status {
-    format = "{percentage}%  "
-    format_muted = "  "
-    # device = "default"
-    # mixer = "Master"
-    # mixer_idx = 0
+volume_status output {
+    format = "{percentage}% "
+    format_muted = ""
+    is_input = False
 
     button_mute = 1
-    on_click 3 = 'exec "killall pavucontrol; pavucontrol"'
+    on_click 3 = 'exec "killall pavucontrol; pavucontrol --tab=1"'
+    on_click 2 = 'exec "killall pavucontrol"'
+}
+
+volume_status input {
+    format = "{percentage}% "
+    format_muted = ""
+    is_input = True
+
+    button_mute = 1
+    on_click 3 = 'exec "killall pavucontrol; pavucontrol --tab=2"'
     on_click 2 = 'exec "killall pavucontrol"'
 }
