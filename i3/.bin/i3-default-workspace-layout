@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/bin/env python3
 
 """ this code will run when change focus in workspace """
 import re
