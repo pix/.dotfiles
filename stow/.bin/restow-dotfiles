@@ -11,10 +11,36 @@ cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
 SCRIPT_PATH="`pwd`";
 popd  > /dev/null
 
-pushd "${SCRIPT_PATH}/../../"
+pushd "${SCRIPT_PATH}/../../" >/dev/null
+
+_process_templates() {
+	while IFS= read -r -d '' line; do 
+		line="${line#*/}"
+		line="${line%.*}"
+		echo "[*] Processing: ${HOME}/${line}"
+		~/.bin/jinja-config-templater ~/${line} || true
+    	done
+}
+
+process_templates() {
+	module="${1}"
+	find "${module}/" -type f -iname '*.tpl' -print0 | _process_templates
+}
+
 
 stow stow
+process_templates stow
 
 for i in ~/.config/dotfiles/*; do
-	stow -R "$(basename "${i}")"
+	module="$(basename "${i}")"
+	stow "${module}"
+	case "${module}" in
+		i3)
+			i3-config-templater
+			process_templates "${module}"
+			;;
+		*)
+			process_templates "${module}"
+			;;
+	esac
 done
