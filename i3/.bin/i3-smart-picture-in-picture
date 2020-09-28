@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""
+Daemon script that makes Chrome "Picture-in-picture" windows move to active
+window and away from the mouse.
+"""
+import notify2
+
+from dataclasses import dataclass
+from os import environ
+
+from i3ipc import Con, Connection, Event
+from Xlib import display
+
+FLOATING_MARK = "PIP"
+CROSS_MARK = "CROSS"
+
+paused = False
+
+notify2.init("i3-smart-picture-in-picture")
+
+
+@dataclass
+class Padding:
+    TOP: int = 0
+    RIGHT: int = 0
+    BOTTOM: int = 0
+    LEFT: int = 0
+
+
+class Positioner:
+    padding: Padding
+
+    def __init__(self, i3: Connection):
+        last_active = next(
+            (
+                w.window_class
+                for w in i3.get_tree().find_focused().workspace().descendants()
+                if w.window_class is not None and FLOATING_MARK not in w.marks
+            ),
+            None,
+        )
+        if last_active == "firefoxdeveloperedition":
+            self.padding = Padding(TOP=150, RIGHT=25)
+        elif last_active == "Termite":
+            self.padding = Padding(BOTTOM=50)
+        else:
+            self.padding = Padding(TOP=5, RIGHT=5, BOTTOM=5, LEFT=5)
+
+    def get_x(self, output_rect, rect, cross=False) -> int:
+        left_value = output_rect.x + self.padding.LEFT
+        right_value = (output_rect.x + output_rect.width) - (
+            rect.width + self.padding.RIGHT
+        )
+        on_left = output_rect.x + (output_rect.width / 2) > rect.x + (rect.width / 2)
+        if on_left:
+            return left_value if not cross else right_value
+        return right_value if not cross else left_value
+
+    def get_y(self, output_rect, rect) -> int:
+        on_top = rect.y + (rect.height / 2) > output_rect.y + (output_rect.height / 2)
+        if on_top:
+            return output_rect.y + self.padding.TOP
+        return output_rect.y + output_rect.height - rect.height - self.padding.BOTTOM
+
+
+def mouse_is_hovered(rect) -> bool:
+    mouse = display.Display().screen().root.query_pointer()._data
+    mouse_x, mouse_y = mouse["root_x"], mouse["root_y"]
+    return (rect.x <= mouse_x <= rect.x + rect.width) and (
+        rect.y <= mouse_y <= rect.y + rect.height
+    )
+
+
+n = notify2.Notification("", "", "notification-message-im")  # Icon name
+
+
+def on_binding(ipc, event):
+    global paused
+    """React on selected binding events.
+    Parameters
+    ----------
+    ipc : i3ipc.Connection
+        An i3ipc connection
+    event : i3ipc.BindingEvent
+        An i3ipc binding event
+    """
+    if event.binding.command.startswith("nop"):
+        if event.binding.command.startswith("nop smart_picture_in_picture toggle"):
+            paused = not paused
+            n.update("{}".format("Paused" if paused else "Running"))
+            n.show()
+
+
+def translate_window(i3: Connection, window, cross=False) -> None:
+    workspace = i3.get_tree().find_focused().workspace()
+    if workspace is not None:
+        positioner = Positioner(i3)
+        window.command(
+            (
+                "move position"
+                f" {positioner.get_x(workspace.rect, window.rect, cross)}"
+                f" {positioner.get_y(workspace.rect, window.rect)};"
+                " focus tiling"
+            )
+        )
+
+
+def on_window_focus(i3: Connection, e) -> None:
+    global paused
+
+    if paused:
+        return
+
+    pip_window = next(iter(i3.get_tree().find_marked(FLOATING_MARK)), None)
+    if (
+        pip_window is None
+        or FLOATING_MARK not in pip_window.marks
+        or pip_window.id != e.container.id
+        or not mouse_is_hovered(e.container.rect)
+    ):
+        return
+    pip_window.command(f"mark --add --toggle {CROSS_MARK}")
+    pip_window.command(f"border pixel 1")
+    cross = CROSS_MARK in pip_window.marks
+    translate_window(i3, pip_window, cross=cross)
+
+
+# i3sock is being set incorrectly somewhere this forces i3ipc to look it up
+con = Connection()
+con.on(Event.BINDING, on_binding)
+con.on(Event.WINDOW_FOCUS, on_window_focus)
+con.main()
+
+# vim: set fdn=1:

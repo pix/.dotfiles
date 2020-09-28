@@ -3,6 +3,7 @@
 import os
 import sys
 import jinja2
+import fontawesome as fa
 import glob
 
 
@@ -30,6 +31,8 @@ def render(template_path, data, extensions, strict=False):
     env.globals["hostname"] = os.uname().nodename
     env.globals["environ"] = lambda key: force_text(os.environ.get(key))
     env.globals["get_context"] = lambda: data
+    env.globals["fa"] = fa.icons
+    env.globals["fileglob"] = fileglob
     env.filters["fileglob"] = fileglob
 
     return env.get_template(os.path.abspath(template_path)).render(data)

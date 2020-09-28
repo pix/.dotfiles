@@ -19,6 +19,7 @@ for action in enable \
 	user-flameshot.service \
 	user-i3-alternating-layouts.service \
 	user-i3-default-workspace-layout.service \
+	user-i3-smart-picture-in-picture.service \
 	user-mpris-notify.service \
 	user-nm-applet.service \
 	user-pasystray.service \

@@ -1,0 +1,13 @@
+[Unit]
+Description=Smart Picture-in-Picture daemon
+PartOf=user-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.bin/i3-smart-picture-in-picture
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=user-session.target
+

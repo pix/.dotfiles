@@ -9,7 +9,7 @@ archlinux_install_deps() {
 	file="${SCRIPT_PATH}/../../${1}/.pacman.install"
 	if [[ -f "${file}" ]]; then
 		packages=$(cat "${file}" | grep -v '^#' | tr $'\n' ' ')
-		yay --batchinstall --noconfirm -S ${packages}
+		yay --needed --norebuild --batchinstall --noconfirm -S ${packages}
 	fi
 }
 

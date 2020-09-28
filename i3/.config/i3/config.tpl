@@ -1,6 +1,11 @@
 # i3 config file (v4)
 #
 
+{% macro bindsym(key, command, help) -%}
+# %%hotkey: {{ help }} %%
+bindsym {{ key }} {{ command }}
+{%- endmacro %}
+
 # auto-reload configs
 exec_always --no-startup-id ~/.bin/i3-config-templater
 
@@ -46,15 +51,14 @@ set $monitor_3 DP1-3
 
 ########################################################################
 # Workspace names
-# term:  ie: mail:  box: tool: word: skull:
 #
-set $ws1 "1:"
-set $ws2 "2:"
-set $ws3 "3:"
-set $ws4 "4:"
-set $ws5 "5:"
-set $ws6 "6:"
-set $ws7 "7:"
+set $ws1 "1:{{ fa['terminal']          }}"
+set $ws2 "2:{{ fa['internet-explorer'] }}"
+set $ws3 "3:{{ fa['envelope-open']     }}"
+set $ws4 "4:{{ fa['laptop']           }}"
+set $ws5 "5:{{ fa['code']              }}"
+set $ws6 "6:{{ fa['file-word']         }}"
+set $ws7 "7:{{ fa['bug']               }}"
 set $ws8 "8:"
 set $ws9 "9:"
 set $ws10 "10:"
@@ -69,16 +73,18 @@ set $ws18 "18"
 set $ws19 "19"
 set $ws20 "20"
 
-set $ws_web    "2:"
+set $ws_web    "2:{{ fa['internet-explorer'] }}"
 # workspace_default_layout 2 tabbed
-set $ws_mail   "3:"
+set $ws_mail   "3:{{ fa['envelope-open']     }}"
 # workspace_default_layout 3 tabbed
-set $ws_vm     "4:"
+set $ws_vm     "4:{{ fa['laptop']           }}"
 # workspace_default_layout 4 tabbed
-set $ws_code   "5:"
+set $ws_code   "5:{{ fa['code']              }}"
 # workspace_default_layout 5 tabbed
-set $ws_office "6:"
+set $ws_office "6:{{ fa['file-word']         }}"
 # workspace_default_layout 6 tabbed
+set $ws_hack   "7:{{ fa['bug']               }}"
+# workspace_default_layout 7 tabbed
 
 set $border_floating normal 2
 set $border_no_floating pixel 1
@@ -134,6 +140,18 @@ floating_modifier $mod
 # start a terminal
 # %%hotkey: Start a terminal %%
 bindsym $mod+Return exec --no-startup-id i3-sensible-terminal
+
+set $pip_style border pixel 1
+{{ bindsym("Control+Shift+plus", 
+           'nop smart_picture_in_picture toggle', 
+           "Toggle nop smart_picture_in_picture toggle globally") }}
+{{ bindsym("$mod+equal",
+           'mark --add PIP, $pip_style',
+           "Mark this window as a PIP window") }}
+{{ bindsym("$mod+Shift+plus",
+           '[con_mark="PIP"] mark --add --toggle PIP, border normal',
+           "Unmark this PIP window") }}
+for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, border pixel 1
 
 # kill focused window
 # %%hotkey: Kill focused window %%
@@ -433,14 +451,15 @@ for_window [class="Ghidra"] floating enable
 for_window [class="Pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="Pcmanfm"] floating enable, resize set 800 600, move window position center
 
-bindsym Pause [title="Picture-in-Picture"] mark --toggle FLOATING_ACTIVE
-bindsym $mod+Pause mark --toggle FLOATING_ACTIVE
-for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle FLOATING_ACTIVE
 
 # Burp configs
-for_window [class="^burp-StartBurp$" title="^(?!Burp Suite|Intruder).*"] floating enable
+assign     [class="burp-StartBurp"] $ws_hack
+for_window [class="burp-StartBurp"] move --no-auto-back-and-forth window to workspace $ws_hack
+no_focus   [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"]
+for_window [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"] floating enable
 
 for_window [floating] border $border_floating
+for_window [floating con_mark="PIP"] border pixel 1
 for_window [tiling] border $border_no_floating
 
 
@@ -499,11 +518,12 @@ assign     [class="Code"] $ws_code
 
 ########################################################################
 # Workspace: Office
-assign [instance="libreoffice"]    $ws_office
-assign [class="(?i)soffice"]       $ws_office
-assign [class="(?i)libreoffice-"]  $ws_office
-assign [class="(?i)libreoffice.*"] $ws_office
-assign [class="DesktopEditors"]    $ws_office
+assign [title="(?i)^libreoffice$" window_type="splash"] $ws_office
+assign [instance="(?i)libreoffice"] $ws_office
+assign [class="(?i)soffice"]        $ws_office
+assign [class="(?i)libreoffice-"]   $ws_office
+assign [class="(?i)libreoffice.*"]  $ws_office
+assign [class="DesktopEditors"]     $ws_office
 
 ########################################################################
 # Volume

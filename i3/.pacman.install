@@ -25,7 +25,8 @@ networkmanager
 # i3
 nitrogen
 py3status
-notify-osd 
+notify-osd
+python-notify2
 libnotify
 pavucontrol 
 playerctl
@@ -35,7 +36,7 @@ otf-font-awesome
 vlc
 mpv
 scli
-python-rofi
+python-rofi-git
 
 # programs
 firefox
