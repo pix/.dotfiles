@@ -4,7 +4,6 @@
 # auto-reload configs
 exec_always --no-startup-id ~/.bin/i3-config-templater
 
-set $rofi_theme
 set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
@@ -461,16 +460,10 @@ for_window [class="KeePassXC" window_type="dialog"] floating disable, floating e
 bindsym $mod+k exec "keepassxc", [class="KeePassXC"] scratchpad show
 
 ########################################################################
-# 'Dropdown' terminal waiting in Scratchpad
-# bindsym twosuperior      [instance="dropdown"]           scratchpad show, \
-#                                                         fullscreen enable, move position center
 # %%hotkey: Show scratchpad windows %%
-bindsym $alt+twosuperior scratchpad show
+bindsym $alt+twosuperior exec ~/.bin/i3scratch
 # %%hotkey: Move current window to scratchpad %%
 bindsym $mod+twosuperior move scratchpad
-# bindsym $mod+shift+twosuperior                           move scratchpad
-#
-# for_window [instance="dropdown"] floating enable, fullscreen enable, move scratchpad
 assign [instance="ws1"] $ws1
 # %%hotkey: Activate $ws1 on current output %%
 bindsym twosuperior [workspace=$ws1] move workspace to output current, workspace $ws1

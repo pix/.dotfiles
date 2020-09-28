@@ -14,8 +14,9 @@ def fileglob(pathname):
 def render(template_path, data, extensions, strict=False):
     from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
+    cwd = os.path.dirname(os.path.abspath(template_path))
     env = Environment(
-        loader=FileSystemLoader("/"),
+        loader=FileSystemLoader(["/", cwd]),
         extensions=extensions,
         keep_trailing_newline=False,
         trim_blocks=True

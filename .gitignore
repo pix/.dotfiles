@@ -4,4 +4,5 @@ shell/.zsh/cache/
 i3/.config/dunst/dunstrc
 i3/.config/i3/config
 i3/.config/i3/py3status/config
+i3/.config/rofi/config-right-menu.rasi
 systemd/.config/systemd/user/*.target.wants/

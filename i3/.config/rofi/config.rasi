@@ -1,5 +1,5 @@
 configuration {
-theme: "~/.cache/wal/colors-rofi-dark-alt.rasi";
-icon-theme: "Adwaita";
-show-icons: true;
+    theme: "~/.cache/wal/colors-rofi-dark-alt.rasi";
+    icon-theme: "Adwaita";
+    show-icons: true;
 }
