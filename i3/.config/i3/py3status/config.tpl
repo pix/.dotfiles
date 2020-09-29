@@ -89,10 +89,6 @@ frame mpris {
     click_mode = "button"
     align="right"
 
-    # mpris next {
-        # format = "{next}"
-        # icon_next=''
-    # }
     mpris {
       format="[{artist} - ]{title}"
       button_next = 3
@@ -106,14 +102,6 @@ frame mpris {
       on_click 1 = "exec playerctl play-pause"
       on_click 3 = "exec playerctl stop"
     }
-    # mpris prev {
-        # format = "{previous}"
-        # icon_previous=''
-    # }
-    # mpris next {
-        # format = "{next}"
-        # icon_next=''
-    # }
 
     static_string {
         format = ''
@@ -140,91 +128,45 @@ group vms {
     button_next = 1
 
     frame {
+        {% for machine in libvirt -%}
         libvirt_status {
             uri = "qemu:///system"
-            name = "whonix"
-            format = " whonix: {state}"
-            format_running = " whonix"
-            format_paused = " whonix"
-            format_shut_off = ""
+            name = "{{ machine.name }}"
+            format = " {{ machine.nick }}: {state}"
+            format_running = " {{ machine.nick }}"
+            format_paused = " {{ machine.nick }}"
+            {% if machine.default -%}
+            format_shut_off = " {{ machine.nick }}"
+            {%- else %}
+            format_shut_off = ""            
+            {%- endif %}
             format_no_state = ""
 
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a whonix"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave whonix"'
-            on_click 3 = 'exec "virsh -c qemu:///system start whonix"'
+            on_click 1 = 'exec "virt-viewer -c qemu:///system -a {{ machine.name }}"'
+            on_click 2 = 'exec "virsh -c qemu:///system managedsave {{ machine.name }}"'
+            on_click 3 = 'exec "virsh -c qemu:///system start {{ machine.name }}"'
         }
 
-        libvirt_status {
-            uri = "qemu:///system"
-            name = "win10"
-            format = " dom: {state}"
-            format_running = " win"
-            format_paused = " win"
-            format_shut_off = ""
-            format_no_state = ""
-
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a win10"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave win10"'
-            on_click 3 = 'exec "virsh -c qemu:///system start win10"'
-        }
-
-        libvirt_status {
-            uri = "qemu:///system"
-            name = "manjaro"
-            format = " pwn: {state}"
-            format_running = " pwn"
-            format_paused = " pwn"
-            format_shut_off = ""
-            format_no_state = ""
-
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a manjaro"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave manjaro"'
-            on_click 3 = 'exec "virsh -c qemu:///system start manjaro"'
-        }
+        {% endfor %}
 
     }
     frame {
+        {% for machine in libvirt -%}
         libvirt_status {
             uri = "qemu:///system"
-            name = "whonix"
-            format = " whonix: {state}"
-            format_running = " whonix"
-            format_paused = " whonix"
-            format_shut_off = " whonix"
+            name = "{{ machine.name }}"
+            format = " {{ machine.nick }}: {state}"
+            format_running = " {{ machine.nick }}"
+            format_paused = " {{ machine.nick }}"
+            format_shut_off = " {{ machine.nick }}"
             format_no_state = ""
 
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a whonix"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave whonix"'
-            on_click 3 = 'exec "virsh -c qemu:///system start whonix"'
+            on_click 1 = 'exec "virt-viewer -c qemu:///system -a {{ machine.name }}"'
+            on_click 2 = 'exec "virsh -c qemu:///system managedsave {{ machine.name }}"'
+            on_click 3 = 'exec "virsh -c qemu:///system start {{ machine.name }}"'
         }
 
-        libvirt_status {
-            uri = "qemu:///system"
-            name = "win10"
-            format = " win: {state}"
-            format_running = " win"
-            format_paused = " win"
-            format_shut_off = " win"
-            format_no_state = ""
-
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a win10"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave win10"'
-            on_click 3 = 'exec "virsh -c qemu:///system start win10"'
-        }
-
-        libvirt_status {
-            uri = "qemu:///system"
-            name = "manjaro"
-            format = " pwn: {state}"
-            format_running = " pwn"
-            format_paused = " pwn"
-            format_shut_off = " pwn"
-            format_no_state = ""
-
-            on_click 1 = 'exec "virt-viewer -c qemu:///system -a manjaro"'
-            on_click 2 = 'exec "virsh -c qemu:///system managedsave manjaro"'
-            on_click 3 = 'exec "virsh -c qemu:///system start manjaro"'
-        }
+        {% endfor %}
     }
 }
 

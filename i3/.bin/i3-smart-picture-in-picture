@@ -89,6 +89,17 @@ def on_binding(ipc, event):
             paused = not paused
             n.update("{}".format("Paused" if paused else "Running"))
             n.show()
+        elif event.binding.command.startswith("nop smart_picture_in_picture"):
+            if event.binding.command.endswith("grow"):
+                cmd = "grow"
+            else:
+                cmd = "shrink"
+
+            pip_window = get_pip_window(ipc)
+            if pip_window is None:
+                return
+            ipc.command(f"[con_mark={FLOATING_MARK}] resize {cmd} height 9 px")
+            ipc.command(f"[con_mark={FLOATING_MARK}] resize {cmd} width 16 px")
 
 
 def translate_window(i3: Connection, window, cross=False) -> None:
@@ -105,22 +116,32 @@ def translate_window(i3: Connection, window, cross=False) -> None:
         )
 
 
+def get_pip_window(i3: Connection, e=None):
+    pip_window = next(iter(i3.get_tree().find_marked(FLOATING_MARK)), None)
+    if (
+        pip_window is None
+        or FLOATING_MARK not in pip_window.marks
+        or (e is not None and pip_window.id != e.container.id)
+        or (e is not None and not mouse_is_hovered(e.container.rect))
+    ):
+        return None
+    else:
+        return pip_window
+
+
 def on_window_focus(i3: Connection, e) -> None:
     global paused
 
     if paused:
         return
 
-    pip_window = next(iter(i3.get_tree().find_marked(FLOATING_MARK)), None)
-    if (
-        pip_window is None
-        or FLOATING_MARK not in pip_window.marks
-        or pip_window.id != e.container.id
-        or not mouse_is_hovered(e.container.rect)
-    ):
+    pip_window = get_pip_window(i3, e)
+    
+    i3.command(f'[con_mark={FLOATING_MARK}] move window to workspace current')
+    if pip_window is None:
         return
+
     pip_window.command(f"mark --add --toggle {CROSS_MARK}")
-    pip_window.command(f"border pixel 1")
     cross = CROSS_MARK in pip_window.marks
     translate_window(i3, pip_window, cross=cross)
 

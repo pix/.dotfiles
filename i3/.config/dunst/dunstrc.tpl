@@ -1,3 +1,7 @@
+{% set colors = json("~/.cache/wal/colors.json") -%}
+{% set theme = json("~/.config/i3/theme.json") -%}
+{% set accent = colors.colors[theme.accent] -%}
+{% set urgent = colors.colors[theme.urgent] -%}
 [global]
 font = Font Awesome 5 Regular 8, monospace 8
 
@@ -79,7 +83,7 @@ shrink = no
 # The transparency of the window.  Range: [0; 100].
 # This option will only work if a compositing windowmanager is
 # present (e.g. xcompmgr, compiz, etc.).
-transparency = 30
+transparency = 20
 
 # Don't remove messages, if the user is idle (no mouse or keyboard input)
 # for longer than idle_threshold seconds.
@@ -149,13 +153,13 @@ browser = /usr/bin/firefox -new-tab
 
 # Align icons left/right/off
 icon_position = right
-max_icon_size = 80
+max_icon_size = 100
 
 # Paths to default icons.
 icon_folders = /usr/share/icons/Yaru/16x16/mimetypes/:/usr/share/icons/Yaru/48x48/status/:/usr/share/icons/Yaru/16x16/devices/:/usr/share/icons/Yaru/48x48/notifications/:/usr/share/icons/Yaru/48x48/emblems/
 
 frame_width = 3
-frame_color = "#8EC07C"
+frame_color = "{{ accent }}"
 
 [shortcuts]
 
@@ -181,25 +185,21 @@ context = ctrl+exclam
 [urgency_low]
 # IMPORTANT: colors have to be defined in quotation marks.
 # Otherwise the "#" and following would be interpreted as a comment.
-frame_color = "${color10}"
-foreground = "${foreground}"
-background = "${background}"
-#background = "#2B313C"
+frame_color = "{{ accent }}"
+foreground = "{{ colors.special.foreground }}"
+background = "{{ colors.special.background }}"
 timeout = 4
 
 [urgency_normal]
-frame_color = "${color7}"
-foreground = "${foreground}"
-background = "${background}"
-#background = "#2B313C"
+frame_color = "{{ accent }}"
+foreground = "{{ colors.special.foreground }}"
+background = "{{ colors.special.background }}"
 timeout = 6
 
 [urgency_critical]
-frame_color = "${color13}"
-frame_color = "#FB4934"
-foreground = "${foreground}"
-background = "${background}"
-#background = "#2B313C"
+frame_color = "{{ urgent }}"
+foreground = "{{ colors.special.foreground }}"
+background = "{{ colors.special.background }}"
 timeout = 8
 
 

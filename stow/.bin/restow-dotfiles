@@ -24,12 +24,15 @@ _process_templates() {
 
 process_templates() {
 	module="${1}"
-	find "${module}/" -type f -iname '*.tpl' -print0 | _process_templates
+	find "${module}/" \( -type f -o -type l  \) -iname '*.tpl' -print0 | _process_templates
 }
 
 
 stow stow
 process_templates stow
+
+# Copy post checkout script (not copied by stow)
+cp -f ~/.local/dotfiles/git-hooks/post-checkout .git/hooks/post-checkout
 
 for i in ~/.config/dotfiles/*; do
 	module="$(basename "${i}")"

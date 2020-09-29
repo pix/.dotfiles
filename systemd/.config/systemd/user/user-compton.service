@@ -6,7 +6,7 @@ PartOf=user-session.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=/usr/bin/compton
+ExecStart=/usr/bin/compton --experimental-backends --backend glx
 
 [Install]
 WantedBy=user-session.target

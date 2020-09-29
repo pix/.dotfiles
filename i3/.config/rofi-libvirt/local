@@ -1,0 +1,2 @@
+[manjaro]
+shared_dir = ["~/Public", 'ask']

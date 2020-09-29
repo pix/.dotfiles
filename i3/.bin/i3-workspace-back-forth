@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""
+Daemon script that makes Chrome "Picture-in-picture" windows move to active
+window and away from the mouse.
+"""
+import notify2
+import re
+
+from collections import OrderedDict
+from dataclasses import dataclass
+from os import environ
+
+from i3ipc import Con, Connection, Event
+from Xlib import display
+
+
+def get_defaults(conn):
+    regex = re.compile(r"^# workspace_ignore_focus_last (\d+)$")
+    version = conn.get_version()
+    defaults = []
+    with open(version.loaded_config_file_name, "r") as config:
+        for line in config.readlines():
+            m = regex.match(line)
+            if m:
+                print(f"[ ] {m.group(0)}")
+                try:
+                    ws = int(m.group(1))
+                    defaults.append(ws)
+                except:
+                    pass
+    return set(defaults)
+
+
+last = []
+ignores = []
+
+def on_binding(ipc: Connection, event) -> None:
+    """React on selected binding events.
+    Parameters
+    ----------
+    ipc : i3ipc.Connection
+        An i3ipc connection
+    event : i3ipc.BindingEvent
+        An i3ipc binding event
+    """
+    global last
+    if event.binding.command.startswith("nop workspace focus-last"):
+        if len(last) > 0:
+            ipc.command(f"workspace --no-auto-back-and-forth number {last[0]}")
+        else:
+            ipc.command(f"workspace --no-auto-back-and-forth number 1")
+
+
+
+def on_workspace_focus(i3: Connection, event) -> None:
+    global last
+    print(ignores)
+    if event.current and event.current.num not in ignores:
+        num = event.current.num
+        if num in last:
+            last.remove(num)
+        last.append(num)
+        last = last[-2:]
+
+
+# i3sock is being set incorrectly somewhere this forces i3ipc to look it up
+con = Connection()
+con.on(Event.BINDING, on_binding)
+con.on(Event.WORKSPACE_FOCUS, on_workspace_focus)
+
+ignores = get_defaults(con)
+
+con.main()
+
+# vim: set fdn=1:

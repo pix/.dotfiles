@@ -1,5 +1,9 @@
 # i3 config file (v4)
 #
+{% set colors = json("~/.cache/wal/colors.json") -%}
+{% set theme = json("~/.config/i3/theme.json") -%}
+{% set accent = colors.colors[theme.accent] -%}
+{% set urgent = colors.colors[theme.urgent] -%}
 
 {% macro bindsym(key, command, help) -%}
 # %%hotkey: {{ help }} %%
@@ -20,10 +24,10 @@ set $osd_id -h string:x-canonical-private-synchronous:anything -u low
 exec_always $cmd_refresh
 
 
-set_from_resource $accent     i3wm.accent
-set_from_resource $urgent     i3wm.urgent
-set_from_resource $background i3wm.background
-set_from_resource $foreground foreground
+set               $accent     {{ accent }}
+set               $urgent     {{ urgent }}
+set               $background {{ colors.special.background }}
+set               $foreground {{ colors.special.foreground }}
 set_from_resource $color0     color0     # black
 set_from_resource $color1     color1     # red
 set_from_resource $color2     color2     # green
@@ -52,6 +56,8 @@ set $monitor_3 DP1-3
 ########################################################################
 # Workspace names
 #
+# workspace_ignore_focus_last 1
+# workspace_ignore_focus_last 3
 set $ws1 "1:{{ fa['terminal']          }}"
 set $ws2 "2:{{ fa['internet-explorer'] }}"
 set $ws3 "3:{{ fa['envelope-open']     }}"
@@ -93,7 +99,7 @@ set $border_no_floating pixel 1
 {% for x in ("~/.config/i3/hosts.d/vars-" + hostname + "*") | fileglob %}
 {% include x %}
 {% endfor %}
-{% for x in ("~/.config/i3/local.d/*") | fileglob %}
+{% for x in ("~/.config/i3/local.d/vars-*") | fileglob %}
 {% include x %}
 {% endfor %}
 
@@ -137,11 +143,22 @@ default_floating_border $border_floating
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# %%hotkey: Over a titlebar kills the window %%
+bindsym --release button2 kill
+
+# %%hotkey: Over any part of the window kills the window %%
+bindsym --whole-window $mod+button2 kill
+
+# %%hotkey: Toggles floating on %%
+bindsym --whole-window $mod+button4 exec ~/.bin/i3-pop
+# %%hotkey: Toggle floating off %%
+bindsym --whole-window $mod+button5 floating disable
+
 # start a terminal
 # %%hotkey: Start a terminal %%
 bindsym $mod+Return exec --no-startup-id i3-sensible-terminal
 
-set $pip_style border pixel 1
+set $pip_style border pixel 4
 {{ bindsym("Control+Shift+plus", 
            'nop smart_picture_in_picture toggle', 
            "Toggle nop smart_picture_in_picture toggle globally") }}
@@ -151,7 +168,8 @@ set $pip_style border pixel 1
 {{ bindsym("$mod+Shift+plus",
            '[con_mark="PIP"] mark --add --toggle PIP, border normal',
            "Unmark this PIP window") }}
-for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, border pixel 1
+for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, $pip_style
+for_window [con_mark="PIP"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, $pip_style
 
 # kill focused window
 # %%hotkey: Kill focused window %%
@@ -309,8 +327,8 @@ bindsym $alt+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus
 workspace_auto_back_and_forth yes
 
 # switch to workspace
-# %%hotkey: Goto workspace 1 %%
-bindsym $mod+1   workspace $ws1
+# %%hotkey: Goto last workspace %%
+bindsym $mod+1   nop workspace focus-last
 # %%hotkey: Goto workspace 2 %%
 bindsym $mod+2   workspace $ws2
 # %%hotkey: Goto workspace 3 %%
@@ -533,6 +551,8 @@ bindsym $mod+End exec "flameshot gui"
 # %%hotkey: Start flameshot launcher %%
 bindsym Print exec "flameshot launcher"
 bindsym $mod+p exec "rofi-autorandr"
+bindsym $mod+o exec "~/.bin/rofi-networkmenu -config ~/.config/rofi/config-right-menu.rasi"
+
 bindsym $mod+Shift+p exec "~/.config/i3/scripts/pulsemenu"
 bindsym XF86MonBrightnessUp exec "python ~/.config/i3/scripts/set-brightness +5"
 bindsym XF86MonBrightnessDown exec "python ~/.config/i3/scripts/set-brightness -5"
@@ -621,9 +641,6 @@ exec i3-msg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3
 
 exec --no-startup-id exec firefox --name Firefart
 
-# Update dunst config
-exec_always --no-startup-id exec ~/.config/i3/scripts/wal-dunst.sh
-
 exec_always --no-startup-id "systemctl --user restart user-session.target"
 exec_always --no-startup-id "systemctl --user start user-session-once.target"
 
@@ -631,6 +648,6 @@ exec_always --no-startup-id "systemctl --user start user-session-once.target"
 {% for x in ("~/.config/i3/hosts.d/conf-" + hostname + "*") | fileglob %}
 {% include x %}
 {% endfor %}
-{% for x in ("~/.config/i3/local.d/*") | fileglob %}
+{% for x in ("~/.config/i3/local.d/conf-*") | fileglob %}
 {% include x %}
 {% endfor %}

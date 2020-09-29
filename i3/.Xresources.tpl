@@ -1,15 +1,17 @@
 #define GTK_THEME_BACKGROUND #222d32
 
-#define CAT(a,b) a##b
-#define XCAT(a,b) CAT(a,b)
-#define __accent 2
-#define __urgent 5
+{% set colors = json("~/.cache/wal/colors.json") -%}
+{% set theme = json("~/.config/i3/theme.json") -%}
+{% set accent = colors.colors[theme.accent] -%}
+{% set urgent = colors.colors[theme.urgent] -%}
+{% set accent_num = theme.accent.replace("color", "") -%}
+{% set urgent_num = theme.urgent.replace("color", "") -%}
 
 #include "./.cache/wal/colors.h"
 #include "./.cache/wal/colors.Xresources"
 
-#define __accent_color XCAT(__color, __accent)
-#define __urgent_color XCAT(__color, __urgent)
+#define __accent_color {{ accent }}
+#define __urgent_color {{ urgent }}
 
 Xft.dpi: 96
 
@@ -24,7 +26,7 @@ i3wm*urgent:        __urgent_color
 URxvt*color0:       GTK_THEME_BACKGROUND
 URxvt*foreground:   #c5c8c6
 URxvt*background:   #1d1f21
-URxvt*cursorColor:  #c5c8c6
+URxvt*cursorColor:  __accent_color
 
 ! URxvt*fontAlt: xft:Ubuntu Mono:pixelsize=13:antialias=false:hinting=true
 URxvt*fontAlt: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
@@ -55,11 +57,11 @@ URxvt*tabbed.actived-fg                : 4
 URxvt*tabbed.actives-fg                : 5
 URxvt*tabbed.autohide                  : true
 URxvt*tabbed.no-tabbedex-keys          : true
-URxvt*tabbed.tab-bg                    : __accent
+URxvt*tabbed.tab-bg                    : {{ accent_num }}
 URxvt*tabbed.tab-fg                    : 0
 URxvt*tabbed.tabbar-bg                 : 0
-URxvt*tabbed.tabbar-fg                 : __accent
-URxvt*tabbed.title-fg                  : __accent
+URxvt*tabbed.tabbar-fg                 : {{ accent_num }}
+URxvt*tabbed.title-fg                  : {{ accent_num }}
 URxvt*tintColor                        : grey40
 URxvt*transpartent:                    : true
 

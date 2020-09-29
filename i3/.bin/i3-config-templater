@@ -2,9 +2,21 @@
 
 RELOAD=0
 
+is_systemd() {
+    systemctl is-enabled --user "${1}" >/dev/null 2>&1
+}
+
 ~/.bin/jinja-config-templater ~/.config/i3/config && RELOAD=1
 ~/.bin/jinja-config-templater ~/.config/i3/py3status/config && RELOAD=1
+~/.bin/jinja-config-templater ~/.config/dunst/dunstrc && RELOAD=1
+~/.bin/jinja-config-templater ~/.Xresources && RELOAD=1
 
 if [[ "${RELOAD}" == "1" ]]; then
-	i3-msg restart
+    xrdb -load ~/.Xresources
+    if is_systemd dunst; then
+        systemctl --user restart dunst
+    elif is_systemd user-dunst; then
+        systemctl --user restart user-dunst
+    fi
+    i3-msg restart
 fi

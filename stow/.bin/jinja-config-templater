@@ -2,10 +2,55 @@
 
 import os
 import sys
+from lxml import etree
+import json
 import jinja2
 import fontawesome as fa
 import glob
+import libvirt
 
+from dataclasses import dataclass
+
+
+@dataclass
+class Machine:
+    name: str = ""
+    nick: str = ""
+    default: bool = False
+
+def json_load(path: str) -> dict:
+    try:
+        with open(os.path.expanduser(path), 'r') as f:
+            return json.loads(f.read())
+    except:
+        return {}
+
+
+def libvirt_machines():
+    conn = libvirt.open("qemu:///system")
+    machines = []
+
+    if conn == None:
+        print("[!] Failed to open connection to qemu:///system", file=sys.stderr)
+        return machines
+
+    domains = conn.listAllDomains(0)
+    if len(domains) != 0:
+        for domain in domains:
+            try:
+                name = domain.name()
+                full_xml = etree.fromstring(domain.XMLDesc())
+                desc_xml = full_xml.find("./description")
+                desc = desc_xml.text if desc_xml is not None else "{}"
+                info = json.loads(desc)
+                m = Machine(name)
+                m.nick = info.get("nick", name)
+                m.default = info.get("default", False)
+                machines.append(m)
+            except Exception as e:
+                pass
+
+    return machines
 
 def fileglob(pathname):
     """ return list of matched files for glob """
@@ -20,14 +65,15 @@ def render(template_path, data, extensions, strict=False):
         loader=FileSystemLoader(["/", cwd]),
         extensions=extensions,
         keep_trailing_newline=False,
-        trim_blocks=True
     )
-    env.globals['fileglob'] = fileglob
+    env.globals["fileglob"] = fileglob
 
     if strict:
         env.undefined = StrictUndefined
 
     # Add environ global
+    env.globals["json"] = json_load
+    env.globals["libvirt"] = libvirt_machines()
     env.globals["hostname"] = os.uname().nodename
     env.globals["environ"] = lambda key: force_text(os.environ.get(key))
     env.globals["get_context"] = lambda: data
