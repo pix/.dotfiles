@@ -10,6 +10,8 @@ i3/.config/rofi/config-right-menu.rasi
 i3/.config/rofi/wal-custom-theme.rasi
 shell/.zsh/cache/
 systemd/.config/systemd/user/*.target.wants/
+!/themes/.themes/matcha-dark-custom/gtk-2.0/assets/.gitkeep
+!/themes/.themes/matcha-dark-custom/gtk-3.0/assets/.gitkeep
 /themes/.themes/matcha-dark-custom/gtk-2.0/assets/
 /themes/.themes/matcha-dark-custom/gtk-2.0/gtkrc
 /themes/.themes/matcha-dark-custom/gtk-3.0/assets/
