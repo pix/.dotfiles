@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=matcha-dark-custom
+Comment=A dark modern design theme
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=matcha-dark-custom
+IconTheme=Qogir-manjaro
+CursorTheme=Qogir-manjaro

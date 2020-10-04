@@ -28,20 +28,32 @@ i3 = i3ipc.Connection()
 
 layouts = get_defaults(i3)
 
-def set_web_layout_to_tab(event):
+MANAGED_MARK = "MANAGED_WORKSPACE"
+
+def set_web_layout_to_tab(workspace):
         """ because i3 do not support different layouts (stack, tabbed, split) on different
         workspaces dynamically. https://github.com/i3/i3/issues/531 """
-        if event.current and event.current.num in layouts: # $ws_web. see ~/.config/i3/config
-            if len(event.current.nodes) == 0: # Skit if the workspace has children
-                i3.command(f'[con_id="{event.current.id}"] layout {layouts[event.current.num]}')
+        if workspace and workspace.num in layouts and len(workspace.nodes) > 1: # $ws_web. see ~/.config/i3/config
+            if MANAGED_MARK not in workspace.marks:
+                print(f"[!] Workspace {workspace.name} is now using {layouts[workspace.num]} layout")
+                i3.command(f'[con_id="{workspace.id}"] mark --add {MANAGED_MARK}')
+                i3.command(f'[con_id="{workspace.id}"] layout {layouts[workspace.num]}')
+
+
+
+# pylint: disable=unused-argument
+def on_window_focus(self, event):
+    focused = i3.get_tree().find_focused()
+    set_web_layout_to_tab(focused.workspace())
                
 # pylint: disable=unused-argument
 def on_workspace_focus(self, event):
         """ change web workspace to tabbed layout on focus """
-        set_web_layout_to_tab(event)
+        set_web_layout_to_tab(event.current)
 
 try:
         i3.on('workspace::focus', on_workspace_focus)
+        i3.on('window::focus', on_window_focus)
         i3.main()
 except KeyboardInterrupt:
         pass

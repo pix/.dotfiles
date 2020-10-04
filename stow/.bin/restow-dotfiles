@@ -38,6 +38,10 @@ for i in ~/.config/dotfiles/*; do
 	module="$(basename "${i}")"
 	stow "${module}"
 	case "${module}" in
+		themes)
+			update-custom-gtk-theme
+			process_templates "${module}"
+			;;
 		i3)
 			i3-config-templater
 			process_templates "${module}"

@@ -2,15 +2,21 @@
 
 import os
 import sys
-from lxml import etree
 import json
 import jinja2
 import fontawesome as fa
 import glob
 import libvirt
+import gi
 
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
 from dataclasses import dataclass
+from lxml import etree
 
+if not sys.warnoptions:
+    import warnings
+    warnings.simplefilter("ignore")
 
 @dataclass
 class Machine:
@@ -18,13 +24,42 @@ class Machine:
     nick: str = ""
     default: bool = False
 
+
 def json_load(path: str) -> dict:
     try:
-        with open(os.path.expanduser(path), 'r') as f:
+        with open(os.path.expanduser(path), "r") as f:
             return json.loads(f.read())
     except:
         return {}
 
+def hex_to_rgba(v):
+    color_rgba = [int(x*255) for x in [v.red, v.green, v.blue]]
+    color_hex = '#{:02x}{:02x}{:02x}'.format(*color_rgba)
+    return color_hex
+
+def gtk_theme_info():
+    window = Gtk.Window()
+    vbox = Gtk.VBox()
+    menubar = Gtk.MenuBar()
+    menuitem = Gtk.MenuItem()
+    menubar.add(menuitem)
+    vbox.add(menubar)
+    window.add(vbox)
+    window.show_all()
+
+    f_, b_, c_ = (
+        menubar.get_style_context().get_color(Gtk.StateType.NORMAL),
+        menubar.get_style_context().get_background_color(Gtk.StateType.NORMAL),
+        menuitem.get_style_context().get_background_color(Gtk.StateType.NORMAL),
+    )
+
+    # Print.get_style_context() context colors of widget class Gtk.Button
+    return {
+        "foreground": hex_to_rgba(f_),
+        "background": hex_to_rgba(b_),
+        "color": hex_to_rgba(c_),
+    }
+    window.destroy()
 
 def libvirt_machines():
     conn = libvirt.open("qemu:///system")
@@ -52,6 +87,7 @@ def libvirt_machines():
 
     return machines
 
+
 def fileglob(pathname):
     """ return list of matched files for glob """
     return glob.glob(os.path.expanduser(pathname))
@@ -74,6 +110,7 @@ def render(template_path, data, extensions, strict=False):
     # Add environ global
     env.globals["json"] = json_load
     env.globals["libvirt"] = libvirt_machines()
+    env.globals["gtk"] = gtk_theme_info()
     env.globals["hostname"] = os.uname().nodename
     env.globals["environ"] = lambda key: force_text(os.environ.get(key))
     env.globals["get_context"] = lambda: data

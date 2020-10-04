@@ -1,0 +1,17 @@
+#!/bin/bash
+
+get_theme() {
+	jq -r ".${1}" < ~/.config/i3/theme.json
+}
+get_color() {
+	jq -r ".colors.${1}" < ~/.cache/wal/colors.json
+}
+
+for gtk in ~/.themes/matcha-dark-custom/gtk-{2,3}.0/; do
+	pushd "${gtk}" > /dev/null
+	accent="$(get_color $(get_theme accent))"
+
+	for asset in assets.in/*; do
+		convert "${asset}" -alpha on -fill "${accent}" -fuzz 25% -opaque "#c0433d" "${asset/.in/}"
+	done
+done

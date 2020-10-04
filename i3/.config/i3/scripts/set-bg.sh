@@ -7,7 +7,7 @@ setbg() {
     sed "s/file=.*/file=$(echo $wallpaper | sed -e 's/[\/&]/\\&/g')/g" -i ~/.config/nitrogen/bg-saved.cfg
     nitrogen --restore
     wal -e -n -i "$@" >/dev/null 2>&1
-    i3-msg restart
+    restow-dotfiles
 }
 
 if [ -z "${1}" ]; then

@@ -26,8 +26,8 @@ exec_always $cmd_refresh
 
 set               $accent     {{ accent }}
 set               $urgent     {{ urgent }}
-set               $background {{ colors.special.background }}
-set               $foreground {{ colors.special.foreground }}
+set               $background {{ gtk.background }}
+set               $foreground {{ gtk.foreground }}
 set_from_resource $color0     color0     # black
 set_from_resource $color1     color1     # red
 set_from_resource $color2     color2     # green
@@ -159,15 +159,18 @@ bindsym --whole-window $mod+button5 floating disable
 bindsym $mod+Return exec --no-startup-id i3-sensible-terminal
 
 set $pip_style border pixel 4
+{{ bindsym("$alt+equal", 
+           'nop smart_picture_in_picture grow',
+           "Expand PIP window size") }}
+{{ bindsym("Shift+$alt+plus", 
+           'nop smart_picture_in_picture shrink', 
+           "Expand PIP window size") }}
 {{ bindsym("Control+Shift+plus", 
            'nop smart_picture_in_picture toggle', 
            "Toggle nop smart_picture_in_picture toggle globally") }}
 {{ bindsym("$mod+equal",
-           'mark --add PIP, $pip_style',
+           'mark --add --toggle PIP, $pip_style',
            "Mark this window as a PIP window") }}
-{{ bindsym("$mod+Shift+plus",
-           '[con_mark="PIP"] mark --add --toggle PIP, border normal',
-           "Unmark this PIP window") }}
 for_window [window_role="PictureInPicture"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, $pip_style
 for_window [con_mark="PIP"] floating enable, sticky enable, resize set 512 288, mark --toggle PIP, $pip_style
 
@@ -229,8 +232,6 @@ bindsym $mod+w layout toggle all, exec notify-send $osd_id '$mod + W: layout tog
 
 bindsym $mod+Shift+s exec ~/.config/i3/scripts/rofi-systemd
 
-# %%hotkey: Toggle tilling / floating mode %%
-bindsym $mod+Shift+space floating toggle
 # %%hotkey: Change focus between tiling / floating windows %%
 bindsym $mod+space focus mode_toggle
 # %%hotkey: Focus the parent container
@@ -461,13 +462,15 @@ for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
 for_window [instance="floating-border"] floating enable, border pixel 4
-for_window [class="Blueman-manager"] floating enable
-for_window [class="Eog"] floating enable
-for_window [class="flameshot"] floating enable
-for_window [class="Gnome-calendar"] floating enable
-for_window [class="Ghidra"] floating enable
-for_window [class="Pavucontrol"] floating enable, resize set 800 600, move window position center
-for_window [class="Pcmanfm"] floating enable, resize set 800 600, move window position center
+for_window [class="(?i)blueman-manager"] floating enable
+for_window [class="(?i)eog"] floating enable
+for_window [class="(?i)flameshot"] floating enable
+for_window [class="(?i)ghidra"] floating enable
+for_window [class="(?i)gnome-calendar"] floating enable
+for_window [class="(?i)lxappearance"] floating enable
+for_window [class="(?i)nitrogen"] floating enable
+for_window [class="(?i)pavucontrol"] floating enable, resize set 800 600, move window position center
+for_window [class="(?i)pcmanfm"] floating enable, resize set 800 600, move window position center
 
 
 # Burp configs
@@ -508,7 +511,11 @@ bindsym Shift+twosuperior exec $switch
 
 ########################################################################
 # Workspace: Firefox
-assign [class="Firefox"] $ws_web
+assign [instance="(?i)^firefart$"] $ws_web
+assign [instance="(?i)^firefox$"] $ws_web
+assign [class="(?i)^firefox$"] $ws_web
+assign [class="(?i)^navigator$"] $ws_web
+assign [class="(?i)^google-chrome"] $ws_web
 
 ########################################################################
 # Fake Update : Haha
@@ -532,7 +539,8 @@ assign [class="Virt-manager"] $ws_vm
 
 ########################################################################
 # Workspace: Code
-assign     [class="Code"] $ws_code
+assign     [class="(?i)^code$"]     $ws_code
+assign     [class="(?i)^code-oss$"] $ws_code
 
 ########################################################################
 # Workspace: Office
@@ -541,7 +549,7 @@ assign [instance="(?i)libreoffice"] $ws_office
 assign [class="(?i)soffice"]        $ws_office
 assign [class="(?i)libreoffice-"]   $ws_office
 assign [class="(?i)libreoffice.*"]  $ws_office
-assign [class="DesktopEditors"]     $ws_office
+assign [class="(?i)desktopeditors"] $ws_office
 
 ########################################################################
 # Volume
@@ -636,10 +644,9 @@ bar {
 # Start tools
 #
 
-exec i3-msg 'workspace --no-auto-back-and-forth $ws_web, append_layout ~/.config/i3/layouts/ws_web.json'
-exec i3-msg 'workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json, exec ~/.config/i3/layouts/ws1.run'
+bindsym Shift+F12 workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json, exec --no-startup-id ~/.config/i3/layouts/ws1.run
 
-exec --no-startup-id exec firefox --name Firefart
+exec --no-startup-id exec firefox --class Firefart
 
 exec_always --no-startup-id "systemctl --user restart user-session.target"
 exec_always --no-startup-id "systemctl --user start user-session-once.target"
