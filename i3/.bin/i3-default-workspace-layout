@@ -30,14 +30,25 @@ layouts = get_defaults(i3)
 
 MANAGED_MARK = "MANAGED_WORKSPACE"
 
+def non_floating_leaves(workspace):
+    return [w for w in workspace.leaves() if not w.floating in ["auto_on", "user_on"]]
+
+def reparent(workspace):
+    windows = non_floating_leaves(workspace)
+    for w in windows:
+        i3.command(f'[con_id={w.id}] floating enable')
+    for w in windows:
+        i3.command(f'[con_id={w.id}] floating disable')
+    i3.command(f'[con_id={workspace.id}] layout tabbed')
+
 def set_web_layout_to_tab(workspace):
         """ because i3 do not support different layouts (stack, tabbed, split) on different
         workspaces dynamically. https://github.com/i3/i3/issues/531 """
-        if workspace and workspace.num in layouts and len(workspace.nodes) > 1: # $ws_web. see ~/.config/i3/config
-            if MANAGED_MARK not in workspace.marks:
-                print(f"[!] Workspace {workspace.name} is now using {layouts[workspace.num]} layout")
-                i3.command(f'[con_id="{workspace.id}"] mark --add {MANAGED_MARK}')
-                i3.command(f'[con_id="{workspace.id}"] layout {layouts[workspace.num]}')
+        if workspace and workspace.num in layouts and len(non_floating_leaves(workspace)) > 1: # $ws_web. see ~/.config/i3/config
+            if any([w.parent.id != workspace.nodes[0].id for w in non_floating_leaves(workspace)]):
+                print(f'[*] reparenting windows in workspace: {workspace.num}')
+                reparent(workspace)
+
 
 
 

@@ -22,21 +22,15 @@ _process_templates() {
     	done
 }
 
+
 process_templates() {
 	module="${1}"
 	find "${module}/" \( -type f -o -type l  \) -iname '*.tpl' -print0 | _process_templates
 }
 
 
-stow stow
-process_templates stow
-
-# Copy post checkout script (not copied by stow)
-cp -f ~/.local/dotfiles/git-hooks/post-checkout .git/hooks/post-checkout
-
-for i in ~/.config/dotfiles/*; do
-	module="$(basename "${i}")"
-	stow "${module}"
+process_dependencies() {
+	module="${1}"
 	case "${module}" in
 		themes)
 			update-custom-gtk-theme
@@ -50,4 +44,23 @@ for i in ~/.config/dotfiles/*; do
 			process_templates "${module}"
 			;;
 	esac
+}
+
+
+stow stow
+process_templates stow
+
+# Copy post checkout script (not copied by stow)
+cp -f ~/.local/dotfiles/git-hooks/post-checkout .git/hooks/post-checkout
+
+if [ -n "${1-}" -a -f ~/.config/dotfiles/${1-} ]; then
+	stow "${1}"
+	process_dependencies "${1}"
+	exit 0
+fi
+
+for i in ~/.config/dotfiles/*; do
+	module="$(basename "${i}")"
+	stow "${module}"
+	process_dependencies "${module}"
 done

@@ -12,6 +12,6 @@ for gtk in ~/.themes/matcha-dark-custom/gtk-{2,3}.0/; do
 	accent="$(get_color $(get_theme accent))"
 
 	for asset in assets.in/*; do
-		convert "${asset}" -alpha on -fill "${accent}" -fuzz 25% -opaque "#c0433d" "${asset/.in/}"
+		convert "${asset}" -alpha on -fill "${accent}" -fuzz 15% -opaque "#c0422d"  -alpha on "${asset/.in/}"
 	done
 done
