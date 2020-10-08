@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [[ -n "${1-}" ]]; then
+	tmp_="$1"
+else
+	tmp_=$(mktemp --suffix=.png)
+fi
+
+mime="image/png"
+
+case "${tmp_}" in
+	*.png)
+		mime="image/png"
+		;;
+	*.jpg)
+		mime="image/png"
+		;;
+	*.html)
+		mime="text/html"
+		;;
+	*)
+		echo "Unsupported file extension"
+		exit 1
+		;;
+esac
+	
+xclip -selection clipboard -t $mime -o > $tmp_  && echo "Saved to: $tmp_"
+
+
+case "${mime}" in
+
+	image/*)
+		identify "${tmp_}"
+		;;
+	text/*)
+		wc < "${tmp_}"
+		;;
+esac
