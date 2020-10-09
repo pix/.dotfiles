@@ -453,6 +453,15 @@ bindsym $mod+b bar mode toggle
 # Default title
 for_window [class=".*"] title_format " %title (%instance, %class)"
 
+# Default borders
+for_window [tiling] border $border_no_floating
+for_window [floating] border $border_floating
+for_window [tiling_from="auto"] border $border_no_floating
+for_window [tiling_from="user"] border $border_no_floating
+
+# PIP
+for_window [floating con_mark="PIP"] border pixel 1
+
 # Default to floating fot these windows
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
@@ -461,7 +470,8 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-for_window [instance="floating-border"] floating enable, border pixel 4
+for_window [instance="(?i)floating"] floating enable
+for_window [instance="(?i)border-4"] border pixel 4
 for_window [class="(?i)blueman-manager"] floating enable
 for_window [class="(?i)eog"] floating enable
 for_window [class="(?i)flameshot"] floating enable
@@ -472,17 +482,11 @@ for_window [class="(?i)nitrogen"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="(?i)pcmanfm"] floating enable, resize set 800 600, move window position center
 
-
 # Burp configs
 assign     [class="burp-StartBurp"] $ws_hack
 for_window [class="burp-StartBurp"] move --no-auto-back-and-forth window to workspace $ws_hack
 no_focus   [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"]
 for_window [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"] floating enable
-
-for_window [floating] border $border_floating
-for_window [floating con_mark="PIP"] border pixel 1
-for_window [tiling] border $border_no_floating
-
 
 ########################################################################
 # Mark and goto
@@ -561,15 +565,15 @@ bindsym Print exec "flameshot launcher"
 bindsym $mod+p exec "rofi-autorandr"
 bindsym $mod+o exec "~/.bin/rofi-networkmenu -config ~/.config/rofi/config-right-menu.rasi"
 
-bindsym $mod+Shift+p exec "~/.config/i3/scripts/pulsemenu"
-bindsym XF86MonBrightnessUp exec "python ~/.config/i3/scripts/set-brightness +5"
-bindsym XF86MonBrightnessDown exec "python ~/.config/i3/scripts/set-brightness -5"
-bindsym XF86AudioRaiseVolume exec "amixer -q -D pulse set Master 5%+ unmute; killall -USR1 i3status py3status"
-bindsym XF86AudioLowerVolume exec "amixer -q -D pulse set Master 5%- unmute; killall -USR1 i3status py3status"
-bindsym XF86AudioMute exec        "amixer -q -D pulse set Master toggle; killall -SIGUSR1 i3status py3status"
-bindsym XF86AudioPrev exec        "playerctl previous"
-bindsym XF86AudioNext exec        "playerctl next"
-bindsym XF86AudioPlay exec        "playerctl play-pause"
+bindsym $mod+Shift+p exec "~/.bin/rofi-pulsemenu"
+bindsym Shift+XF86MonBrightnessUp exec "~/.bin/set-backlight-brightness +5"
+bindsym Shift+XF86MonBrightnessDown exec "~/.bin/set-backlight-brightness -5"
+bindsym Shift+XF86AudioRaiseVolume exec "amixer -q -D pulse set Master 5%+ unmute; killall -USR1 i3status py3status"
+bindsym Shift+XF86AudioLowerVolume exec "amixer -q -D pulse set Master 5%- unmute; killall -USR1 i3status py3status"
+bindsym Shift+XF86AudioMute exec        "amixer -q -D pulse set Master toggle; killall -SIGUSR1 i3status py3status"
+bindsym Shift+XF86AudioPrev exec        "playerctl previous"
+bindsym Shift+XF86AudioNext exec        "playerctl next"
+bindsym Shift+XF86AudioPlay exec        "playerctl play-pause"
 
 ########################################################################
 # Notification toggle

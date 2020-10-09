@@ -16,16 +16,14 @@
 Xft.dpi: 96
 
 ! special
-i3wm*background:    GTK_THEME_BACKGROUND
 i3wm*accent:        __accent_color
 i3wm*urgent:        __urgent_color
 
 ! urxvt settings
 !
 ! Override black
-URxvt*color0:       GTK_THEME_BACKGROUND
-URxvt*foreground:   #c5c8c6
-URxvt*background:   #1d1f21
+URxvt*color0:	    {{ gtk.background }}
+URxvt*background:   {{ gtk.background }}
 URxvt*cursorColor:  __accent_color
 
 ! URxvt*fontAlt: xft:Ubuntu Mono:pixelsize=13:antialias=false:hinting=true

@@ -13,7 +13,7 @@ for gtk in ~/.themes/matcha-dark-custom/gtk-{2,3}.0/; do
 
 	for asset in assets.in/*; do
 		convert "${asset}" -write MPR:orig \
-		     -alpha off -fuzz 15% -fill "${accent}" -opaque "#c0422d"  \
-		     MPR:orig -compose CopyOpacity -composite "${asset/.in/}"
+ 		     -alpha on -fuzz 20% -fill "${accent}" -opaque "#c0422d"  \
+ 		     MPR:orig -compose CopyOpacity -composite "${asset/.in/}"
 	done
 done
