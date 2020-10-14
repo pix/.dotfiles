@@ -137,10 +137,10 @@ def on_window_focus(i3: Connection, e) -> None:
 
     pip_window = get_pip_window(i3, e)
     
-    i3.command(f'[con_mark={FLOATING_MARK}] move window to workspace current')
     if pip_window is None:
         return
-
+    
+    i3.command(f'[con_mark={FLOATING_MARK}] move window to workspace current')
     pip_window.command(f"mark --add --toggle {CROSS_MARK}")
     cross = CROSS_MARK in pip_window.marks
     translate_window(i3, pip_window, cross=cross)

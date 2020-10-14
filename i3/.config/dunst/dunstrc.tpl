@@ -156,7 +156,7 @@ icon_position = right
 max_icon_size = 100
 
 # Paths to default icons.
-icon_folders = /usr/share/icons/Yaru/16x16/mimetypes/:/usr/share/icons/Yaru/48x48/status/:/usr/share/icons/Yaru/16x16/devices/:/usr/share/icons/Yaru/48x48/notifications/:/usr/share/icons/Yaru/48x48/emblems/
+icon_folders = /usr/share/icons/Adwaita/16x16/mimetypes/:/usr/share/icons/Adwaita/48x48/status/:/usr/share/icons/Adwaita/16x16/devices/:/usr/share/icons/Adwaita/48x48/notifications/:/usr/share/icons/Adwaita/48x48/emblems/
 
 frame_width = 3
 frame_color = "{{ accent }}"

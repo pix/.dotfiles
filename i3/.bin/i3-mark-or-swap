@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+import time
+import i3ipc
+
+MARK = "TO_SWAP"
+
+con = i3ipc.Connection()
+
+w = con.get_tree().find_marked(MARK)
+f = con.get_tree().find_focused()
+
+if w:
+    con.command(f"[con_mark={MARK}] border pixel 1")
+   
+    print(f.name)
+    if f and f.id != w[0].id:
+        con.command(f"swap container with mark {MARK}")
+    
+    con.command(f"[con_mark={MARK}] mark --toggle {MARK}")
+else:
+    con.command(f"mark {MARK}")
+    con.command(f"[con_mark={MARK}] border pixel 10")

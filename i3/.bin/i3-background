@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+
+# -----------------------------------------------
+# -----------------------------------------------
+
+import os
+import sys
+import glob
+import i3ipc
+import random
+import subprocess
+import argparse
+from pathlib import Path
+from rofi import Rofi
+from shutil import copyfile
+from urllib.parse import urlparse, unquote
+from urllib.request import url2pathname
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-b", "--background", dest="background", type=str)
+parser.add_argument("-w", "--workspace", default="current", dest="workspace", type=str)
+parser.add_argument("-d", "--daemon", dest="daemon_mode", action="store_true")
+parser.add_argument("-r", "--rofi", dest="rofi_menu", action="store_true")
+parser.add_argument("-x", "--delete", dest="delete", action="store_true", default=False)
+
+args = parser.parse_args()
+
+i3 = i3ipc.Connection()
+
+def fix_path(uri):
+    if not uri.startswith("file://"):
+        return uri
+
+    parsed = urlparse(uri)
+    host = "{0}{0}{mnt}{0}".format(os.path.sep, mnt=parsed.netloc)
+    return os.path.normpath(
+        os.path.join(host, url2pathname(unquote(parsed.path)))
+    )
+
+if args.background:
+    args.background = fix_path(args.background)
+
+class Memoize:
+    def __init__(self, fn):
+        self.fn = fn
+        self.memo = {}
+
+    def __call__(self, *args):
+        if args != self.memo:
+            self.memo = args
+            self.fn(*args)
+
+def get_background_for_desktop(background_num):
+    p = Path("~/.cache/wallpaper")
+    current = p.expanduser() / f"bg-{background_num}.png"
+    default = p.expanduser() / f"bg-default.png"
+
+    background = None
+
+    if current.exists():
+        background = str(current)
+    elif default.exists():
+        background = str(default)
+
+    return background
+
+@Memoize
+def apply_xorg_backgrounds(workspaces):
+
+    bgs = [get_background_for_desktop(w) for w in workspaces if get_background_for_desktop(w)]
+    if len(bgs) > 0:
+        subprocess.run(["feh", "--bg-fill", *bgs])
+        print(f"[*] using bgs: {bgs}")
+
+def filter_paths(paths):
+    return sorted(filter(lambda f: Path(f).is_file(), paths))
+
+def get_all_outputs():
+    # Sorts the outputs, should work for one or two screens
+    # Is there a way to get xinerama output index from i3 ?
+    return sorted(
+        filter(lambda o: o.current_workspace and o.active, i3.get_outputs()),
+        key=lambda out: out.rect.x + out.rect.y,
+    )
+
+def apply_backgrounds():
+    workspaces = [int(out.current_workspace.split(":")[0]) for out in get_all_outputs()]
+
+    apply_xorg_backgrounds(workspaces)
+
+def sets_background_for_desktop(num, background, delete=False):
+    current_workspace_num = i3.get_tree().find_focused().workspace().num
+    if num == "current":
+        background_num = current_workspace_num
+    else:
+        background_num = num
+
+    p = Path("~/.cache/wallpaper")
+    current = p.expanduser() / f"bg-{background_num}.png"
+
+    if delete:
+        print(f"[!] deleting: {current}")
+        os.remove(current)
+        return
+    else:
+        print(f"[*] setting bg: {current}")
+
+    if background.endswith(".png"):
+        copyfile(background, str(current))
+    else:
+        subprocess.run(["ffmpeg", "-y", "-i", background, str(current)])
+
+if args.daemon_mode:
+    apply_backgrounds()
+
+    def on_workspace_focus(self, event):
+        apply_backgrounds()
+
+    # Subscribe to events
+    i3.on("workspace::focus", on_workspace_focus)
+    i3.main()
+
+elif args.rofi_menu:
+    r = Rofi()
+    if not args.background and not args.delete:
+        
+        specials = ["** random **"]
+        
+        backgrounds = glob.glob(
+            os.path.expanduser("~/Pictures/Wallpaper/**"), recursive=True
+        )
+        backgrounds = filter_paths(backgrounds)
+        backgrounds = [*backgrounds, *specials]
+
+        index, key = r.select("Which background ?", backgrounds)
+        background = backgrounds[index]
+
+        for s in specials:
+            if s in backgrounds:
+                backgrounds.remove(s)
+
+        if background == "** random **":
+            background = random.choice(backgrounds)
+    else:
+        background = args.background
+
+    desktops = [str(x) for x in ["current", *range(1, 21), "default"]]
+    index, key = r.select(
+        f"Which desktop {'to remove' if args.delete else ''} ?", desktops
+    )
+    if desktops[index] is None:
+        sys.exit(0)
+
+    sets_background_for_desktop(desktops[index], background, args.delete)
+    apply_backgrounds()
+
+elif args.background or args.delete:
+    sets_background_for_desktop(args.workspace, args.background, args.delete)
+    apply_backgrounds()

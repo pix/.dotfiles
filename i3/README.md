@@ -18,7 +18,9 @@ for action in enable \
         user-download-xkcd.timer \
         user-flameshot.service \
         user-i3-alternating-layouts.service \
+        user-i3-background.service \
         user-i3-default-workspace-layout.service \
+        user-i3-icons.service \
         user-i3-smart-picture-in-picture.service \
         user-i3-workspace-back-forth.service \
         user-mpris-notify.service \

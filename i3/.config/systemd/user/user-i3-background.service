@@ -1,0 +1,13 @@
+[Unit]
+Description=i3 background daemon
+PartOf=user-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.bin/i3-background -d
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=user-session.target
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=i3 workspace icons daemon
+PartOf=user-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.bin/i3-icons
+Restart=always
+RestartSec=1s
+
+[Install]
+WantedBy=user-session.target
+

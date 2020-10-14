@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+import getopt
+import i3ipc
+import sys
+import os
+
+
+def find_parent(i3, window_id):
+    """
+        Find the parent of a given window id
+    """
+
+    def finder(con, parent):
+        if con.id == window_id:
+            return parent
+        for node in con.nodes:
+            res = finder(node, con)
+            if res:
+                return res
+        return None
+
+    return finder(i3.get_tree(), None)
+
+
+con = i3ipc.Connection()
+
+workspace = con.get_tree().find_focused().workspace()
+
+leaves = list(workspace.leaves())
+
+def swap_two(i3, win1, win2):
+    win1.command("mark --add TO_SWAP")
+    win2.command('swap container with mark TO_SWAP')
+    i3.command("[con_mark=TO_SWAP] mark --add --toggle TO_SWAP")
+
+def swap(i3, *windows):
+    if len(windows) < 2:
+        return None
+
+    first, second, *tail = windows
+
+    swap_two(i3, first, second)
+
+    swap(i3, second, *tail)
+
+
+swap(con, *leaves)

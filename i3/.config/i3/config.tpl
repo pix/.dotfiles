@@ -15,14 +15,11 @@ exec_always --no-startup-id ~/.bin/i3-config-templater
 
 set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
-set $cmd_refresh ~/.config/i3/scripts/wal-nitrogen.sh
 set $cmd_locker exec --no-startup-id xautolock -locknow, exec --no-startup-id xset dpms force off
+set $cmd_quick_browser qutebrowser --qt-arg name floating-border-4-floating-browser
 
 set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low
-
-exec_always $cmd_refresh
-
 
 set               $accent     {{ accent }}
 set               $urgent     {{ urgent }}
@@ -49,6 +46,7 @@ set $alt Mod1
 set $mod Mod4
 
 # Set default monitors
+
 set $monitor_1 DP1-1
 set $monitor_2 DP1-2
 set $monitor_3 DP1-3
@@ -58,39 +56,52 @@ set $monitor_3 DP1-3
 #
 # workspace_ignore_focus_last 1
 # workspace_ignore_focus_last 3
-set $ws1 "1:{{ fa['terminal']          }}"
-set $ws2 "2:{{ fa['internet-explorer'] }}"
-set $ws3 "3:{{ fa['envelope-open']     }}"
-set $ws4 "4:{{ fa['laptop']           }}"
-set $ws5 "5:{{ fa['code']              }}"
-set $ws6 "6:{{ fa['file-word']         }}"
-set $ws7 "7:{{ fa['bug']               }}"
-set $ws8 "8:"
-set $ws9 "9:"
-set $ws10 "10:"
-set $ws11 "11"
-set $ws12 "12"
-set $ws13 "13"
-set $ws14 "14"
-set $ws15 "15"
-set $ws16 "16"
-set $ws17 "17"
-set $ws18 "18"
-set $ws19 "19"
-set $ws20 "20"
-
-set $ws_web    "2:{{ fa['internet-explorer'] }}"
 # workspace_default_layout 2 tabbed
-set $ws_mail   "3:{{ fa['envelope-open']     }}"
 # workspace_default_layout 3 tabbed
-set $ws_vm     "4:{{ fa['laptop']           }}"
 # workspace_default_layout 4 tabbed
-set $ws_code   "5:{{ fa['code']              }}"
 # workspace_default_layout 5 tabbed
-set $ws_office "6:{{ fa['file-word']         }}"
 # workspace_default_layout 6 tabbed
-set $ws_hack   "7:{{ fa['bug']               }}"
 # workspace_default_layout 7 tabbed
+# i3-icons workspace 1 {{ fa['terminal']          }}
+# i3-icons workspace 2 {{ fa['internet-explorer'] }}
+# i3-icons workspace 3 {{ fa['envelope-open']     }}
+# i3-icons workspace 4 {{ fa['laptop']            }}
+# i3-icons workspace 5 {{ fa['code']              }}
+# i3-icons workspace 6 {{ fa['file-word']         }}
+# i3-icons workspace 7 {{ fa['bug']               }}
+# i3-icons class bloodhound {{ fa['sitemap']   }}
+# i3-icons class qutebrowser {{ fa['internet-explorer'] }}
+# i3-icons title r"(msfconsole|metasploit)" {{ fa['redhat'] }}
+## i3-icons title pwn3 {{ fa['bug'] }}
+
+set $ws1 workspace number 1
+set $ws1_name 1
+set $ws2 workspace number 2
+set $ws3 workspace number 3
+set $ws4 workspace number 4
+set $ws5 workspace number 5
+set $ws6 workspace number 6
+set $ws7 workspace number 7
+set $ws8 workspace number 8
+set $ws9 workspace number 9
+set $ws10 workspace number 10
+set $ws11 workspace number 11
+set $ws12 workspace number 12
+set $ws13 workspace number 13
+set $ws14 workspace number 14
+set $ws15 workspace number 15
+set $ws16 workspace number 16
+set $ws17 workspace number 17
+set $ws18 workspace number 18
+set $ws19 workspace number 19
+set $ws20 workspace number 20
+
+set $ws_web    workspace number 2
+set $ws_mail   workspace number 3
+set $ws_vm     workspace number 4
+set $ws_code   workspace number 5
+set $ws_office workspace number 6
+set $ws_hack   workspace number 7
 
 set $border_floating normal 2
 set $border_no_floating pixel 1
@@ -154,6 +165,11 @@ bindsym --whole-window $mod+button4 exec ~/.bin/i3-pop
 # %%hotkey: Toggle floating off %%
 bindsym --whole-window $mod+button5 floating disable
 
+# %%hotkey: Decrease transparency %%
+bindsym --whole-window $mod+Shift+button5 exec --no-startup-id transset-df -a --min 0.25 --dec 0.05
+# %%hotkey: Increase transparency %%
+bindsym --whole-window $mod+Shift+button4 exec --no-startup-id transset-df -a --inc 0.05
+
 # start a terminal
 # %%hotkey: Start a terminal %%
 bindsym $mod+Return exec --no-startup-id i3-sensible-terminal
@@ -177,8 +193,6 @@ for_window [con_mark="PIP"] floating enable, sticky enable, resize set 512 288, 
 # kill focused window
 # %%hotkey: Kill focused window %%
 bindsym $mod+Shift+k kill
-# %%hotkey: Kill focused window %%
-bindsym $alt+F4      kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
@@ -229,7 +243,10 @@ bindsym $mod+z layout tabbed, exec notify-send $osd_id '$mod + Z: layout tabbed'
 bindsym $mod+e layout toggle split, exec notify-send $osd_id '$mod + E: layout split' '$bindings'
 # %%hotkey: Toggle all layout mode %%
 bindsym $mod+w layout toggle all, exec notify-send $osd_id '$mod + W: layout toggle all' '$bindings'
+# %%hotkey: Reparent all windows %%
+bindsym $mod+Shift+w nop reparent
 
+# %%hotkey: Manage Systemd services %%
 bindsym $mod+Shift+s exec ~/.config/i3/scripts/rofi-systemd
 
 # %%hotkey: Change focus between tiling / floating windows %%
@@ -257,36 +274,35 @@ bindsym $mod+Control+Down move workspace to output down
 # Arrange window for 3 screens
 #
 # %%hotkey: Send workspace/apps where they belong at work %%
-bindsym $mod+a exec $cmd_refresh, \
-               exec --no-startup-id autorandr -f -c,                 \
+bindsym $mod+a exec --no-startup-id autorandr -f -c,                \
                \
-               workspace $ws1, move workspace to output $monitor_2, \
-               workspace $ws2, move workspace to output $monitor_1, \
-               workspace $ws3, move workspace to output $monitor_3, \
+               $ws1, move workspace to output $monitor_2, \
+               $ws2, move workspace to output $monitor_1, \
+               $ws3, move workspace to output $monitor_3, \
                \
-               workspace $ws4, move workspace to output $monitor_3, \
-               workspace $ws5, move workspace to output $monitor_3, \
-               workspace $ws6, move workspace to output $monitor_3, \
+               $ws4, move workspace to output $monitor_3, \
+               $ws5, move workspace to output $monitor_3, \
+               $ws6, move workspace to output $monitor_3, \
                \
-               workspace $ws7, move workspace to output $monitor_3, \
-               workspace $ws8, move workspace to output $monitor_3, \
-               workspace $ws9, move workspace to output $monitor_3, \
+               $ws7, move workspace to output $monitor_3, \
+               $ws8, move workspace to output $monitor_3, \
+               $ws9, move workspace to output $monitor_3, \
                \
-               workspace $ws10, move workspace to output $monitor_2, \
-               workspace $ws11, move workspace to output $monitor_3, \
-               workspace $ws12, move workspace to output $monitor_3, \
-               workspace $ws13, move workspace to output $monitor_3, \
-               workspace $ws14, move workspace to output $monitor_3, \
-               workspace $ws15, move workspace to output $monitor_3, \
-               workspace $ws16, move workspace to output $monitor_3, \
-               workspace $ws17, move workspace to output $monitor_3, \
-               workspace $ws18, move workspace to output $monitor_3, \
-               workspace $ws19, move workspace to output $monitor_3, \
-               workspace $ws20, move workspace to output $monitor_3, \
+               $ws10, move workspace to output $monitor_2, \
+               $ws11, move workspace to output $monitor_3, \
+               $ws12, move workspace to output $monitor_3, \
+               $ws13, move workspace to output $monitor_3, \
+               $ws14, move workspace to output $monitor_3, \
+               $ws15, move workspace to output $monitor_3, \
+               $ws16, move workspace to output $monitor_3, \
+               $ws17, move workspace to output $monitor_3, \
+               $ws18, move workspace to output $monitor_3, \
+               $ws19, move workspace to output $monitor_3, \
+               $ws20, move workspace to output $monitor_3, \
                \
-               workspace $ws2, \
-               workspace $ws3, \
-               workspace $ws1, \
+               $ws2, \
+               $ws3, \
+               $ws1, \
                \
                exec --no-startup-id ~/.bin/i3-config-templater
 
@@ -331,106 +347,106 @@ workspace_auto_back_and_forth yes
 # %%hotkey: Goto last workspace %%
 bindsym $mod+1   nop workspace focus-last
 # %%hotkey: Goto workspace 2 %%
-bindsym $mod+2   workspace $ws2
+bindsym $mod+2   $ws2
 # %%hotkey: Goto workspace 3 %%
-bindsym $mod+3   workspace $ws3
+bindsym $mod+3   $ws3
 # %%hotkey: Goto workspace 4 %%
-bindsym $mod+4   workspace $ws4
+bindsym $mod+4   $ws4
 # %%hotkey: Goto workspace 5 %%
-bindsym $mod+5   workspace $ws5
+bindsym $mod+5   $ws5
 # %%hotkey: Goto workspace 6 %%
-bindsym $mod+6   workspace $ws6
+bindsym $mod+6   $ws6
 # %%hotkey: Goto workspace 7 %%
-bindsym $mod+7   workspace $ws7
+bindsym $mod+7   $ws7
 # %%hotkey: Goto workspace 8 %%
-bindsym $mod+8   workspace $ws8
+bindsym $mod+8   $ws8
 # %%hotkey: Goto workspace 9 %%
-bindsym $mod+9   workspace $ws9
+bindsym $mod+9   $ws9
 # %%hotkey: Goto workspace 10 %%
-bindsym $mod+0   workspace $ws10
+bindsym $mod+0   $ws10
 # %%hotkey: Goto workspace 11 %%
-bindsym $mod+F1  workspace $ws11
+bindsym $mod+F1  $ws11
 # %%hotkey: Goto workspace 12 %%
-bindsym $mod+F2  workspace $ws12
+bindsym $mod+F2  $ws12
 # %%hotkey: Goto workspace 13 %%
-bindsym $mod+F3  workspace $ws13
+bindsym $mod+F3  $ws13
 # %%hotkey: Goto workspace 14 %%
-bindsym $mod+F4  workspace $ws14
+bindsym $mod+F4  $ws14
 # %%hotkey: Goto workspace 15 %%
-bindsym $mod+F5  workspace $ws15
+bindsym $mod+F5  $ws15
 # %%hotkey: Goto workspace 16 %%
-bindsym $mod+F6  workspace $ws16
+bindsym $mod+F6  $ws16
 # %%hotkey: Goto workspace 17 %%
-bindsym $mod+F7  workspace $ws17
+bindsym $mod+F7  $ws17
 # %%hotkey: Goto workspace 18 %%
-bindsym $mod+F8  workspace $ws18
+bindsym $mod+F8  $ws18
 # %%hotkey: Goto workspace 19 %%
-bindsym $mod+F9  workspace $ws19
+bindsym $mod+F9  $ws19
 # %%hotkey: Goto workspace 20 %%
-bindsym $mod+F10 workspace $ws20
+bindsym $mod+F10 $ws20
 
 # move focused container to workspace
 # %%hotkey: Move focused container and go to workspace 1 %%
-bindsym $mod+Shift+1   move container to workspace $ws1;  workspace $ws1
+bindsym $mod+Shift+1   move container to $ws1;  $ws1
 # %%hotkey: Move focused container and go to workspace 2 %%
-bindsym $mod+Shift+2   move container to workspace $ws2;  workspace $ws2
+bindsym $mod+Shift+2   move container to $ws2;  $ws2
 # %%hotkey: Move focused container and go to workspace 3 %%
-bindsym $mod+Shift+3   move container to workspace $ws3;  workspace $ws3
+bindsym $mod+Shift+3   move container to $ws3;  $ws3
 # %%hotkey: Move focused container and go to workspace 4 %%
-bindsym $mod+Shift+4   move container to workspace $ws4;  workspace $ws4
+bindsym $mod+Shift+4   move container to $ws4;  $ws4
 # %%hotkey: Move focused container and go to workspace 5 %%
-bindsym $mod+Shift+5   move container to workspace $ws5;  workspace $ws5
+bindsym $mod+Shift+5   move container to $ws5;  $ws5
 # %%hotkey: Move focused container and go to workspace 6 %%
-bindsym $mod+Shift+6   move container to workspace $ws6;  workspace $ws6
+bindsym $mod+Shift+6   move container to $ws6;  $ws6
 # %%hotkey: Move focused container and go to workspace 7 %%
-bindsym $mod+Shift+7   move container to workspace $ws7;  workspace $ws7
+bindsym $mod+Shift+7   move container to $ws7;  $ws7
 # %%hotkey: Move focused container and go to workspace 8 %%
-bindsym $mod+Shift+8   move container to workspace $ws8;  workspace $ws8
+bindsym $mod+Shift+8   move container to $ws8;  $ws8
 # %%hotkey: Move focused container and go to workspace 9 %%
-bindsym $mod+Shift+9   move container to workspace $ws9;  workspace $ws9
+bindsym $mod+Shift+9   move container to $ws9;  $ws9
 # %%hotkey: Move focused container and go to workspace 10 %%
-bindsym $mod+Shift+0   move container to workspace $ws10; workspace $ws10
+bindsym $mod+Shift+0   move container to $ws10; $ws10
 # %%hotkey: Move focused container and go to workspace 11 %%
-bindsym $mod+Shift+F1  move container to workspace $ws11; workspace $ws11
+bindsym $mod+Shift+F1  move container to $ws11; $ws11
 # %%hotkey: Move focused container and go to workspace 12 %%
-bindsym $mod+Shift+F2  move container to workspace $ws12; workspace $ws12
+bindsym $mod+Shift+F2  move container to $ws12; $ws12
 # %%hotkey: Move focused container and go to workspace 13 %%
-bindsym $mod+Shift+F3  move container to workspace $ws13; workspace $ws13
+bindsym $mod+Shift+F3  move container to $ws13; $ws13
 # %%hotkey: Move focused container and go to workspace 14 %%
-bindsym $mod+Shift+F4  move container to workspace $ws14; workspace $ws14
+bindsym $mod+Shift+F4  move container to $ws14; $ws14
 # %%hotkey: Move focused container and go to workspace 15 %%
-bindsym $mod+Shift+F5  move container to workspace $ws15; workspace $ws15
+bindsym $mod+Shift+F5  move container to $ws15; $ws15
 # %%hotkey: Move focused container and go to workspace 16 %%
-bindsym $mod+Shift+F6  move container to workspace $ws16; workspace $ws16
+bindsym $mod+Shift+F6  move container to $ws16; $ws16
 # %%hotkey: Move focused container and go to workspace 17 %%
-bindsym $mod+Shift+F7  move container to workspace $ws17; workspace $ws17
+bindsym $mod+Shift+F7  move container to $ws17; $ws17
 # %%hotkey: Move focused container and go to workspace 18 %%
-bindsym $mod+Shift+F8  move container to workspace $ws18; workspace $ws18
+bindsym $mod+Shift+F8  move container to $ws18; $ws18
 # %%hotkey: Move focused container and go to workspace 19 %%
-bindsym $mod+Shift+F9  move container to workspace $ws19; workspace $ws19
+bindsym $mod+Shift+F9  move container to $ws19; $ws19
 # %%hotkey: Move focused container and go to workspace 20 %%
-bindsym $mod+Shift+F10 move container to workspace $ws20; workspace $ws20
+bindsym $mod+Shift+F10 move container to $ws20; $ws20
 
-# %%hotkey: Activate workspaces 11/12/13 on output 1/2/3 %%
-bindsym $alt+F1 workspace --no-auto-back-and-forth $ws11, \
-                workspace --no-auto-back-and-forth $ws12, \
-                workspace --no-auto-back-and-forth $ws13
+set $instant_layout ~/.virtualenvs/i3/bin/i3-instant-layout
 
-# %%hotkey: Activate workspaces 14/15/16 on output 1/2/3 %%
-bindsym $alt+F2 workspace --no-auto-back-and-forth $ws14, \
-                workspace --no-auto-back-and-forth $ws15, \
-                workspace --no-auto-back-and-forth $ws16
+# %%hotkey: Cycle through all windows %%
+bindsym $alt+Escape exec ~/.bin/i3-cycle-all
+# %%hotkey: Automatically apply a layout %%
+bindsym $alt+F1 exec $instant_layout --list | rofi -dmenu -i | $instant_layout -
+# %%hotkey: Mark or swap the current container %%
+bindsym $alt+F2 exec ~/.bin/i3-mark-or-swap
+# %%hotkey: Toggles the current default layout for this container %%
+bindsym $alt+F3 nop set-layout toggle
+# %%hotkey: Kill focused window %%
+bindsym $alt+F4      kill
+# %%hotkey: Launches xkill %%
+bindsym $alt+F5 exec --no-startup-id xkill
+# %%hotkey: Launches terminal layout %%
+bindsym $alt+F12 append_layout ~/.config/i3/layouts/ws1.json, exec --no-startup-id ~/.config/i3/layouts/ws1.run
 
-# %%hotkey: Activate workspaces 17/18/19 on output 1/2/3 %%
-bindsym $alt+F3 workspace --no-auto-back-and-forth $ws17, \
-                workspace --no-auto-back-and-forth $ws18, \
-                workspace --no-auto-back-and-forth $ws19
-########################################################################
+
 # i3 Controls
-
 # reload the configuration file
-# %%hotkey: Reload the configuration file %%
-bindsym $mod+Shift+c exec "$cmd_refresh", reload
 # %%hotkey: Restart i3 inplace (preserves your layout/session, can be used to upgrade i3) %%
 bindsym $mod+Shift+r restart
 # %%hotkey: Exit i3 (logs you out of your X session) %%
@@ -445,7 +461,7 @@ bindsym $mod+Shift+f floating toggle
 ########################################################################
 # Bar settings
 # %%hotkey: Toggle primary bar
-bindsym $mod+b bar mode toggle
+bindsym $mod+b exec --no-startup-id "$cmd_quick_browser"
 
 ########################################################################
 # Default window settings
@@ -472,6 +488,7 @@ for_window [window_type="menu"] floating enable
 
 for_window [instance="(?i)floating"] floating enable
 for_window [instance="(?i)border-4"] border pixel 4
+for_window [instance="(?i)floating-browser"] floating-browser
 for_window [class="(?i)blueman-manager"] floating enable
 for_window [class="(?i)eog"] floating enable
 for_window [class="(?i)flameshot"] floating enable
@@ -484,7 +501,7 @@ for_window [class="(?i)pcmanfm"] floating enable, resize set 800 600, move windo
 
 # Burp configs
 assign     [class="burp-StartBurp"] $ws_hack
-for_window [class="burp-StartBurp"] move --no-auto-back-and-forth window to workspace $ws_hack
+for_window [class="burp-StartBurp"] move --no-auto-back-and-forth window to $ws_hack
 no_focus   [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"]
 for_window [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"] floating enable
 
@@ -510,7 +527,7 @@ bindsym $alt+twosuperior exec ~/.bin/i3scratch
 bindsym $mod+twosuperior move scratchpad
 assign [instance="ws1"] $ws1
 # %%hotkey: Activate $ws1 on current output %%
-bindsym twosuperior [workspace=$ws1] move workspace to output current, workspace $ws1
+bindsym twosuperior [workspace=$ws1_name] move workspace to output current, $ws1
 bindsym Shift+twosuperior exec $switch
 
 ########################################################################
@@ -564,6 +581,9 @@ bindsym $mod+End exec "flameshot gui"
 bindsym Print exec "flameshot launcher"
 bindsym $mod+p exec "rofi-autorandr"
 bindsym $mod+o exec "~/.bin/rofi-networkmenu -config ~/.config/rofi/config-right-menu.rasi"
+bindsym $mod+i exec "~/.bin/i3-background -r"
+bindsym $mod+Shift+i exec "~/.bin/i3-background -r -x"
+bindsym $mod+u exec "~/.bin/i3-rofi-abitbol"
 
 bindsym $mod+Shift+p exec "~/.bin/rofi-pulsemenu"
 bindsym Shift+XF86MonBrightnessUp exec "~/.bin/set-backlight-brightness +5"
@@ -647,8 +667,6 @@ bar {
 ########################################################################
 # Start tools
 #
-
-bindsym Shift+F12 workspace --no-auto-back-and-forth $ws1, append_layout ~/.config/i3/layouts/ws1.json, exec --no-startup-id ~/.config/i3/layouts/ws1.run
 
 exec --no-startup-id exec firefox --class Firefart
 

@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+
+import pyinotify
+import i3ipc
+import sys
+import re
+import os
+
+con = i3ipc.Connection()
+
+class ConfigEventHandler(pyinotify.ProcessEvent):
+
+    def __init__(self, watched_files, **kw):
+        self.watched_files = watched_files
+        super(ConfigEventHandler, self).__init__()
+
+    def process_default(self, event):
+        print(f"[*] config file updated: {event.pathname}")
+        os._exit(0)
+
+wm = pyinotify.WatchManager()
+# watch all config files, and plugin config files
+watched_files = [
+    __file__,
+    con.get_version().loaded_config_file_name,
+]
+
+def get_config(conn):
+    regex_ignore = re.compile(r"^# i3-icons ignore (.+)$")
+    regex_static = re.compile(r"^# i3-icons workspace (\d+) (.*)$")
+    regex_class = re.compile(r"^# i3-icons (class|title) (?:r\"((?:(?!(?<!\\)\").)*)\"|(\S*)) (.*)$")
+    version = conn.get_version()
+    defaults = {"ignores": [], "workspaces": {}, "classes": {}, "titles": {}}
+    
+    files = ["/etc/i3icons2.config", "~/.config/i3/icons.config"]
+    for f in files:
+        watched_files.append(f)
+        path = os.path.expanduser(f)
+
+        if not os.path.exists(path):
+            continue
+
+        with open(path, "r") as config:
+            for line in config.readlines():
+                items = line.strip().split("=")
+                if len(items) == 2:
+                    defaults["classes"][items[0].lower()] = items[1]
+
+    
+    with open(version.loaded_config_file_name, "r") as config:
+        for line in config.readlines():
+            m = regex_ignore.match(line)
+            s = regex_static.match(line)
+            k = regex_class.match(line)
+            if m:
+                print(f"[ ] {m.group(0)}")
+                try:
+                    ignores = int(m.group(1))
+                    for i in ignores.split(" "):
+                        if i.isdigit():
+                            defaults["ignore"].append(int(i))
+                except:
+                    pass
+            elif s:
+                print(f"[ ] {s.group(0)}")
+                try:
+                    workspace = s.group(1)
+                    icon = s.group(2).strip()
+
+                    if workspace.isdigit():
+                        defaults["workspaces"][int(workspace)] = icon
+                except:
+                    pass
+            elif k:
+                print(f"[ ] {k.group(0)}")
+                try:
+                    target = k.group(1).strip().lower()
+                    regex = (k.group(2) or "").strip()
+                    class_ = (k.group(3) or "").strip().lower()
+                    arg = k.group(4).strip()
+
+                    if target == "class":
+                        defaults["classes"][class_] = arg
+                    elif target == "title":
+                        try:
+                            if len(regex) > 0:
+                                defaults['titles'][re.compile(regex)] = arg
+                            elif len(class_) > 0:
+                                defaults['titles'][class_] = arg
+                        except:
+                            print(f"[!] unable to parse: {k.group(0)}")
+                except Exception as e:
+                    # raise e
+                    pass
+
+    return defaults
+
+
+config = get_config(con)
+
+def on_workspace(ipc, event):
+    return on_window(ipc, event, event.current)
+
+def safe_worskpace_rename(ipc, workspace, name):
+    if workspace.name != name:
+        ipc.command(
+                f'rename workspace "{workspace.name}" to "{name}"'
+        )
+
+def on_window(ipc, event, workspace = None):
+    focused = ipc.get_tree().find_focused()
+    
+    if not workspace:
+        workspace = focused.workspace()
+
+    if not workspace:
+        return
+
+    if workspace.num in config["workspaces"]:
+        new_name = f'{workspace.num}:{config["workspaces"][workspace.num]}'
+        safe_worskpace_rename(ipc, workspace, new_name)
+        return
+
+    if workspace.num in config["ignores"]:
+        return
+
+    if workspace.num < 1:
+        return
+
+    leaves = workspace.leaves()
+
+    if len(leaves) == 0:
+        return
+
+    leaves = sorted(workspace.leaves(), key=lambda l: l.rect.height * l.rect.width)
+    leaf = leaves[-1]
+
+    if (
+        focused is not None
+        and focused.window_class
+        and focused.rect.width == leaf.rect.width
+        and focused.rect.height == leaf.rect.height
+    ):
+        leaf = focused
+
+    
+
+    icon = ""
+    title = leaf.window_class
+
+    for title_, arg_ in config['titles'].items():
+        if isinstance(title_, re.Pattern) and leaf.name:
+            if title_.match(leaf.name):
+                icon = arg_
+                title = ''
+                break
+        else:
+            if title_ in leaf.name:
+                icon = arg_
+                title = ''
+                break
+    else:
+        if leaf.window_class and leaf.window_class.lower() in config["classes"]:
+            icon = config["classes"][leaf.window_class.lower()]
+            title = ""
+
+    new_name = f'{workspace.num}:{workspace.num} {icon}{title}'
+    safe_worskpace_rename(ipc, workspace, new_name)
+
+for event in [i3ipc.Event.WINDOW_NEW,
+        i3ipc.Event.WINDOW_CLOSE,
+        i3ipc.Event.WINDOW_TITLE,
+        i3ipc.Event.WINDOW_FOCUS]:
+    con.on(event, on_window)
+
+for event in [i3ipc.Event.WORKSPACE_FOCUS,
+        i3ipc.Event.WORKSPACE_EMPTY,
+        i3ipc.Event.WORKSPACE_INIT,
+        i3ipc.Event.WORKSPACE_RELOAD]:
+    con.on(event, on_workspace)
+
+for path in watched_files:
+    path = os.path.expanduser(path)
+    if os.path.exists(path):
+        wm.add_watch(path, pyinotify.IN_CLOSE_WRITE, rec=True)
+
+eh = ConfigEventHandler(watched_files)
+# notifier
+notifier = pyinotify.ThreadedNotifier(wm, eh)
+notifier.start()
+
+con.main()

@@ -4,12 +4,16 @@
 import re
 import sys
 import i3ipc
+import notify2
+
+notify2.init("i3-default-workspace-layout")
+notification = notify2.Notification("", "", "notification-message-im")
 
 def get_defaults(conn):
     regex = re.compile(r"^# workspace_default_layout (\d+) (\w+)$")
-    version = conn.get_version();
+    version = conn.get_version()
     defaults = {}
-    with open(version.loaded_config_file_name, 'r') as config:
+    with open(version.loaded_config_file_name, "r") as config:
         for line in config.readlines():
             m = regex.match(line)
             if m:
@@ -30,41 +34,131 @@ layouts = get_defaults(i3)
 
 MANAGED_MARK = "MANAGED_WORKSPACE"
 
+
 def non_floating_leaves(workspace):
     return [w for w in workspace.leaves() if not w.floating in ["auto_on", "user_on"]]
 
-def reparent(workspace):
+
+def reparent(workspace, layout="tabbed"):
     windows = non_floating_leaves(workspace)
     for w in windows:
-        i3.command(f'[con_id={w.id}] floating enable')
+        i3.command(f"[con_id={w.id}] floating enable")
     for w in windows:
-        i3.command(f'[con_id={w.id}] floating disable')
-    i3.command(f'[con_id={workspace.id}] layout tabbed')
+        i3.command(f"[con_id={w.id}] floating disable")
+    i3.command(f"[con_id={workspace.id}] layout {layout}")
+
 
 def set_web_layout_to_tab(workspace):
-        """ because i3 do not support different layouts (stack, tabbed, split) on different
-        workspaces dynamically. https://github.com/i3/i3/issues/531 """
-        if workspace and workspace.num in layouts and len(non_floating_leaves(workspace)) > 1: # $ws_web. see ~/.config/i3/config
-            if any([w.parent.id != workspace.nodes[0].id for w in non_floating_leaves(workspace)]):
-                print(f'[*] reparenting windows in workspace: {workspace.num}')
-                reparent(workspace)
+    """because i3 do not support different layouts (stack, tabbed, split) on different
+    workspaces dynamically. https://github.com/i3/i3/issues/531"""
+    if (
+        workspace
+        and workspace.num in layouts
+        and layouts[workspace.num] == "tabbed"
+        and len(non_floating_leaves(workspace)) > 1
+    ):  # $ws_web. see ~/.config/i3/config
+        if any(
+            [
+                w.parent.id != workspace.nodes[0].id
+                for w in non_floating_leaves(workspace)
+            ]
+        ):
+            print(f"[*] reparenting windows in workspace: {workspace.num}")
+            reparent(workspace)
 
+def on_window_new(self, event):
+    focused = i3.get_tree().find_focused()
+    if not focused:
+        return
+    workspace = focused.workspace()
+    if not workspace:
+        return
 
+    print(event)
 
+    if workspace.num in layouts:
+        layout = layouts[workspace.num]
+
+        if layout == 'floating':
+            event.container.command(f"[con_id={event.container.id}] floating enable")
+            event.container.command(f"[con_id={event.container.id}] move container to position cursor")
 
 # pylint: disable=unused-argument
 def on_window_focus(self, event):
     focused = i3.get_tree().find_focused()
+    if not focused:
+        return
     set_web_layout_to_tab(focused.workspace())
-               
+
+
 # pylint: disable=unused-argument
 def on_workspace_focus(self, event):
-        """ change web workspace to tabbed layout on focus """
-        set_web_layout_to_tab(event.current)
+    """ change web workspace to tabbed layout on focus """
+    set_web_layout_to_tab(event.current)
+
+def notify_new_layout(workspace, layout):
+    icons = {
+            "none": "gtk-stop",
+            None:   "gtk-stop",
+            "tabbed": "tab-duplicate",
+            "floating": "system-windows"
+    }
+    icon = icons.get(layout, "gtk-stop")
+
+    if layout == "none" or layout is None:
+        notification.update(f"{workspace.name}", f"is now unmanaged", icon)
+    else:
+        notification.update(f"{workspace.name}", f"is now in {layout} mode", icon)
+
+    notification.show()
+
+def on_binding(ipc, event):
+    focused = ipc.get_tree().find_focused()
+    if not focused:
+        return
+    workspace = focused.workspace()
+    if not workspace:
+        return
+
+    command = event.binding.command
+    if command.startswith("nop"):
+        if command.startswith("nop reparent"):
+            reparent(workspace)
+        if command.startswith("nop set-layout"):
+            layout = command.split(' ')[-1].strip()
+            valid_commands = ['tabbed', 'floating', 'none', 'toggle']
+            if layout in valid_commands:
+                if layout in ['tabbed', 'floating']:
+                    layouts[workspace.num] = layout
+                    notify_new_layout(workspace, layout)
+                elif layout == 'none':
+                    del layouts[workspace.num]
+                    notify_new_layout(workspace, layout)
+                elif layout == 'toggle':
+                    next_layout = None
+                    if workspace.num in layouts:
+                        current = layouts[workspace.num]
+                    else:
+                        current = None
+                    
+                    if current is None:
+                        next_layout = 'tabbed'
+                    elif current == 'tabbed':
+                        next_layout = 'floating'
+                    elif current == 'floating':
+                        del layouts[workspace.num]
+                        next_layout = None
+
+                    if next_layout:
+                        layouts[workspace.num] = next_layout
+
+                    notify_new_layout(workspace, next_layout)
 
 try:
-        i3.on('workspace::focus', on_workspace_focus)
-        i3.on('window::focus', on_window_focus)
-        i3.main()
+    i3.on('binding', on_binding)
+    i3.on("workspace::focus", on_workspace_focus)
+    i3.on("window::focus", on_window_focus)
+    i3.on("window::new", on_window_new)
+    i3.main()
 except KeyboardInterrupt:
-        pass
+    pass

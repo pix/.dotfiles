@@ -6,7 +6,7 @@ window and away from the mouse.
 import notify2
 import re
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from dataclasses import dataclass
 from os import environ
 
@@ -31,7 +31,7 @@ def get_defaults(conn):
     return set(defaults)
 
 
-last = []
+last = defaultdict(list)
 ignores = []
 
 def on_binding(ipc: Connection, event) -> None:
@@ -44,23 +44,30 @@ def on_binding(ipc: Connection, event) -> None:
         An i3ipc binding event
     """
     global last
+    w = ipc.get_tree().find_focused().workspace()
+    cnum = w.num
+
+    output = get_output_for_workspace(ipc, w)
     if event.binding.command.startswith("nop workspace focus-last"):
-        if len(last) > 0:
-            ipc.command(f"workspace --no-auto-back-and-forth number {last[0]}")
+
+        if len(last[output]) > 0:
+            ipc.command(f"workspace --no-auto-back-and-forth number {last[output][0]}")
         else:
             ipc.command(f"workspace --no-auto-back-and-forth number 1")
 
-
+def get_output_for_workspace(i3, workspace):
+    return workspace.ipc_data['output']
 
 def on_workspace_focus(i3: Connection, event) -> None:
     global last
-    print(ignores)
     if event.current and event.current.num not in ignores:
         num = event.current.num
-        if num in last:
-            last.remove(num)
-        last.append(num)
-        last = last[-2:]
+        output = get_output_for_workspace(i3, event.current)
+        for out, lastlist in last.items():
+            if num in lastlist:
+                lastlist.remove(num)
+        last[output].append(num)
+        last[output] = last[output][-2:]
 
 
 # i3sock is being set incorrectly somewhere this forces i3ipc to look it up
