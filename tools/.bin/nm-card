@@ -1,0 +1,105 @@
+#!/usr/bin/sudo /usr/bin/python3
+
+import os
+import re
+import dbus
+import fcntl
+import socket
+import struct
+import argparse
+import configparser
+
+parser = argparse.ArgumentParser(
+    description="Add or remove a card from ignored NetworkManager devices",
+    epilog="That's it !"
+)
+parser.add_argument("-i", "--ignore", metavar="aa:bb:cc:dd:ee:ff | eth0")
+parser.add_argument("-m", "--manage", metavar="aa:bb:cc:dd:ee:ff | eth0")
+
+args = parser.parse_args(
+)
+
+config_path = "/etc/NetworkManager/NetworkManager.conf"
+
+config = configparser.ConfigParser()
+config.read(config_path)
+
+
+def getHwAddr(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    info = fcntl.ioctl(
+        s.fileno(), 0x8927, struct.pack("256s", bytes(ifname, "utf-8")[:15])
+    )
+    return ":".join("%02x" % b for b in info[18:24])
+
+
+def format_mac(mac: str) -> str:
+    mac = re.sub(
+        "[.:-]", "", mac
+    ).lower()  # remove delimiters and convert to lower case
+    mac = "".join(mac.split())  # remove whitespaces
+
+    if len(mac) != 12:
+        # length should be now exactly 12 (eg. 008041aefd7e)
+        return None
+
+    if not mac.isalnum():
+        # should only contain letters and numbers
+        return None
+
+    # convert mac in canonical form (eg. 00:80:41:ae:fd:7e)
+    mac = ":".join(["%s" % (mac[i : i + 2]) for i in range(0, 12, 2)])
+
+    return mac
+
+
+if args.ignore or args.manage:
+
+    if not config.has_section("main"):
+        config.add_section("main")
+        config.set("main", "plugins", "keyfile")
+
+    if not config.has_section("keyfile"):
+        config.add_section("keyfile")
+
+    cfg = config.get("keyfile", "unmanaged-devices", fallback="")
+
+    items = cfg.strip().split(";")
+    if "" in items:
+        items.remove("")
+
+    if args.ignore:
+        try:
+            mac = format_mac(getHwAddr(args.ignore))
+        except:
+            mac = format_mac(args.ignore)
+    else:
+        try:
+            mac = format_mac(getHwAddr(args.manage))
+        except:
+            mac = format_mac(args.manage)
+
+    current_ignore = f"mac:{mac}"
+
+    if args.ignore:
+        if current_ignore not in items:
+            items.append(current_ignore)
+    else:
+        if current_ignore in items:
+            items.remove(current_ignore)
+
+    config.set("keyfile", "unmanaged-devices", ";".join(items))
+
+    with open(config_path + ".tmp", "w") as configfile:
+        config.write(configfile)
+        os.rename(config_path + ".tmp", config_path)
+
+        sysbus = dbus.SystemBus()
+        systemd1 = sysbus.get_object(
+            "org.freedesktop.systemd1", "/org/freedesktop/systemd1"
+        )
+        manager = dbus.Interface(systemd1, "org.freedesktop.systemd1.Manager")
+        job = manager.RestartUnit("NetworkManager.service", "fail")
+
+else:
+    parser.print_help()
