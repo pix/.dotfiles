@@ -1,0 +1,5 @@
+#!/bin/bash -euf
+set -o pipefail
+
+mime=$(file --brief --mime-type "${1}")
+xclip -selection clipboard -i -target "${mime}" "${1}"
