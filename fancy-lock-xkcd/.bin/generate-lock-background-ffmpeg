@@ -1,7 +1,7 @@
 #!/bin/bash
 LOCKBG="${HOME}/.cache/i3lock/lock.png"
 OVERLAY="${HOME}/.cache/i3lock/overlay.png"
-BLUR_INTENSITY="${BLUR_INTENSITY:=4}"
+BLUR_INTENSITY="${BLUR_INTENSITY:=8}"
 RES=$(xdpyinfo | grep 'dimensions:'|awk '{print $2}')
 RES_x=$(echo "${RES}" | cut -dx -f1)
 RES_y=$(echo "${RES}" | cut -dx -f2)

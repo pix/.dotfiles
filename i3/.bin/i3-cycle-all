@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 
+import argparse
 import getopt
 import i3ipc
 import sys
 import os
 
+parser = argparse.ArgumentParser(
+    description="Rotate every window in by swapping them in order"
+)
+parser.add_argument("-r", "--reverse", action="store_true", help="Rotate backwarde")
+parser.add_argument("-a", "--all", action="store_true", help="Also rotates floats")
+
+args = parser.parse_args()
+
 
 def find_parent(i3, window_id):
     """
-        Find the parent of a given window id
+    Find the parent of a given window id
     """
 
     def finder(con, parent):
@@ -29,10 +38,12 @@ workspace = con.get_tree().find_focused().workspace()
 
 leaves = list(workspace.leaves())
 
+
 def swap_two(i3, win1, win2):
     win1.command("mark --add TO_SWAP")
-    win2.command('swap container with mark TO_SWAP')
+    win2.command("swap container with mark TO_SWAP")
     i3.command("[con_mark=TO_SWAP] mark --add --toggle TO_SWAP")
+
 
 def swap(i3, *windows):
     if len(windows) < 2:
@@ -41,8 +52,13 @@ def swap(i3, *windows):
     first, second, *tail = windows
 
     swap_two(i3, first, second)
-
     swap(i3, second, *tail)
 
 
-swap(con, *leaves)
+if not args.all:
+    leaves = filter(lambda c: "on" not in c.floating, leaves)
+
+if args.reverse:
+    swap(con, *reversed(leaves))
+else:
+    swap(con, *leaves)
