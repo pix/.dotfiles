@@ -58,7 +58,7 @@ order += "frame network"
 order += "frame cpu"
 order += "frame date"
 order += "frame time"
-order += "battery 0"
+order += "battery_level"
 
 {% if is_roger %}
 frame systemd {
@@ -204,18 +204,14 @@ frame network {
     open = True
 }
 
-battery 0 {
-    format = "%status %percentage %remaining "
-    format_down = ""
-    last_full_capacity = true
-    integer_battery_capacity = true
-    low_threshold = 20
-    threshold_type = percentage
-    hide_seconds = true
-    status_chr = " "
-    status_bat = " "
-    status_unk = " "
-    status_full = " "
+battery_level {
+    format = " {percent}% {icon} {time_remaining}"
+    battery_id = "all"
+    notify_low_level = True
+    notification = True
+    blocks = "{{ fa.battery_empty }}{{ fa.battery_quarter }}{{ fa.battery_half }}{{ fa.battery_three_quarters }}{{ fa.battery_full }}"
+    threshold_degraded = 15
+    threshold_bad = 5
 }
 
 frame date {
