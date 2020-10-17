@@ -10,7 +10,11 @@ function __dot_is_installed() {
 	which "$1" >/dev/null 2>/dev/null
 }
 
-if __dot_is_installed vim; then
+if __dot_is_installed nvim; then
+    export EDITOR=nvim
+    alias vi='nvim'
+    alias vim='nvim'
+elif __dot_is_installed vim; then
     export EDITOR=vim
     alias vi='vim'
 fi

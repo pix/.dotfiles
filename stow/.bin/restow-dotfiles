@@ -40,6 +40,10 @@ process_dependencies() {
 			i3-config-templater
 			process_templates "${module}"
 			;;
+        neovim)
+			process_templates "${module}"
+            nvim +PlugInstall +PlugClean +qall
+            ;;
 		*)
 			process_templates "${module}"
 			;;
