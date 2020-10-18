@@ -1,0 +1,11 @@
+clear  Lock
+clear  Mod3
+clear  Mod4
+clear  Control
+
+keycode 66 = Hyper_L
+
+add    Lock = Insert
+add    Control = Control_L Control_R
+add    Mod3 = Hyper_L
+add    Mod4 = Super_L
