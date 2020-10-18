@@ -531,7 +531,7 @@ bindsym $mod+Shift+g exec i3-input -F '[title="(?i)%s"] focus' -P 'Goto title: '
 for_window [class="KeePassXC" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
 for_window [class="KeePassXC" window_type="dialog"] floating disable, floating enable, focus
 # %%hotkey: Show keepassxc window %%
-bindsym $mod+k exec "keepassxc", [class="KeePassXC"] scratchpad show
+bindsym $mod+k exec "QT_QPA_PLATFORMTHEME=qt5ct keepassxc", [class="KeePassXC"] scratchpad show
 
 ########################################################################
 # %%hotkey: Show scratchpad windows %%
