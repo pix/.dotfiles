@@ -10,6 +10,7 @@ import i3ipc
 import random
 import subprocess
 import argparse
+import configparser
 from pathlib import Path
 from rofi import Rofi
 from shutil import copyfile
@@ -18,14 +19,29 @@ from urllib.request import url2pathname
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--background", dest="background", type=str)
-parser.add_argument("-w", "--workspace", default="current", dest="workspace", type=str)
+parser.add_argument("-w", "--workspace", dest="workspace", type=str)
 parser.add_argument("-d", "--daemon", dest="daemon_mode", action="store_true")
 parser.add_argument("-r", "--rofi", dest="rofi_menu", action="store_true")
 parser.add_argument("-x", "--delete", dest="delete", action="store_true", default=False)
+parser.add_argument("-vf", "--ffmpeg-vf", dest="ffmpeg_vf", default=None)
+parser.add_argument("-vf2", "--ffmpeg-vf-2", dest="ffmpeg_vf_2", default=None)
+parser.add_argument("-vf3", "--ffmpeg-vf-3", dest="ffmpeg_vf_3", default=None)
+parser.add_argument("-vi", "--vf-index", dest="vf_index", type=int, default=-1)
+
+try:
+    conf = configparser.ConfigParser()
+    conf.read(os.path.expanduser("~/.config/i3/i3-background.cfg"))
+    defaults = {
+        key.replace("-", "_"): value for key, value in conf.items("i3-background")
+    }
+    parser.set_defaults(**defaults)
+except Exception as e:
+    pass
 
 args = parser.parse_args()
 
 i3 = i3ipc.Connection()
+
 
 def fix_path(uri):
     if not uri.startswith("file://"):
@@ -33,12 +49,12 @@ def fix_path(uri):
 
     parsed = urlparse(uri)
     host = "{0}{0}{mnt}{0}".format(os.path.sep, mnt=parsed.netloc)
-    return os.path.normpath(
-        os.path.join(host, url2pathname(unquote(parsed.path)))
-    )
+    return os.path.normpath(os.path.join(host, url2pathname(unquote(parsed.path))))
+
 
 if args.background:
     args.background = fix_path(args.background)
+
 
 class Memoize:
     def __init__(self, fn):
@@ -49,6 +65,12 @@ class Memoize:
         if args != self.memo:
             self.memo = args
             self.fn(*args)
+
+    @property
+    def clear(self):
+        self.memo = {}
+        return self
+
 
 def get_background_for_desktop(background_num):
     p = Path("~/.cache/wallpaper")
@@ -64,16 +86,23 @@ def get_background_for_desktop(background_num):
 
     return background
 
+
 @Memoize
 def apply_xorg_backgrounds(workspaces):
 
-    bgs = [get_background_for_desktop(w) for w in workspaces if get_background_for_desktop(w)]
+    bgs = [
+        get_background_for_desktop(w)
+        for w in workspaces
+        if get_background_for_desktop(w)
+    ]
     if len(bgs) > 0:
         subprocess.run(["feh", "--bg-fill", *bgs])
         print(f"[*] using bgs: {bgs}")
 
+
 def filter_paths(paths):
     return sorted(filter(lambda f: Path(f).is_file(), paths))
+
 
 def get_all_outputs():
     # Sorts the outputs, should work for one or two screens
@@ -83,12 +112,18 @@ def get_all_outputs():
         key=lambda out: out.rect.x + out.rect.y,
     )
 
-def apply_backgrounds():
+
+def apply_backgrounds(clear=False):
     workspaces = [int(out.current_workspace.split(":")[0]) for out in get_all_outputs()]
 
-    apply_xorg_backgrounds(workspaces)
+    if clear:
+        apply_xorg_backgrounds.clear(workspaces)
+    else:
+        apply_xorg_backgrounds(workspaces)
 
-def sets_background_for_desktop(num, background, delete=False):
+
+def sets_background_for_desktop(num, background, delete=False, vf_filter_index=0):
+
     current_workspace_num = i3.get_tree().find_focused().workspace().num
     if num == "current":
         background_num = current_workspace_num
@@ -105,13 +140,22 @@ def sets_background_for_desktop(num, background, delete=False):
     else:
         print(f"[*] setting bg: {current}")
 
-    if background.endswith(".png"):
-        copyfile(background, str(current))
-    else:
-        subprocess.run(["ffmpeg", "-y", "-i", background, str(current)])
+    vf = []
+    if args.vf_index > -1:
+        vf_filter_index = args.vf_index
+
+    if args.ffmpeg_vf and vf_filter_index == 0:
+        vf = ["-vf", args.ffmpeg_vf]
+    elif args.ffmpeg_vf_2 and vf_filter_index == 1:
+        vf = ["-vf", args.ffmpeg_vf_2]
+    elif args.ffmpeg_vf_3 and vf_filter_index == 2:
+        vf = ["-vf", args.ffmpeg_vf_3]
+
+    subprocess.run(["ffmpeg", "-y", "-i", background, *vf, str(current)])
+
 
 if args.daemon_mode:
-    apply_backgrounds()
+    apply_backgrounds(True)
 
     def on_workspace_focus(self, event):
         apply_backgrounds()
@@ -123,37 +167,111 @@ if args.daemon_mode:
 elif args.rofi_menu:
     r = Rofi()
     if not args.background and not args.delete:
-        
-        specials = ["** random **"]
-        
+
+        specials = ["** delete **", "** random **", "** cycle **"]
+
         backgrounds = glob.glob(
             os.path.expanduser("~/Pictures/Wallpaper/**"), recursive=True
         )
         backgrounds = filter_paths(backgrounds)
         backgrounds = [*backgrounds, *specials]
+        backgrounds_display = map(lambda x: os.path.basename(x), backgrounds)
 
-        index, key = r.select("Which background ?", backgrounds)
+        index, key = r.select(
+            "Which background ?",
+            backgrounds_display,
+        )
+        if key == -1:
+            sys.exit(0)
         background = backgrounds[index]
 
         for s in specials:
             if s in backgrounds:
                 backgrounds.remove(s)
-
         if background == "** random **":
             background = random.choice(backgrounds)
+        elif background == "** delete **":
+            args.delete = True
     else:
         background = args.background
 
-    desktops = [str(x) for x in ["current", *range(1, 21), "default"]]
-    index, key = r.select(
-        f"Which desktop {'to remove' if args.delete else ''} ?", desktops
-    )
-    if desktops[index] is None:
-        sys.exit(0)
+    if not args.workspace:
+        desktops = [str(x) for x in ["default", "current", *range(1, 21)]]
+        index, key = r.select(
+            f"Which desktop {'to remove' if args.delete else ''} ?",
+            desktops,
+        )
 
-    sets_background_for_desktop(desktops[index], background, args.delete)
-    apply_backgrounds()
+        if args.background:
+            key = key
+
+        if key == -1:
+            sys.exit(0)
+
+    if background == "** cycle **":
+        previous = []
+        choices = list(backgrounds)
+        while len(choices) > 0:
+            item = random.choice(choices)
+            choices.remove(item)
+            sets_background_for_desktop(
+                desktops[index], item, False, vf_filter_index=key
+            )
+            apply_backgrounds(True)
+            options = ["next", "keep", *previous]
+            index, key = r.select(
+                "Action",
+                options,
+            )
+
+            if key == -1:
+                sys.exit(0)
+
+            if os.path.exists(options[index]):
+                sets_background_for_desktop(
+                    desktops[index], options[index], False, vf_filter_index=key
+                )
+                apply_backgrounds(True)
+                sys.exit(0)
+
+            if options[index] == "keep":
+                sys.exit(0)
+
+            previous = [item]
+
+
+    if not args.workspace:
+        workspace = desktops[index]
+    else:
+        workspace = args.workspace or "current"
+
+    vf_index = 4
+    if args.vf_index > -1:
+        vf_index = args.vf_index
+    elif not args.delete:
+        filters = []
+        if args.ffmpeg_vf:
+            filters.append(f"Default filter: {args.ffmpeg_vf}")
+        if args.ffmpeg_vf_2:
+            filters.append(f"Second filter: {args.ffmpeg_vf_2}")
+        if args.ffmpeg_vf_3:
+            filters.append(f"Third filter: {args.ffmpeg_vf_3}")
+        if args.ffmpeg_vf or args.ffmpeg_vf_2 or args.ffmpeg_vf_3:
+            filters.append("No filter")
+    
+        if len(filters) > 0:
+            index, key = r.select("Select filters", filters)
+            if index == -1:
+                sys.exit(1)
+
+            vf_index = index
+
+
+    sets_background_for_desktop(
+        workspace, background, args.delete, vf_filter_index=vf_index
+    )
+    apply_backgrounds(True)
 
 elif args.background or args.delete:
     sets_background_for_desktop(args.workspace, args.background, args.delete)
-    apply_backgrounds()
+    apply_backgrounds(True)
