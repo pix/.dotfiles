@@ -23,5 +23,3 @@ if [ -n "$ZSH_VERSION" ]; then
 	. "$HOME/.zshrc"
     fi
 fi
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

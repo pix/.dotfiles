@@ -1,3 +1,5 @@
+# Load virtualenv if installed
+# vim:ft=sh:
 for i in /usr/bin/virtualenvwrapper.sh \
     /usr/share/virtualenvwrapper/virtualenvwrapper.sh; do
 

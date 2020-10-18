@@ -1,1 +1,2 @@
 . <(systemctl --user show-environment | grep '^SSH_AUTH_SOCK=' && echo export SSH_AUTH_SOCK)
+. <(systemctl --user show-environment | grep '^QT_QPA_PLATFORMTHEME=' && echo export QT_QPA_PLATFORMTHEME)

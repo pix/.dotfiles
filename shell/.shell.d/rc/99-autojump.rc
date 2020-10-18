@@ -1,0 +1,22 @@
+# Use autojump if installed
+# vim:ft=sh:
+#
+
+if [[ -s ~/.autojump/etc/profile.d/autojump.sh ]]; then
+    source ~/.autojump/etc/profile.d/autojump.sh
+elif [[ -s /etc/profile.d/autojump.sh ]]; then
+    source /etc/profile.d/autojump.sh
+fi
+
+if __dot_is_installed fzf; then
+    fzf=fzf
+    __dot_is_installed fzf-tmux && test -n "$TMUX" && fzf="fzf-tmux"
+
+    j() {
+        if [[ "$#" -ne 0 ]]; then
+            cd $(autojump $@)
+            return
+        fi
+        cd "$(autojump -s | sort -k1gr | awk '$1 ~ /[0-9]:/ && $2 ~ /^\// { for (i=2; i<=NF; i++) { print $(i) } }' | $fzf --height 0% --reverse --inline-info)"
+    }
+fi

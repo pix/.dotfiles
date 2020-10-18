@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim:ft=sh:
 
 addpath() {
     local _prepend cur_path
