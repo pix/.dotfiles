@@ -10,6 +10,7 @@ transset-df
 # rofi
 rofi
 rofi-file-browser-extended
+bsdmainutils
 
 # fancy lock
 xautolock

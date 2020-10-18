@@ -12,6 +12,7 @@ bindsym {{ key }} {{ command }}
 
 # auto-reload configs
 exec_always --no-startup-id ~/.bin/i3-config-templater
+exec_always --no-startup-id ~/.bin/xkbsetup
 
 set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
 set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
@@ -42,8 +43,9 @@ set_from_resource $color13    color13    # magenta
 set_from_resource $color14    color14    # cyan
 set_from_resource $color15    color15    # white
 
-set $alt Mod1
-set $mod Mod4
+set $alt  Mod1
+set $mod  Mod4
+set $mod2 Mod3
 
 # Set default monitors
 
@@ -513,6 +515,17 @@ bindsym $mod+t exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
 bindsym $mod+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
 # %%hotkey: Search window by title %%
 bindsym $mod+Shift+g exec i3-input -F '[title="(?i)%s"] focus' -P 'Goto title: '
+
+########################################################################
+# Quick tags
+{% for f_number in range(0, 10) -%}
+{% set key = "{}".format(f_number) -%}
+{% set mark = "{}".format(f_number) -%}
+{{ bindsym("$mod2+Shift+" + key, "mark --add " + mark,            "Add mark: " + mark) }}
+{{ bindsym("$mod2+" + key,       "[con_mark=" + mark + "] focus", "Focus window marked: " + mark) }}
+{% endfor %}
+
+
 ########################################################################
 # Keepassx waiting in Scratchpad
 for_window [class="KeePassXC" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
