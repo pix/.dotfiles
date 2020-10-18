@@ -1,0 +1,13 @@
+[Unit]
+Description=MPRIS notify daemon
+PartOf=user-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.virtualenvs/mpris-chromecast/bin/chromecast_mpris
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=user-session.target
+

@@ -1,0 +1,6 @@
+#
+pip
+vext
+vext.gi
+vext.dbus
+chromecast_mpris
