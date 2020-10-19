@@ -1,11 +1,6 @@
 "
 " neovim config
 "
-runtime plugins.vim
-
-" Blink highlighted search results
-runtime settings/hl-next.vim
-runtime settings/backup-and-temp-stuff.vim
 
 " File-type highlighting and configuration.
 " Run :filetype (without args) to see what you may have
@@ -67,7 +62,6 @@ set shortmess=atI
 
 " I Never, ever used background=light
 set background=dark
-colorscheme wal
 
 " Automatically read a file again if it has been modified outside vim
 " and not in the current session
@@ -89,12 +83,14 @@ map  <C-s> :w!<CR>
 imap <C-s> <Esc>:w!<CR>a
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Clear current search highlight
-nnoremap <esc> :noh<return><esc>
+" Reselect visual block after indent/outdent
+" http://vimbits.com/bits/20
+vnoremap < <gv
+vnoremap > >gv
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Write file with sudo // Life saver !
-let g:suda_smart_edit = 1
+" Clear current search highlight
+nnoremap <esc> :noh<return><esc>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " In zsh: bindkey "^F" edit-command-line, just colorize the tmp file
@@ -106,15 +102,15 @@ set shiftwidth=4
 set autoindent smartindent
 set expandtab
 
-autocmd FileType make     set noexpandtab
-autocmd FileType python   set noexpandtab
-
 if &bg == "dark"
     hi HintHL cterm=bold ctermfg=white ctermbg=black guifg=blue3 guibg=white
 else
     hi HintHL cterm=bold ctermfg=black ctermbg=white guifg=white guibg=blue3
 endif
 
-map <silent> <C-v><C-v> :<C-u>Unite buffer<cr>
-map <silent> <C-v>v     :<C-u>Unite buffer<cr>
+runtime plugins.vim
+" Blink highlighted search results
+runtime settings/hl-next.vim
+runtime settings/backup-and-temp-stuff.vim
 
+colorscheme wal
