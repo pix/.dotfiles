@@ -45,7 +45,11 @@ set_from_resource $color15    color15    # white
 
 set $alt  Mod1
 set $mod  Mod4
-set $mod2 Mod3
+
+# $mod2 (Mod3) was Caps_Lock, disabled for now
+# (see: ~/.Xmodmap)
+#
+# set $mod2 Mod3
 
 # Set default monitors
 
@@ -71,10 +75,10 @@ set $monitor_3 DP1-3
 # i3-icons workspace 5 {{ fa['code']              }}
 # i3-icons workspace 6 {{ fa['file-word']         }}
 # i3-icons workspace 7 {{ fa['bug']               }}
+# i3-icons class epdfview {{ fa['file-pdf']   }}
 # i3-icons class bloodhound {{ fa['sitemap']   }}
 # i3-icons class qutebrowser {{ fa['internet-explorer'] }}
 # i3-icons title r"(msfconsole|metasploit)" {{ fa['redhat'] }}
-## i3-icons title pwn3 {{ fa['bug'] }}
 
 set $ws1 workspace number 1
 set $ws1_name 1
@@ -509,22 +513,51 @@ for_window [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"] floating 
 
 ########################################################################
 # Mark and goto
-# %%hotkey: Mark active window with a mark %%
-bindsym $mod+t exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
-# %%hotkey: Gogo the marked window  %%
-bindsym $mod+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
-# %%hotkey: Search window by title %%
-bindsym $mod+Shift+g exec i3-input -F '[title="(?i)%s"] focus' -P 'Goto title: '
-
 ########################################################################
-# Quick tags
-{% for f_number in range(0, 10) -%}
-{% set key = "{}".format(f_number) -%}
-{% set mark = "{}".format(f_number) -%}
-{{ bindsym("$mod2+Shift+" + key, "mark --add " + mark,            "Add mark: " + mark) }}
-{{ bindsym("$mod2+" + key,       "[con_mark=" + mark + "] focus", "Focus window marked: " + mark) }}
-{% endfor %}
+# {% set keys = "abcdefhijklmnopqrsuvwxyz0123456789" -%}
+# Mark a window
+mode "tag" {
+    {% for f_key in keys -%}
+    {% set key = "{}".format(f_key) -%}
+    {% set mark = "{}".format(f_key) -%}
+    {{ bindsym(key,           "mark --add " + mark + ", mode default",   "Add mark: " + mark) | indent(4) }}
+    {{ bindsym("$mod+" + key, "mark --add " + mark + ", mode default",   "Add mark: " + mark) | indent(4)}}
+    {% endfor %}
+    {{ bindsym("t",                "mark --add primary, mode default",   "Add mark: primary") | indent(4)}}
+    {{ bindsym("g",              "mark --add secondary, mode default", "Add mark: secondary") | indent(4)}}
+    {{ bindsym("$mod+t",           "mark --add primary, mode default",   "Add mark: primary") | indent(4)}}
+    {{ bindsym("$mod+g",         "mark --add secondary, mode default", "Add mark: secondary") | indent(4)}}
+    # back to normal: Enter or Escape or $mod+r
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+# %%hotkey: Mark active window with a mark %%
+bindsym $mod+Shift+t exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
+# %%hotkey: Switch to resize mode %%
+bindsym $mod+t mode "tag"
 
+# Goto window
+mode "goto" {
+    {% for f_key in keys -%}
+    {% set key = "{}".format(f_key) -%}
+    {% set mark = "{}".format(f_key) -%}
+    {{ bindsym(key,                 "[con_mark="+ mark + "] focus, mode default",    "Goto mark: " + mark) | indent(4)}}
+    {{ bindsym("$mod+" + key,       "[con_mark="+ mark + "] focus, mode default",    "Goto mark: " + mark) | indent(4)}}
+    {% endfor %}
+    {{ bindsym("g",                 "exec ~/.bin/i3-cycle-marks primary secondary, mode default",
+                                    "Goto mark: primary/secondary") | indent(4)}}
+    {{ bindsym("t",                 "[con_mark=secondary] focus, mode default",    "Goto mark: secondary") | indent(4)}}
+    {{ bindsym("$mod+g",            "exec ~/.bin/i3-cycle-marks primary secondary, mode default",
+                                    "Goto mark: primary/secondary") | indent(4)}}
+    {{ bindsym("$mod+t",            "[con_mark=secondary] focus, mode default",    "Goto mark: secondary") | indent(4)}}
+    # back to normal: Enter or Escape or $mod+r
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+# %%hotkey: Switch to resize mode %%
+bindsym $mod+g mode "goto"
+# %%hotkey: Goto the marked window  %%
+bindsym $mod+Shift+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
 
 ########################################################################
 # Keepassx waiting in Scratchpad
