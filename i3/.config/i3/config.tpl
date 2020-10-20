@@ -1,4 +1,5 @@
 # i3 config file (v4)
+# vim:ft=i3config:
 #
 {% set colors = json("~/.cache/wal/colors.json") -%}
 {% set theme = json("~/.config/i3/theme.json") -%}
@@ -14,12 +15,8 @@ bindsym {{ key }} {{ command }}
 exec_always --no-startup-id ~/.bin/i3-config-templater
 exec_always --no-startup-id ~/.bin/xkbsetup
 
-set $switch ~/.virtualenvs/i3/bin/python ~/.bin/focus-last --switch
-set $cmd_i3cmd ~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-cmd-menu --
 set $cmd_locker exec --no-startup-id xautolock -locknow, exec --no-startup-id xset dpms force off
 set $cmd_quick_browser qutebrowser --qt-arg name floating-border-4-floating-browser
-
-set $window_name $(~/.virtualenvs/i3/bin/python ~/.config/i3/scripts/i3-current-title)
 set $osd_id -h string:x-canonical-private-synchronous:anything -u low
 
 set               $accent     {{ accent }}
@@ -81,7 +78,6 @@ set $monitor_3 DP1-3
 # i3-icons title r"(msfconsole|metasploit)" {{ fa['redhat'] }}
 
 set $ws1 workspace number 1
-set $ws1_name 1
 set $ws2 workspace number 2
 set $ws3 workspace number 3
 set $ws4 workspace number 4
@@ -122,19 +118,7 @@ set $border_no_floating pixel 1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-# font pango:FontAwesome5Free-regular 20, UbuntuMono-regular 7
-# font pango:Font Awesome 20, Ubuntu Mono 7
-# font pango:Font Awesome 7, Ubuntu Mono 7
-# font pango:Font Awesome 5 Free 7, Consolas 7
 font xft:Source Code Pro 8
-
-# Before i3 v4.8, we used to recommend this one as the default:
-#
-#font -misc-fixed-medium-r-normal--8-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
 
 focus_on_window_activation none
 show_marks yes
@@ -251,10 +235,6 @@ bindsym $mod+e layout toggle split, exec notify-send $osd_id '$mod + E: layout s
 bindsym $mod+w layout toggle all, exec notify-send $osd_id '$mod + W: layout toggle all' '$bindings'
 # %%hotkey: Reparent all windows %%
 bindsym $mod+Shift+w nop reparent
-
-# %%hotkey: Manage Systemd services %%
-bindsym $mod+Shift+s exec ~/.config/i3/scripts/rofi-systemd
-
 # %%hotkey: Change focus between tiling / floating windows %%
 bindsym $mod+space focus mode_toggle
 # %%hotkey: Focus the parent container
@@ -320,29 +300,17 @@ bindsym $mod+Shift+a \
 ########################################################################
 # Focus / Workspace switch <Alt/Mod/Ctrl> + Tab
 # %%hotkey: Goto previous workspace on output %%
-bindsym $mod+Tab                workspace prev_on_output, \
-                                exec notify-send $osd_id 'Workspace' "$window_name"
-
+bindsym $mod+Tab                workspace prev_on_output
 # %%hotkey: Goto next workspace on output %%
-bindsym $mod+Shift+Tab          workspace next_on_output, \
-                                exec notify-send $osd_id 'Workspace' "$window_name"
-
+bindsym $mod+Shift+Tab          workspace next_on_output
 # %%hotkey: Goto previous workspace %%
-bindsym Control+Tab             workspace prev, \
-                                exec notify-send $osd_id 'Workspace' "$window_name"
-
+bindsym Control+Tab             workspace prev
 # %%hotkey: Goto next workspace %%
-bindsym Control+Shift+Tab       workspace next, \
-                                exec notify-send $osd_id 'Workspace' "$window_name"
-
+bindsym Control+Shift+Tab       workspace next
 # %%hotkey: Focus previous window %%
-bindsym $alt+Tab                exec --no-startup-id "~/.config/i3/scripts/focus-next prev", \
-                                exec notify-send $osd_id 'Focus' "$window_name"
-
+bindsym $alt+Tab                exec --no-startup-id "~/.bin/i3-focus-next prev"
 # %%hotkey: Focus next window %%
-bindsym $alt+Shift+Tab          exec --no-startup-id "~/.config/i3/scripts/focus-next next", \
-                                exec notify-send $osd_id 'Focus' '$window_name'
-
+bindsym $alt+Shift+Tab          exec --no-startup-id "~/.bin/i3-focus-next next"
 ########################################################################
 # Workspace controls and settings
 
@@ -459,7 +427,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # %%hotkey: Prompt for an i3 command %%
-bindsym $mod+Escape exec $cmd_i3cmd
+bindsym $mod+Escape exec ~/.bin/i3-cmd-menu
 
 # %%hotkey: Float the current window %%
 bindsym $mod+Shift+f floating toggle
@@ -567,14 +535,12 @@ for_window [class="KeePassXC" window_type="dialog"] floating disable, floating e
 bindsym $mod+k exec "QT_QPA_PLATFORMTHEME=qt5ct keepassxc", [class="KeePassXC"] scratchpad show
 
 ########################################################################
+# %%hotkey: Activate $ws1 on current output %%
+bindsym twosuperior [workspace="^1:"] move workspace to output current, $ws1
 # %%hotkey: Show scratchpad windows %%
 bindsym $alt+twosuperior exec ~/.bin/i3scratch
 # %%hotkey: Move current window to scratchpad %%
 bindsym $mod+twosuperior move scratchpad
-assign [instance="ws1"] $ws1
-# %%hotkey: Activate $ws1 on current output %%
-bindsym twosuperior [workspace=$ws1_name] move workspace to output current, $ws1
-bindsym Shift+twosuperior exec $switch
 
 ########################################################################
 # Workspace: Firefox
@@ -583,12 +549,6 @@ assign [instance="(?i)^firefox$"] $ws_web
 assign [class="(?i)^firefox$"] $ws_web
 assign [class="(?i)^navigator$"] $ws_web
 assign [class="(?i)^google-chrome"] $ws_web
-
-########################################################################
-# Fake Update : Haha
-# %%hotkey: Show fake windows10 update screen %%
-bindsym $mod+Shift+l exec chromium --new-window --start-fulscreen --app="http://fakeupdate.net/win10u/"
-for_window [instance="fakeupdate.net__win10u"] fullscreen enable, sticky enable
 
 ########################################################################
 # Workspace: Mails
