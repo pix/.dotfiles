@@ -472,6 +472,7 @@ for_window [class="(?i)lxappearance"] floating enable
 for_window [class="(?i)nitrogen"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="(?i)pcmanfm"] floating enable, resize set 800 600, move window position center
+for_window [class="(?i)zathura"] floating enable, resize set 636 900, move window position center
 
 # Burp configs
 assign     [class="burp-StartBurp"] $ws_hack
