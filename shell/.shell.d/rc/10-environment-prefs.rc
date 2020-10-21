@@ -10,28 +10,6 @@ function __dot_is_installed() {
 	which "$1" >/dev/null 2>/dev/null
 }
 
-if __dot_is_installed nvim; then
-    export EDITOR=nvim
-    alias vi='nvim'
-    alias vim='nvim'
-elif __dot_is_installed vim; then
-    export EDITOR=vim
-    alias vi='vim'
-fi
-
-# ack is ack-grep on debian/ubuntu
-if __dot_is_installed ack-grep; then
-    alias ack='ack-grep'
-fi
-
-# Goodbye more, lets play with most ##########################################
-#
-if __dot_is_installed most; then
-	alias more='most'
-	alias less='most'
-	export PAGER='most'
-fi
-
 # GTK FTW !
 export OOO_FORCE_DESKTOP=gnome
 # XFT my friend
