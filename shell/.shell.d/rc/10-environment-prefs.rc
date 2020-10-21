@@ -10,6 +10,13 @@ function __dot_is_installed() {
 	which "$1" >/dev/null 2>/dev/null
 }
 
+# FZF
+if __dot_is_installed fd; then
+    export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+else
+	export FZF_DEFAULT_COMMAND="find -type f -not -path '*/\.git/*' -a -not -path '*/\.svn/*"
+fi
+
 # GTK FTW !
 export OOO_FORCE_DESKTOP=gnome
 # XFT my friend
