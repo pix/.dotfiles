@@ -31,11 +31,6 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
@@ -59,7 +54,6 @@ else
 fi
 unset color_prompt force_color_prompt
 
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
@@ -68,7 +62,6 @@ xterm*|rxvt*)
 *)
     ;;
 esac
-
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -85,5 +78,6 @@ for file in $HOME/.{shell.d,bash.d}/rc{,.local}/*.rc; do
 done
 [ "$__ngs" -eq 1 ] && shopt -u nullglob
 unset __ngs
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+#!/bin/sh
+# vim:ft=sh
+which fortune >/dev/null 2>&1 && ((fortune -a fr . || fortune -a) && echo) || true

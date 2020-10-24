@@ -1,0 +1,21 @@
+#!/bin/bash
+# Load sequences for urxvt if exits
+#
+# vim:ft=bash:
+#
+
+__load_wal() {
+    local wal
+    wal=~/.cache/wal/sequences
+
+    if [[ ! -f "${wal}" ]]; then
+        return
+    fi
+
+    if [[ -n "$DISPLAY" && "$TERM" == *"rxvt"* ]]; then
+        cat "${wal}"
+    fi
+
+    unset __load_wal
+}
+__load_wal

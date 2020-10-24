@@ -1,9 +1,0 @@
-#######################################################################
-# Some ENV prefs
-# vi: ft=zsh
-
-# exports default languages
-export LANG=en_US.utf8
-export LC_COLLATE=C
-
-

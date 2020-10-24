@@ -1,3 +1,0 @@
-#!/bin/sh
-# vim:ft=sh
-which fortune >/dev/null 2>&1 && ((fortune -a fr . || fortune -a) && echo) || true

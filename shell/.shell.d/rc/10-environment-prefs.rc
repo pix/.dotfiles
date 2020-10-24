@@ -1,9 +1,10 @@
-#######################################################################
-# Some ENV prefs
-# vi: ft=zsh
-
+#!/bin/bash
 # History is in ~/.history
 #
+# shellcheck disable=SC2039
+# vim:ft=bash:
+#
+
 export RLWRAP_HOME=~/.history
 
 function __dot_is_installed() {
@@ -33,6 +34,3 @@ export CVS_RSH=ssh
 
 # Programming and C manuals first
 export MANSECT="3:1:5:2:4:8:9:7:6"
-
-# disable XON/XOFF flow control (^s/^q)
-stty -ixon

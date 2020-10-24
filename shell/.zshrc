@@ -1,4 +1,4 @@
-# 
+#
 # Zshrc home configs files
 # Camille Moncelier <pix@devlife.org>
 #
@@ -6,56 +6,54 @@
 # http://svn.asyd.net/svn/zsh/trunk/
 #
 
+
+which fortune >/dev/null 2>&1 && ((fortune -a fr . || fortune -a) && echo) || true
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Load System wide profile:
 [ -f /etc/profile ] && source /etc/profile
 
 # My functions (don't forget to modify fpath before call compinit !!)
 fpath=($HOME/.zsh/functions $fpath)
 
-
 # in order to have many completion function run comptinstall !
 autoload -U zutil
 autoload -U compinit
 autoload -U complist
-
 autoload -U predict-on
+
 zle -N predict-on
 zle -N predict-off
-
-# Activation
-compinit
 
 local os host
 
 # Set default umask to 027, can be override by host specific resource file
 umask 022
 
-# per OS resource file
-os=$(uname)
-[ -f "$HOME/.zsh/rc.os/${os}.zsh" ] && source "$HOME/.zsh/rc.os/${os}.zsh"
-
-# Global resource files
-for file in $HOME/.{shell.d,zsh}/rc{,.local}/*.{rc,zsh}(N); do
-    source $file
-done
-
-# per host resource file
-host=${$(hostname)//.*/}
-if [ -f "$HOME/.zsh/rc.host/${host}.zsh" ] ; then
-     source "$HOME/.zsh/rc.host/${host}.zsh"
+if [[ -f ~/.zinit/bin/zinit.zsh ]]; then
+    source .zsh/zinit/zinit.rc
 else
-    source "$HOME/.zsh/rc.host/default.zsh"
+    # Global resource files
+    for file in $HOME/.{shell.d,zsh}/rc{,.local}/*.{rc,zsh}(N); do
+        source $file
+    done
+    # per host resource file
+    host=${$(hostname)//.*/}
+    if [ -f "$HOME/.zsh/rc.host/${host}.zsh" ] ; then
+         source "$HOME/.zsh/rc.host/${host}.zsh"
+    fi
+    # Local file
+    [[ -f ~/.zsh/rc.local ]] && source ~/.zsh/rc.local
 fi
 
-# Local file
-[[ -f ~/.zsh/rc.local ]] && source ~/.zsh/rc.local
 
 # Only ask for seeing all possibilities if line would scroll off screen
 LISTMAX=0
 
-# setup prompt
-autoload -U promptinit
-promptinit
-prompt walterscolor cyan blue
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -1,0 +1,6 @@
+#!/bin/zsh
+# vim:ft=zsh:
+
+if [[ -f  /usr/share/fzf/key-bindings.zsh ]]; then
+     . /usr/share/fzf/key-bindings.zsh
+fi

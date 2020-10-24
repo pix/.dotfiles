@@ -1,5 +1,8 @@
-#!/bin/sh
-# vim:ft=sh:
+#!/bin/bash
+#
+# vim:ft=bash:
+# shellcheck disable=SC2039
+#
 
 addpath() {
     local _prepend cur_path
@@ -20,26 +23,7 @@ addpath() {
     fi
 }
 
-recursive_addpath() {
-    local prepend dir
-    case "$1" in
-        "--prepend")
-            prepend=${1}
-            shift
-            ;;
-    esac
-    for dir in $(find "$1"/ -follow -maxdepth 2 -type d ! -name .git); do
-        addpath $prepend "$dir"
-    done
-}
-
-show_path() {
-    echo $PATH | sed 's/:/\n/g'
-}
-
-[ -d ~/.bin/ ] && recursive_addpath --prepend ~/.bin
-[ -d ~/.bin-local/ ] && recursive_addpath --prepend ~/.bin-local
-
+addpath ~/.bin
+addpath ~/.local/bin
 addpath /sbin
 addpath /usr/sbin
-addpath ~/.rvm/bin # Add RVM to PATH for scripting

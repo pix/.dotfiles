@@ -1,4 +1,9 @@
-# vim:ft=sh:
+#!/bin/bash
+# Add npm to path
+#
+# vim:ft=bash:
+#
+
 if [ -d ~/.npm/packages/bin/ ]; then
     addpath ~/.npm/packages/bin
 fi

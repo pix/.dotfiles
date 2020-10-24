@@ -1,9 +1,9 @@
-########################################################################
+#!/bin/bash
 # "Safely" remove latex "junk" files
-# vi: ft=zsh
 #
-# TODO: use xargs
+# vim:ft=bash:
 #
+
 cleantex(){
 	if [ "$1" \!= "nodry" ] ; then
 		DRY=echo

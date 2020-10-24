@@ -1,0 +1,89 @@
+#!/bin/zsh
+# vim:ft=zsh:
+
+function zinit-init() {
+  # git clone https://github.com/zinit/zinit ~/.zinit
+  mkdir ~/.zinit
+  git clone https://github.com/zdharma/zinit.git ~/.zinit/bin
+}
+
+function zinit-install() {
+  zinit install
+}
+
+function zinit-configure() {
+  if [[ ! -d ~/.zinit ]]; then
+    echo "zinit is not configured: type zinit-install"
+  else
+    source ~/.zinit/bin/zinit.zsh
+
+    autoload -Uz _zinit
+    (( ${+_comps} )) && _comps[zinit]=_zinit
+
+    # Set case-sensitivity for completion, history lookup, etc.
+    zstyle ':prezto:*:*' case-sensitive 'no'
+    # Color output (auto set to 'no' on dumb terminals).
+    zstyle ':prezto:*:*' color 'yes'
+    # Auto set the tab and window titles.
+    zstyle ':prezto:module:terminal' auto-title 'yes'
+    # Set the Pacman frontend.
+    zstyle ':prezto:module:pacman' frontend 'yay'
+
+    zinit ice svn
+    zinit snippet PZTM::completion
+    zinit snippet PZTM::editor
+    zinit snippet PZTM::environment
+    zinit snippet PZTM::helper
+    zinit snippet PZTM::history
+    zinit snippet PZTM::pacman
+    zinit snippet PZTM::python
+    zinit snippet PZTM::rsync
+    zinit snippet PZTM::ruby
+    zinit snippet PZTM::spectrum
+    zinit snippet PZTM::ssh
+    zinit snippet PZTM::tmux
+    zinit snippet PZTM::terminal
+
+    # Use deer (see: https://github.com/Vifon/deer) with alt-d
+    zinit ice lucid id-as"auto" pick'deer'
+    zinit light Vifon/deer
+    zle -N deer
+    bindkey '\ed' deer
+
+    zinit for depth=1 \
+      light-mode 3v1n0/zsh-bash-completions-fallback \
+      light-mode MichaelAquilina/zsh-you-should-use \
+      light-mode marzocchi/zsh-notify \
+      light-mode reegnz/jq-zsh-plugin \
+      light-mode romkatv/powerlevel10k \
+      light-mode zdharma/zui \
+      light-mode zdharma/zzcomplete \
+      light-mode zinit-zsh/z-a-meta-plugins \
+      light-mode zsh-users+fast \
+      light-mode prezto
+
+    zinit for \
+      %HOME/.shell.d/rc \
+      %HOME/.zsh/rc
+
+    zstyle ':notify:*' error-title "Command failed (in #{time_elapsed} seconds)"
+    zstyle ':notify:*' success-title "Command finished (in #{time_elapsed} seconds)"
+    zstyle ':notify:*' command-complete-timeout 30
+    zstyle ':notify:*' always-check-active-window yes
+    zstyle ':notify:*' expire-time 2500
+    zstyle ':notify:*' app-name 'zsh'
+
+    bindkey '\em' zzcomplete
+
+  fi
+}
+
+function zinit-load() {
+  if [[ -f ~/.zinit/init.zsh ]]; then
+    zinit load
+  fi
+}
+
+zinit-configure
+zinit-load
+
