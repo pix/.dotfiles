@@ -11,7 +11,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'dylanaraps/wal.vim'
 
-let dir = globpath('~/.config/nvim/plugins/', '*.md', 0, 1)
+let dir = globpath('~/.config/nvim/plugins/', '*.vim.md', 0, 1)
 for item in dir
     execute literatevimrc#load(item)
 endfor

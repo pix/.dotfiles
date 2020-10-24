@@ -102,11 +102,20 @@ set shiftwidth=4
 set autoindent smartindent
 set expandtab
 
-if &bg == "dark"
-    hi HintHL cterm=bold ctermfg=white ctermbg=black guifg=blue3 guibg=white
-else
-    hi HintHL cterm=bold ctermfg=black ctermbg=white guifg=white guibg=blue3
-endif
+function! Push_if_new(list, value) abort
+  if !exists(a:list)
+    exec "let " . a:list . " = ['" . a:value . "']"
+  else
+    call add (a:list, a:value)
+  endif
+  return a:list
+endfunction
+
+"if &bg == "dark"
+    "hi HintHL cterm=bold ctermfg=white ctermbg=black guifg=blue3 guibg=white
+"else
+    "hi HintHL cterm=bold ctermfg=black ctermbg=white guifg=white guibg=blue3
+"endif
 
 runtime plugins.vim
 " Blink highlighted search results
