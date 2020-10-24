@@ -111,15 +111,15 @@ function! Push_if_new(list, value) abort
   return a:list
 endfunction
 
-"if &bg == "dark"
-    "hi HintHL cterm=bold ctermfg=white ctermbg=black guifg=blue3 guibg=white
-"else
-    "hi HintHL cterm=bold ctermfg=black ctermbg=white guifg=white guibg=blue3
-"endif
+if &bg == "dark"
+    hi HintHL cterm=bold ctermfg=white ctermbg=black guifg=blue3 guibg=white
+else
+    hi HintHL cterm=bold ctermfg=black ctermbg=white guifg=white guibg=blue3
+endif
 
 runtime plugins.vim
 " Blink highlighted search results
 runtime settings/hl-next.vim
 runtime settings/backup-and-temp-stuff.vim
 
-colorscheme wal
+colorscheme janah

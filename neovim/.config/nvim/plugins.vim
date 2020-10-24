@@ -9,7 +9,6 @@ call plug#begin($HOME."/.cache/vim/plugins")
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'bronson/vim-trailing-whitespace'
-Plug 'dylanaraps/wal.vim'
 
 let dir = globpath('~/.config/nvim/plugins/', '*.vim.md', 0, 1)
 for item in dir
