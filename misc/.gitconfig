@@ -1,3 +1,6 @@
+[core]
+	pager = less
+
 [user]
 	email = camille@moncelier.Fr
 	name = Camille Moncelier
