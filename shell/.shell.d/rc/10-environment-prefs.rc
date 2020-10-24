@@ -17,6 +17,8 @@ else
 	export FZF_DEFAULT_COMMAND="find -type f -not -path '*/\.git/*' -a -not -path '*/\.svn/*"
 fi
 
+__dot_is_installed nvimpager && export PAGER=nvimpager
+
 # GTK FTW !
 export OOO_FORCE_DESKTOP=gnome
 # XFT my friend
