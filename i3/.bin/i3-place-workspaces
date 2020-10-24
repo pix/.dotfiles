@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+import os
+import re
+import sys
+import i3ipc
+import subprocess
+
+from collections import defaultdict
+
+class AutoRandR(object):
+
+    def __init__(self):
+        pass
+
+    def get_profile(self):
+        out = subprocess.check_output(['autorandr', '--skip-options', 'gamma'])
+        matches = re.findall(r"^(\S*) \(detected\) \(current\)$", out.decode('utf-8'), re.MULTILINE)
+
+        if len(matches) > 0:
+            return matches[0]
+        else:
+            return None
+
+class I3Config(object):
+
+    def __init__(self, ipc):
+        self.ipc = ipc
+        self.regex_profile_workspace_output = \
+            re.compile("^# i3-place-workspace (\S+)\s+(\d+)\s+(\S+)$")
+
+        self.config = defaultdict(dict)
+        self.parse_config()
+
+    def parse_config(self):
+        version = self.ipc.get_version()
+        with open(version.loaded_config_file_name, "r") as config:
+            for line in config.readlines():
+                m = self.regex_profile_workspace_output.match(line)
+                if m:
+                    profile, workspace, output = m[1], int(m[2]), m[3]
+                    self.config[profile][workspace] = output
+
+        print(self.config)
+
+ipc = i3ipc.Connection()
+config = I3Config(ipc)
+randr = AutoRandR()
+
+current = ipc.get_tree().find_focused()
+
+for workspace, output in config.config[randr.get_profile()].items():
+    cmd = f'[workspace="^{workspace}:"] move workspace to output {output}'
+    ipc.command(cmd)
+    print(cmd, workspace, output)
+
+current.command('focus')

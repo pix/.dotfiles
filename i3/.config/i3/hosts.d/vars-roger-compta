@@ -1,4 +1,0 @@
-# Monitors for roger-compta
-set $monitor_1 DP1
-set $monitor_2 eDP1
-set $monitor_3 HDMI1

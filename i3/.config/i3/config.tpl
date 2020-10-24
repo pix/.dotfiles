@@ -48,23 +48,23 @@ set $mod  Mod4
 #
 # set $mod2 Mod3
 
-# Set default monitors
-
-set $monitor_1 DP1-1
-set $monitor_2 DP1-2
-set $monitor_3 DP1-3
-
 ########################################################################
 # Workspace names
 #
 # workspace_ignore_focus_last 1
 # workspace_ignore_focus_last 3
+#
 # workspace_default_layout 2 tabbed
 # workspace_default_layout 3 tabbed
 # workspace_default_layout 4 tabbed
 # workspace_default_layout 5 tabbed
 # workspace_default_layout 6 tabbed
 # workspace_default_layout 7 tabbed
+#
+# i3-place-workspace <autorand-profile> <workspace_number> <output>
+# i3-place-workspace home-dock 2 DP1
+# i3-place-workspace home-dock 3 DP1
+#
 # i3-icons workspace 1 {{ fa['terminal']          }}
 # i3-icons workspace 2 {{ fa['internet-explorer'] }}
 # i3-icons workspace 3 {{ fa['envelope-open']     }}
@@ -72,6 +72,7 @@ set $monitor_3 DP1-3
 # i3-icons workspace 5 {{ fa['code']              }}
 # i3-icons workspace 6 {{ fa['file-word']         }}
 # i3-icons workspace 7 {{ fa['bug']               }}
+#
 # i3-icons class epdfview {{ fa['file-pdf']   }}
 # i3-icons class bloodhound {{ fa['sitemap']   }}
 # i3-icons class qutebrowser {{ fa['internet-explorer'] }}
@@ -261,41 +262,13 @@ bindsym $mod+Control+Down move workspace to output down
 #
 # %%hotkey: Send workspace/apps where they belong at work %%
 bindsym $mod+a exec --no-startup-id autorandr -f -c,                \
-               \
-               $ws1, move workspace to output $monitor_2, \
-               $ws2, move workspace to output $monitor_1, \
-               $ws3, move workspace to output $monitor_3, \
-               \
-               $ws4, move workspace to output $monitor_3, \
-               $ws5, move workspace to output $monitor_3, \
-               $ws6, move workspace to output $monitor_3, \
-               \
-               $ws7, move workspace to output $monitor_3, \
-               $ws8, move workspace to output $monitor_3, \
-               $ws9, move workspace to output $monitor_3, \
-               \
-               $ws10, move workspace to output $monitor_2, \
-               $ws11, move workspace to output $monitor_3, \
-               $ws12, move workspace to output $monitor_3, \
-               $ws13, move workspace to output $monitor_3, \
-               $ws14, move workspace to output $monitor_3, \
-               $ws15, move workspace to output $monitor_3, \
-               $ws16, move workspace to output $monitor_3, \
-               $ws17, move workspace to output $monitor_3, \
-               $ws18, move workspace to output $monitor_3, \
-               $ws19, move workspace to output $monitor_3, \
-               $ws20, move workspace to output $monitor_3, \
-               \
-               $ws2, \
-               $ws3, \
-               $ws1, \
-               \
+               exec --no-startup-id ~/.bin/i3-place-workspaces,     \
                exec --no-startup-id ~/.bin/i3-config-templater
 
 # %%hotkey: Send virt-viewer screens to the right monitors %%
 bindsym $mod+Shift+a \
-            exec --no-startup-id autorandr single
-
+               exec --no-startup-id autorandr single,               \
+               exec --no-startup-id ~/.bin/i3-place-workspaces
 
 ########################################################################
 # Focus / Workspace switch <Alt/Mod/Ctrl> + Tab
@@ -586,7 +559,8 @@ assign [class="(?i)desktopeditors"] $ws_office
 bindsym $mod+End exec "flameshot gui"
 # %%hotkey: Start flameshot launcher %%
 bindsym Print exec "flameshot launcher"
-bindsym $mod+p exec "rofi-autorandr"
+bindsym $mod+p exec --no-startup-id "rofi-autorandr", \
+               exec --no-startup-id autorandr -f -c
 bindsym $mod+o exec "~/.bin/rofi-networkmenu -config ~/.config/rofi/config-right-menu.rasi"
 bindsym $mod+i exec "~/.bin/i3-background -r"
 bindsym $mod+Shift+i exec "~/.bin/i3-background -r -x"
