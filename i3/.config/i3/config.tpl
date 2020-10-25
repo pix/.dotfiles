@@ -503,10 +503,11 @@ bindsym $mod+Shift+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
 
 ########################################################################
 # Keepassx waiting in Scratchpad
-for_window [class="KeePassXC" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
-for_window [class="KeePassXC" window_type="dialog"] floating disable, floating enable, focus
+for_window [class="(?i)KeePassXC"] sticky enable
+for_window [class="(?i)KeePassXC" window_type="^((?!dialog).*)$"] floating enable, move scratchpad, border normal
+for_window [class="(?i)KeePassXC"] floating disable, floating enable, sticky enable, focus
 # %%hotkey: Show keepassxc window %%
-bindsym $mod+k exec "QT_QPA_PLATFORMTHEME=qt5ct keepassxc", [class="KeePassXC"] scratchpad show
+bindsym $mod+k exec "QT_QPA_PLATFORMTHEME=qt5ct keepassxc", [class="(?i)KeePassXC"] scratchpad show
 
 ########################################################################
 # %%hotkey: Activate $ws1 on current output %%
