@@ -6,6 +6,7 @@
 #
 
 export RLWRAP_HOME=~/.history
+export SQLITE_HISTORY=${RLWRAP_HOME}/sqlite
 
 function __dot_is_installed() {
 	which "$1" >/dev/null 2>/dev/null
