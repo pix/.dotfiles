@@ -1,5 +1,5 @@
 # UtilSnips and Completion Manager
-./snipppets.vim.md<Up>
+
 Only if python3 is available
 ```vim
 if has("python3")
@@ -13,7 +13,6 @@ if has("python3")
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-neoinclude'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'ncm2/ncm2-markdown-subscope'
 Plug 'fgrsnau/ncm2-otherbuf'

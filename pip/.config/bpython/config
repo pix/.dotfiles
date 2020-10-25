@@ -1,0 +1,5 @@
+[general]
+hist_file = ~/.history/python
+hist_length = 100000
+save_append_py = True
+

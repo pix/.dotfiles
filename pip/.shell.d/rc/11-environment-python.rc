@@ -1,0 +1,5 @@
+#######################################################################
+# Python prefs
+
+export PYTHONSTARTUP=~/.config/python/pythonrc
+

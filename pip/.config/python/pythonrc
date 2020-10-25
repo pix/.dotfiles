@@ -1,0 +1,56 @@
+
+def init():
+    import os
+    import sys
+    import atexit
+    import readline
+
+    if os.path.basename(sys.argv[0]) == "bpython":
+        # pastebin = F8
+        # last_output = F9
+        # reimport = F6
+		# help = F1
+		# toggle_file_watch = F5
+		# save = C-s
+		# undo = C-r
+		# up_one_line = C-p
+		# down_one_line = C-n
+		# cut_to_buffer = C-k
+		# search = C-o
+		# yank_from_buffer = C-y
+		# backspace = C-h
+		# clear_word = C-w
+		# clear_line = C-u
+		# clear_screen = C-l
+		# show_source = F2
+		# exit = C-d
+		# external_editor = F7
+		# edit_config = F3
+		# reverse_incremental_search = M-r
+		# incremental_search = M-s
+        print(f"""\n
+F2:   show source
+F7:   external editor
+C-s:  save session
+C-r:  undo
+""", file=sys.stderr)
+    elif os.path.basename(sys.argv[0]) == "python":
+        # color prompt
+        sys.ps1 = '\001\033[0;32m\002>>> \001\033[0m\002'
+        sys.ps2 = '\001\033[0;31m\002... \001\033[0m\002'
+
+
+    readline.parse_and_bind('tab: complete')
+    readline.set_history_length(100000)
+
+    readline_history_file = os.path.join(os.path.expanduser('~'), '.history', 'python')
+    try:
+        readline.read_history_file(readline_history_file)
+    except IOError:
+        pass
+
+    atexit.register(readline.write_history_file, readline_history_file)
+
+
+init()
+del init
