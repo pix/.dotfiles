@@ -455,10 +455,35 @@ for_window [class="burp-StartBurp"] move --no-auto-back-and-forth window to $ws_
 no_focus   [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"]
 for_window [class="burp-StartBurp" title="^(?!Burp Suite|Intruder).*"] floating enable
 
+#
+# {% set keys = "abcdefhijklmnopqrsuvwxyz0123456789" -%}
+# {% set all_keys = "abcdefghijklmnopqrstuvwxyz0123456789" -%}
+#
+
+########################################################################
+# Mark send or bring back from scratchpad
+########################################################################
+
+mode "scratchpad" {
+    {% for f_key in all_keys -%}
+    {% set key = "{}".format(f_key) -%}
+    {% set mark = "scratch_{}".format(f_key) -%}
+    {{ bindsym(key,           "exec ./.bin/i3-mark-float-and-scratch --mark " + mark + ", mode default",
+                              "Add mark: " + mark) | indent(4) }}
+    {{ bindsym("$mod+" + key, "exec ./.bin/i3-mark-float-and-scratch --mark " + mark + ", mode default",
+                              "Add mark: " + mark) | indent(4) }}
+    {% endfor -%}
+    # back to normal: Enter or Escape or $mod+r
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+# %%hotkey: Mark/Toggle floats in scratchpad %%
+bindsym $mod+j mode "scratchpad"
+
+
 ########################################################################
 # Mark and goto
 ########################################################################
-# {% set keys = "abcdefhijklmnopqrsuvwxyz0123456789" -%}
 # Mark a window
 mode "tag" {
     {% for f_key in keys -%}
