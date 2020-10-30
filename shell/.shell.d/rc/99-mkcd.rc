@@ -1,0 +1,7 @@
+# vim:ft=zsh:
+
+# Create then jump
+mkcd() {
+  mkdir "$1" && cd "$1"
+}
+

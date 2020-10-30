@@ -1,0 +1,10 @@
+# vim:ft=zsh:
+
+zmodload -i zsh/parameter
+
+insert-last-command-output() {
+  LBUFFER+="$(eval $history[$((HISTCMD-1))])"
+}
+zle -N insert-last-command-output
+
+bindkey "^Q" insert-last-command-output
