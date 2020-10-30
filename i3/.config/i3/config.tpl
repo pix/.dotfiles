@@ -64,6 +64,8 @@ set $mod  Mod4
 # i3-place-workspace <autorand-profile> <workspace_number> <output>
 # i3-place-workspace home-dock 2 DP1
 # i3-place-workspace home-dock 3 DP1
+# i3-place-workspace work 2 DP1
+# i3-place-workspace work 3 eDP1
 #
 # i3-icons workspace 1 {{ fa['terminal']          }}
 # i3-icons workspace 2 {{ fa['internet-explorer'] }}
