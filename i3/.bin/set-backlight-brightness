@@ -11,24 +11,11 @@ import sys
 import math
 from subprocess import check_output, call
 
-max_brightness = int(open('/sys/class/backlight/intel_backlight/max_brightness', 'r').read())
-current_brightness = int(open('/sys/class/backlight/intel_backlight/brightness', 'r').read())
 
-current_percent = math.ceil((current_brightness / float(max_brightness)) * 100)
+call(['brightnessctl', 's', sys.argv[1]])
 
-step = int(sys.argv[1])
-
-set_percent = current_percent + step
-if set_percent > 100:
-    set_percent = 100
-elif set_percent < 20:
-    set_percent = 20
-
-if set_percent >= 30:
-    print(int(math.ceil(max_brightness * (set_percent/100))))
-    f = open('/sys/class/backlight/intel_backlight/brightness', 'w')
-    f.write(str(int(math.ceil(max_brightness * (set_percent/100)))))
-    f.close()
+set_percent = check_output(['brightnessctl', 'i', '-m']).decode('utf-8')
+set_percent = set_percent.split(',')[3]
 
 call(['notify-send', \
     '-h', 'string:synchronous:brightness',
