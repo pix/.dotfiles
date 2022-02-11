@@ -27,9 +27,8 @@ URxvt*color0:	    {{ gtk.background }}
 URxvt*background:   {{ gtk.background }}
 URxvt*cursorColor:  __accent_color
 
-! URxvt*fontAlt: xft:Ubuntu Mono:pixelsize=13:antialias=false:hinting=true
-URxvt*fontAlt: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
-URxvt*font: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
+URxvt*fontAlt: xft:DejaVu Sans Mono:antialias=true:hinting=true:pixelsize=9
+URxvt*font: xft:DejaVu Sans Mono:antialias=true:hinting=true:pixelsize=9
 URxvt.bell-command: notify-send -u low -t 200 "URXVT !"
 
 URxvt*cursorBlink                      : true
@@ -43,9 +42,11 @@ URxvt*keysym.Control-t                 : perl:tabbed:new_tab
 URxvt*keysym.M-C-v                     : perl:clipboard:paste_escaped
 URxvt*keysym.M-c                       : perl:clipboard:copy
 URxvt*keysym.M-v                       : perl:clipboard:paste
-URxvt*keysym.Shift-Down                : perl:font-size:decrease
-URxvt*keysym.Shift-Up                  :   perl:font-size:increase
-URxvt*perl-ext-common                  : default,matcher,tabbed,clipboard,font-size,bell-command
+URxvt.keysym.M-Down                    : resize-font:smaller
+URxvt.keysym.M-Up                      : resize-font:bigger
+URxvt.keysym.M-equal                   : resize-font:reset
+URxvt.keysym.M-question                : resize-font:show
+URxvt*perl-ext-common                  : default,matcher,tabbed,clipboard,resize-font,bell-command
 URxvt*print-pipe                       : cat > $(TMPDIR=$HOME mktemp URxvt.XXXXX)
 URxvt*reverseVideo                     : false
 URxvt*saveLines                        : 10000
