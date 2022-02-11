@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import subprocess
+import argparse
+import getopt
+import i3ipc
+import sys
+import os
+
+parser = argparse.ArgumentParser(
+    description="Rotate every window in by swapping them in order"
+)
+parser.add_argument("-m", "--mark", action="store", help="Send to this mark")
+parser.add_argument("-n", "--notify", action="store", dest='notify', nargs='+', help="Notify this window (give focus)")
+parser.add_argument("-k", "--key", action="store", dest='keys', nargs='+', help="Send this keys")
+
+args = parser.parse_args()
+
+con = i3ipc.Connection()
+
+if not args.mark:
+    sys.exit(1)
+
+tree = con.get_tree()
+focused = tree.find_focused()
+marked = tree.find_marked(args.mark)
+
+if len(marked) > 0:
+    marked = marked[0]
+    marked.command('focus')
+
+    for key in args.keys:
+        subprocess.call(['xdotool', 'key', '--clearmodifiers', '--window', str(marked.window), key])
+
+    for n in args.notify:
+        clients = con.get_tree().find_marked(n)
+        for client in clients:
+            client.command('focus')
+
+    focused.command('focus')

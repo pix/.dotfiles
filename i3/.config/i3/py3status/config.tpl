@@ -42,11 +42,8 @@ general {
     output_format   = "i3bar"
 }
 
-{% if is_roger %}
-order += "frame systemd"
-{% endif %}
 order += "group rate"
-order += "xsel"
+order += "frame xsel"
 order += "dpms"
 order += "frame mpris"
 order += "volume_status output"
@@ -266,8 +263,8 @@ frame cpu {
     open = False
 }
 
-xsel {
-    format = ''
+frame xsel {
+    format = 'aa{{ fa['clipboard-check'] }}aa'
     on_click 1 = "exec ~/.bin/exchange-clipboard"
     on_click 2 = 'exec "xsel -o -p; xsel -i -b"'
     on_click 3 = 'exec "xsel -o -b; xsel -i -p"'

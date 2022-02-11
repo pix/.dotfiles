@@ -12,6 +12,7 @@
 
 #define __accent_color {{ accent }}
 #define __urgent_color {{ urgent }}
+#define __tint 0.4
 
 Xft.dpi: 96
 
@@ -32,19 +33,19 @@ URxvt*font: xft:DejaVu Sans Mono-7:antialias=true:hinting=true
 URxvt.bell-command: notify-send -u low -t 200 "URXVT !"
 
 URxvt*cursorBlink                      : true
-URxvt*inheritPixmap                    : true
+#URxvt*inheritPixmap                    : true
 URxvt*iso14755                         : false
 URxvt*iso14755_52                      : false
-URxvt*keysym.Control-Shift-Down        : perl:tabbedex:new_tab
-URxvt*keysym.Control-Shift-Left        : perl:tabbedex:prev_tab
-URxvt*keysym.Control-Shift-Right       : perl:tabbedex:next_tab
-URxvt*keysym.Control-t                 : perl:tabbedex:new_tab
+URxvt*keysym.Control-Shift-Down        : perl:tabbed:new_tab
+URxvt*keysym.Control-Shift-Left        : perl:tabbed:prev_tab
+URxvt*keysym.Control-Shift-Right       : perl:tabbed:next_tab
+URxvt*keysym.Control-t                 : perl:tabbed:new_tab
 URxvt*keysym.M-C-v                     : perl:clipboard:paste_escaped
 URxvt*keysym.M-c                       : perl:clipboard:copy
 URxvt*keysym.M-v                       : perl:clipboard:paste
 URxvt*keysym.Shift-Down                : perl:font-size:decrease
 URxvt*keysym.Shift-Up                  :   perl:font-size:increase
-URxvt*perl-ext-common                  : default,matcher,tabbedex,clipboard,font-size,bell-command
+URxvt*perl-ext-common                  : default,matcher,tabbed,clipboard,font-size,bell-command
 URxvt*print-pipe                       : cat > $(TMPDIR=$HOME mktemp URxvt.XXXXX)
 URxvt*reverseVideo                     : false
 URxvt*saveLines                        : 10000
@@ -60,8 +61,10 @@ URxvt*tabbed.tab-fg                    : 0
 URxvt*tabbed.tabbar-bg                 : 0
 URxvt*tabbed.tabbar-fg                 : {{ accent_num }}
 URxvt*tabbed.title-fg                  : {{ accent_num }}
-URxvt*tintColor                        : grey40
-URxvt*transpartent:                    : true
+#URxvt*tintColor                        : grey40
+#URxvt*transparent:                     : true
+URxvt*background.expr                  : rootalign keep { tint [__tint,  __tint,  __tint,  1], root }
+
 
 *keysym.M-Down                         : \033[1;3B
 *keysym.M-Up                           : \033[1;3A

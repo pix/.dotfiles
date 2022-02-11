@@ -1,8 +1,8 @@
 configuration {
-    theme: "~/.config/rofi/wal-custom-theme.rasi";
     icon-theme: "Adwaita";
     show-icons: true;
 }
+
 
 * {
     active-background: #0d6678;
@@ -10,3 +10,5 @@ configuration {
     urgent-background: #fb543f;
     selected-urgent-background: #fb543f;
 }
+
+@theme "~/.config/rofi/wal-custom-theme.rasi"

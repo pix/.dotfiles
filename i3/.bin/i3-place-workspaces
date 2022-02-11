@@ -15,10 +15,10 @@ class AutoRandR(object):
 
     def get_profile(self):
         out = subprocess.check_output(['autorandr', '--skip-options', 'gamma'])
-        matches = re.findall(r"^(\S*) \(detected\) \(current\)$", out.decode('utf-8'), re.MULTILINE)
+        matches = re.findall(r"^(\S*) \(detected\) (\(.*?\) )?\(current\)$", out.decode('utf-8'), re.MULTILINE)
 
         if len(matches) > 0:
-            return matches[0]
+            return matches[0][0]
         else:
             return None
 

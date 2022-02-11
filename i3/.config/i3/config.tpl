@@ -64,8 +64,10 @@ set $mod  Mod4
 # i3-place-workspace <autorand-profile> <workspace_number> <output>
 # i3-place-workspace home-dock 2 DP1
 # i3-place-workspace home-dock 3 DP1
+# i3-place-workspace home-two 2 DP-1
+# i3-place-workspace home-two 3 DP-1
 # i3-place-workspace work 2 DP1
-# i3-place-workspace work 3 eDP1
+# i3-place-workspace work 3 1
 #
 # i3-icons workspace 1 {{ fa['terminal']          }}
 # i3-icons workspace 2 {{ fa['internet-explorer'] }}
@@ -128,7 +130,7 @@ show_marks yes
 
 smart_gaps yes
 gaps inner 7
-gaps outer 4
+gaps outer 3
 
 ########################################################################
 # Colors
@@ -148,10 +150,10 @@ default_floating_border $border_floating
 floating_modifier $mod
 
 # %%hotkey: Over a titlebar kills the window %%
-bindsym --release button2 kill
+bindsym button2 exec sleep 0.1 && /usr/bin/xkill
 
 # %%hotkey: Over any part of the window kills the window %%
-bindsym --whole-window $mod+button2 kill
+bindsym --whole-window $mod+button2 exec sleep 0.2 && /usr/bin/xkill
 
 # %%hotkey: Toggles floating on %%
 bindsym --whole-window $mod+button4 exec ~/.bin/i3-pop
@@ -189,7 +191,7 @@ bindsym $mod+Shift+k kill
 
 # start dmenu (a program launcher)
 # %%hotkey: Start dmenu launcher %%
-bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,file-browser,ssh,windowcd,combi,keys -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
+bindsym $mod+d exec --no-startup-id "rofi -modi window,run,drun,file-browser-extended,ssh,windowcd,combi,keys -show combi -sidebar-mod -file-browser-oc-cmd 'env;icon:system-run'"
 bindsym $mod+Shift+question exec --no-startup-id ~/.virtualenvs/i3/bin/dmenu_hotkeys run -m rofi --app i3
 bindsym $mod+colon exec --no-startup-id rofi-emoji
 
@@ -438,16 +440,25 @@ for_window [window_type="menu"] floating enable
 for_window [instance="(?i)floating"] floating enable
 for_window [instance="(?i)border-4"] border pixel 4
 for_window [instance="(?i)floating-browser"] floating-browser
+for_window [instance="vokoscreen"] floating enable
 for_window [class="(?i)blueman-manager"] floating enable
 for_window [class="(?i)eog"] floating enable
 for_window [class="(?i)flameshot"] floating enable
-for_window [class="(?i)ghidra"] floating enable
+# Rules for Ghidra windows
+for_window [class="(?i)Ghidra"] floating enable
+for_window [class="(?i)Ghidra" title="(?i)CodeBrowser"] floating disable
+for_window [class="(?i)Ghidra" title="(?i)Version Tracking"] floating disable
+for_window [class="(?i)Ghidra" title="(?i)^Ghidra: "] floating disable
+for_window [class="(?i)Ghidra" window_type=dialog] focus
 for_window [class="(?i)gnome-calendar"] floating enable
 for_window [class="(?i)lxappearance"] floating enable
 for_window [class="(?i)nitrogen"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable, resize set 800 600, move window position center
 for_window [class="(?i)pcmanfm"] floating enable, resize set 800 600, move window position center
 for_window [class="(?i)zathura"] floating enable, resize set 636 900, move window position center
+for_window [class="(?i)^obs$"] floating enable, resize set 1024 768, move window position center
+for_window [class="(?i)kdeconnect.daemon"] floating enable, border none, fullscreen toggle, resize set 1920 1080, move window position center
+
 
 # Burp configs
 assign     [class="burp-StartBurp"] $ws_hack
@@ -504,6 +515,8 @@ mode "tag" {
 bindsym $mod+Shift+t exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
 # %%hotkey: Switch to resize mode %%
 bindsym $mod+t mode "tag"
+bindsym --release $mod+Next exec ~/.bin/i3-send-key-marked --mark p --key Next
+bindsym --release $mod+Prior exec ~/.bin/i3-send-key-marked --mark p --key Prior
 
 # Goto window
 mode "goto" {
@@ -527,7 +540,6 @@ mode "goto" {
 bindsym $mod+g mode "goto"
 # %%hotkey: Goto the marked window  %%
 bindsym $mod+Shift+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
-
 ########################################################################
 # Keepassx waiting in Scratchpad
 for_window [class="(?i)KeePassXC"] sticky enable
@@ -583,10 +595,11 @@ assign [class="(?i)desktopeditors"] $ws_office
 ########################################################################
 # Volume
 
+# %%hotkey: Start flameshot gui with a delay %%
+bindsym $mod+Print exec "flameshot gui --delay 1000"
 # %%hotkey: Start flameshot gui %%
-bindsym $mod+End exec "flameshot gui"
-# %%hotkey: Start flameshot launcher %%
-bindsym Print exec "flameshot launcher"
+bindsym Print exec "flameshot gui"
+
 bindsym $mod+p exec --no-startup-id "rofi-autorandr", \
                exec --no-startup-id autorandr -f -c
 bindsym $mod+o exec "~/.bin/rofi-networkmenu -config ~/.config/rofi/config-right-menu.rasi"
