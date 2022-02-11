@@ -1,0 +1,10 @@
+[Unit]
+Description=redshift needs to get a (geo)clue
+PartOf=user-session.target
+
+[Service]
+ExecStart=/usr/lib/geoclue-2.0/demos/agent
+
+[Install]
+WantedBy=user-session.target
+

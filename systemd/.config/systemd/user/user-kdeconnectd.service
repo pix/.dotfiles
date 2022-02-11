@@ -1,0 +1,12 @@
+[Unit]
+Description=Connect your computer to your smartphone or tablet
+PartOf=user-session.target
+
+[Service]
+Restart=always
+ExecStart=/usr/lib/kdeconnectd
+ExecStop=/usr/bin/kquitapp5 kdeconnect
+BusName=org.kde.kdeconnect
+
+[Install]
+WantedBy=user-session.target

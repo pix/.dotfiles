@@ -2,6 +2,8 @@
 Description=redshift notification daemon
 Documentation=man:redshift-gtk
 PartOf=user-session.target
+Requires=user-geoclue-agent.service
+After=user-geoclue-agent.service
 
 [Service]
 Type=simple
