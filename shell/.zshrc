@@ -37,7 +37,7 @@ local os host
 umask 022
 
 if [[ -f ~/.zinit/bin/zinit.zsh ]]; then
-    source .zsh/zinit/zinit.rc
+    source ~/.zsh/zinit/zinit.rc
 else
     # Global resource files
     for file in $HOME/.{shell.d,zsh}/rc{,.local}/*.{rc,zsh}(N); do
@@ -46,7 +46,7 @@ else
     # per host resource file
     host=${$(hostname)//.*/}
     if [ -f "$HOME/.zsh/rc.host/${host}.zsh" ] ; then
-         source "$HOME/.zsh/rc.host/${host}.zsh"
+        source "$HOME/.zsh/rc.host/${host}.zsh"
     fi
     # Local file
     [[ -f ~/.zsh/rc.local ]] && source ~/.zsh/rc.local
@@ -57,3 +57,5 @@ fi
 LISTMAX=0
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+bindkey '^ ' autosuggest-disable

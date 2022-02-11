@@ -51,6 +51,7 @@ function zinit-configure() {
     bindkey '\ed' deer
 
     zinit for depth=1 \
+      light-mode zpm-zsh/autoenv \
       light-mode 3v1n0/zsh-bash-completions-fallback \
       light-mode MichaelAquilina/zsh-you-should-use \
       light-mode marzocchi/zsh-notify \

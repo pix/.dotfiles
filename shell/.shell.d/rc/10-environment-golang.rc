@@ -1,0 +1,15 @@
+#!/bin/bash
+
+GOPATH="${HOME}/.local/go/path"
+
+if [[ -d "${GOPATH}" ]]; then
+    export GOPATH
+    export PATH="${GOPATH}/bin:${PATH}"
+else
+    unset GOPATH
+fi
+
+function usego() {
+    . <(${1} env)
+    export PATH="${GOROOT}/bin:${PATH}"
+}

@@ -1,0 +1,41 @@
+#!/bin/zsh
+
+function autoenv-find-up () {
+  spath=$(pwd)
+  while [[ "$spath" != "" && ! -e "$spath/$1" ]]; do
+    spath=${spath%/*}
+  done
+
+  if [[ -e "$spath/$1" ]]; then
+    echo "$spath/$1"
+  fi
+}
+
+function autoenv-cat() {
+  if type bat &>/dev/null; then
+    bat --style="plain" -l bash "$1"
+  else
+    cat "$1"
+  fi
+}
+
+function autoenv-add() {
+    name=$1
+    shift 1
+    envfile=$(autoenv-find-up .in)
+    if [[ "${envfile}" == "" ]]; then
+      touch .in
+      envfile=$(realpath .in)
+    fi
+
+    if ! grep "^export ${name}=" < "${envfile}" 2>/dev/null 2>&1; then
+        echo "Adding to envfile: ${envfile}"
+        printf 'export %s="%s"\n' "${name}" "$*" | tee -a "${envfile}"
+        autoenv-cat "${envfile}"
+        source "${envfile}"
+    else
+        echo "Already defined:"
+        echo "----------------"
+        autoenv-cat "${envfile}"
+    fi
+}
